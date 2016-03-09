@@ -1,0 +1,19 @@
+.layout {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.content {
+  left: 0;
+  right: 30%;
+}
+
+.sidebar {
+  right: 0;
+  width: 30%;
+}
+
+.margin {
+  margin: 10px;
+}
