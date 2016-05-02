@@ -1,0 +1,118 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | Introducing Carota</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="http://www.cnlsoftware.com">CNL Software Ltd<a/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-roslyn.html">ROSLYN</a> <a href="tag-typescript.html">TYPESCRIPT</a></div>
+            </div>
+            
+            <div class="content">
+                <h1>Introducing Carota</h1>
+<hr>
+<p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a>  2013-11-04</p>
+
+<p><em>This project was a lot of fun, but it has a big roadblock that has to be overcome by any text-based project: internationalisation. Hence I don't see it being 
+generally useful outside of Western-language-only projects without a lot more work.</em></p>
+
+<p>I'm developing a rich text editor from scratch in JavaScript, atop the HTML5 canvas. It's called Carota (Latin for carrot, which sounds like "caret", and I 
+like carrots).</p>
+
+<p><a href="http://earwicker.com/carota/">Here is the demo page</a>, which is very self-explanatory, in that it presents a bunch of information about the editor, inside 
+the editor itself, so you can fiddle with it and instantly see how it persists the text in JSON. As you can see, it's quite far along. In fact I suspect it
+is already good enough for every way I currently make use of rich text in browser applications. If your browser is old, it will not work. (Hint: IE8 is way old.)</p>
+
+<p>So... Why? What a crazy waste of time when browsers already have the marvellous <a href="https://www.google.com/search?q=contentEditable">contentEditable</a> feature, right?</p>
+
+<p>A quick survey of the state-of-the-art suggests otherwise. <a href="http://googledocs.blogspot.co.uk/2010/05/whats-different-about-new-google-docs.html">Google Docs uses its own text layout and rendering system</a>, 
+only using the DOM as low-level display mechanism (the details on that link are very relevant and interesting). Go to Apple's iCloud which now has a beta of 
+their <em>Pages</em> word processor, and use your browser to look at how they do it: the text is rendered using absolute, meticulously positioned SVG elements, so 
+they too perform their own layout.</p>
+
+<p>And having tried for the last year to get <code>contentEditable</code> to serve my purposes, in the same way on all browsers (actually, even one browser would be 
+something), I can understand why the Twin Behemoths of the Cloud have taken control of their own text layout. So I'm going to do the same thing, but with 
+Canvas. (My previous plan was to do a plugin for Windows so I'd be able to use the Win32 Rich Edit control, but <a href="http://blog.chromium.org/2013/09/saying-goodbye-to-our-old-friend-npapi.html">that kind of plugin is about to die out</a>.)</p>
+
+<p>Before I got as far as drawing any text on screen, I had to be very careful to build up a fundamental model of how flowing text actually works. I wanted to 
+end up with beautiful components that each do something extremely simple, and plug together into a working editor. That way it's easier to change stuff to 
+meet future needs. I've designed it from the ground up to be hacked by other people to do whatever <em>they</em> want.</p>
+
+<p>So, hopefully I'll be back soon to start describing how it works. In the meantime, <a href="https://github.com/danielearwicker/carota">fork me on github</a> and you 
+can also get the development set-up via the usual:</p>
+
+<p><code>npm install carota</code></p>
+
+<p>For a really quick minimal demo, <a href="http://jsfiddle.net/K9JZA/20/">try this jsfiddle</a>, which just creates an editor in an empty <code>DIV</code> and then uses <code>load</code> 
+and <code>save</code> for persistence.</p>
+
+            </div>
+            
+            <div class="outer">                
+                <table class="recent" align="center"><tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <strong>Introducing Carota</strong>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

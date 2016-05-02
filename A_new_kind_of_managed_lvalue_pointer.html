@@ -1,0 +1,403 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | A new kind of managed lvalue pointer</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="http://www.cnlsoftware.com">CNL Software Ltd<a/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-roslyn.html">ROSLYN</a> <a href="tag-typescript.html">TYPESCRIPT</a></div>
+            </div>
+            
+            <div class="content">
+                <h1>A new kind of managed lvalue pointer</h1>
+<hr>
+<p class="meta"><a href="tag-roslyn.html">ROSLYN</a>  2014-04-27</p>
+
+<p>It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!</p>
+
+<p>Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
+much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an <code>Invoke</code> method.</p>
+
+<p>So all we need is an interface with a <code>Value</code> property. Objects supporting that interface can represent a single property that can be passed around like any other value:</p><pre><code class="csharp">public interface IProperty&lt;T&gt;
+{
+    T Value { get; set; }
+}
+</code></pre><p>This is closely analogous to an old-fashioned pointer in C and C++, <a href="http://smellegantcode.wordpress.com/2008/05/06/pointers-to-value-types-in-c/">as I mused aloud all those years ago</a>. 
+Let's turn that whole idea into a strangely alluring language feature, which I'll call "property references", and then occasionally forget that terminology and call them pointers instead.</p>
+
+<p>Firstly, syntax. We could use actual pointer syntax, but <a href="http://smellegantcode.wordpress.com/2014/04/26/adventures-in-roslyn-using-pointer-syntax-as-a-shorthand-for-ienumerable/">I already used some of that in yesterday's feature</a>. 
+Dagnabbit! Fortunately <a href="http://en.wikipedia.org/wiki/C%2B%2B/CX">C++/CX</a> has already paved the way: it has the concept of a reference to a fancy object that must be explicitly dereferenced. The syntax is like this:</p><pre><code class="csharp">MyClass ^r = %x;
+
+(*r).Foo();
+</code></pre><p>If this looks weird, try replacing <code>^</code> with <code>*</code> and <code>%</code> with <code>&amp;</code>. It's then exactly like C/C++. <code>^</code> is a postfix modifier on a type declaration 
+that means "Will store a pointer to one of those", and <code>%</code> is a unary prefix operator that means "Give me a pointer to whatever comes next". And for the sake 
+of uniformity in common code, C++/CX always uses <code>*</code> to dereference.</p>
+
+<p>Before getting into the nitty-gritty of changing the compiler, let's survey the glorious sunny uplands we wish to invade. We should be able to do this in C#:</p><pre><code class="csharp">var x = 5;
+var px = %x; // Take a "pointer" to x
+
+Console.WriteLine(*px); // Prints 5
+
+*px = 6; // Can assign "through" a pointer
+(*px)++; // Or increment
+
+Console.WriteLine(x); // Prints 7 - we modified x via px
+</code></pre><p>Unlike old-school pointers, we can - of course - quite safely return one of these things from a method, <em>referring to a local variable</em>:</p><pre><code class="csharp">static int^ GetCounter(int init)
+{
+    var counter = init;
+    return %counter;
+}
+
+// elsewhere...
+var c = GetCounter(100);
+Console.WriteLine(*c); // Prints 100
+
+(*c)++;
+Console.WriteLine(*c); // Prints 101
+</code></pre><p>The trick is that each bit of new syntax expands very simply into some standard C#. All the heavy lifting is done by the compiler's existing support for lambdas:</p><pre><code class="csharp">var x = 5;
+System.IProperty&lt;int&gt; px = System.Property.Bind(v =&gt; x = v, () =&gt; x); // int *p = %x;
+var y = px.Value; // var y = *x;
+</code></pre><p>But of course, those helper types are not part of the standard <code>System</code> namespace. We need to add them:</p><pre><code class="csharp">namespace System
+{
+    public interface IProperty&lt;T&gt;
+    {
+        T Value { get; set; }
+    }
+
+    public static class Property
+    {
+        private class PtrImpl&lt;T&gt; : IProperty&lt;T&gt;
+        {
+            Action&lt;T&gt; _set;
+            Func&lt;T&gt; _get;
+
+            public PtrImpl(Action&lt;T&gt; set, Func&lt;T&gt; get)
+            {
+                _set = set;
+                _get = get;
+            }
+
+            public T Value
+            {
+                get { return _get(); }
+                set { _set(value); }
+            }
+        }
+
+        public static IProperty&lt;T&gt; Bind&lt;T&gt;(Action&lt;T&gt; set, Func&lt;T&gt; get)
+        {
+            return new PtrImpl&lt;T&gt;(set, get);
+        }
+    }
+}
+</code></pre><p>These don't need to be in <code>mscorlib.dll</code> (some of the later C# features rely on types in <code>System.Core.dll</code>). So we can just create a new 
+<code>System.Extras.dll</code> assembly and stick them in there.</p>
+
+<p>So, one thing that makes this a whole 'nother level of crazy compared to my first two forays in to compiler features is that here we are adding new syntax. 
+Fortunately Roslyn makes this quite easy. There's a file called <code>Syntax.xml</code> from which the project generates classes for all the nodes that can appear in a 
+syntax tree. We can (as usual) follow the example of what we find in there.</p>
+
+<p>All the unary prefix operators are in here, so they share a single class that can be distinguished by the <code>Kind</code> property:</p><pre><code class="xml">&lt;Node Name="PrefixUnaryExpressionSyntax" Base="ExpressionSyntax"&gt;
+  &lt;Kind Name="UnaryPlusExpression"/&gt;
+  &lt;Kind Name="UnaryMinusExpression"/&gt;
+  &lt;Kind Name="BitwiseNotExpression"/&gt;
+  &lt;Kind Name="LogicalNotExpression"/&gt;
+  &lt;Kind Name="PreIncrementExpression"/&gt;
+  &lt;Kind Name="PreDecrementExpression"/&gt;
+  &lt;Kind Name="AddressOfExpression"/&gt;
+  &lt;Kind Name="PointerIndirectionExpression"/&gt;
+  &lt;Kind Name="AwaitExpression"/&gt;
+  &lt;Kind Name="PropertyReferenceExpression"/&gt;    
+  &lt;Field Name="OperatorToken" Type="SyntaxToken"&gt;
+    &lt;Kind Name="PlusToken"/&gt;
+    &lt;Kind Name="MinusToken"/&gt;
+    &lt;Kind Name="TildeToken"/&gt;
+    &lt;Kind Name="ExclamationToken"/&gt;
+    &lt;Kind Name="PlusPlusToken"/&gt;
+    &lt;Kind Name="MinusMinusToken"/&gt;
+    &lt;Kind Name="AmpersandToken"/&gt;
+    &lt;Kind Name="AsteriskToken"/&gt;
+    &lt;Kind Name="AwaitKeyword"/&gt;
+    &lt;Kind Name="PercentToken"/&gt;
+    &lt;PropertyComment&gt;
+      &lt;summary&gt;SyntaxToken representing the kind of the operator of the prefix unary expression.&lt;/summary&gt;
+    &lt;/PropertyComment&gt;
+  &lt;/Field&gt;
+  &lt;Field Name="Operand" Type="ExpressionSyntax"&gt;
+    &lt;PropertyComment&gt;
+      &lt;summary&gt;ExpressionSyntax representing the operand of the prefix unary expression.&lt;/summary&gt;
+    &lt;/PropertyComment&gt;
+  &lt;/Field&gt;
+  &lt;TypeComment&gt;
+    &lt;summary&gt;Class which represents the syntax node for prefix unary expression.&lt;/summary&gt;
+  &lt;/TypeComment&gt;
+  &lt;FactoryComment&gt;
+    &lt;summary&gt;Creates an PrefixUnaryExpressionSyntax node.&lt;/summary&gt;
+  &lt;/FactoryComment&gt;
+&lt;/Node&gt;
+</code></pre><p>I've added the <code>PropertyReferenceExpression</code> and the <code>PercentToken</code>. For the type modifier <code>^</code> I have to cook up a whole new node type:</p><pre><code class="xml">&lt;Node Name="PropertyReferenceTypeSyntax" Base="TypeSyntax"&gt;
+  &lt;Kind Name="PropertyReferenceType"/&gt;
+  &lt;Field Name="ElementType" Type="TypeSyntax"&gt;
+    &lt;PropertyComment&gt;
+      &lt;summary&gt;TypeSyntax node that represents the element type of the property reference.&lt;/summary&gt;
+    &lt;/PropertyComment&gt;
+  &lt;/Field&gt;
+  &lt;Field Name="CaretToken" Type="SyntaxToken"&gt;
+    &lt;Kind Name="CaretToken"/&gt;
+    &lt;PropertyComment&gt;
+      &lt;summary&gt;SyntaxToken representing the caret symbol.&lt;/summary&gt;
+    &lt;/PropertyComment&gt;
+  &lt;/Field&gt;
+  &lt;TypeComment&gt;
+    &lt;summary&gt;Class which represents the syntax node for property reference type.&lt;/summary&gt;
+  &lt;/TypeComment&gt;
+  &lt;FactoryComment&gt;
+    &lt;summary&gt;Creates a PropertyReferenceTypeSyntax node.&lt;/summary&gt;
+  &lt;/FactoryComment&gt;
+&lt;/Node&gt;
+</code></pre><p>Now, if we try to build the compiler we'll get errors about missing names in the <code>enum SyntaxKind</code>, so we need to add them:</p><pre><code class="csharp">public enum SyntaxKind : ushort
+{
+    ...
+
+    PropertyReferenceType,
+    PropertyReferenceExpression
+}
+</code></pre><p>In <code>SyntaxKindFacts.cs</code> there's a workaday <code>switch</code> statement that we need to modify so it takes care of mapping <code>%</code> tokens to our new unary operator:</p><pre><code class="csharp">public static SyntaxKind GetPrefixUnaryExpression(SyntaxKind token)
+{
+    switch (token)
+    {
+        case SyntaxKind.PlusToken:
+            return SyntaxKind.UnaryPlusExpression;
+        case SyntaxKind.MinusToken:
+            return SyntaxKind.UnaryMinusExpression;
+        case SyntaxKind.TildeToken:
+            return SyntaxKind.BitwiseNotExpression;
+        case SyntaxKind.ExclamationToken:
+            return SyntaxKind.LogicalNotExpression;
+        case SyntaxKind.PlusPlusToken:
+            return SyntaxKind.PreIncrementExpression;
+        case SyntaxKind.MinusMinusToken:
+            return SyntaxKind.PreDecrementExpression;
+        case SyntaxKind.AmpersandToken:
+            return SyntaxKind.AddressOfExpression;
+        case SyntaxKind.AsteriskToken:
+            return SyntaxKind.PointerIndirectionExpression;
+
+        // The new part:
+        case SyntaxKind.PercentToken:
+            return SyntaxKind.PropertyReferenceExpression;
+
+        default:
+            return SyntaxKind.None;
+    }
+}
+</code></pre><p>And there's a another that defines the precedence of operators, which is how the compiler decides what to do when you don't fully parenthesise your 
+expressions. I figure that the new <code>%</code> operator should copy the existing <code>&amp;amp</code> operator:</p><pre><code class="csharp">private static uint GetPrecedence(SyntaxKind op)
+{
+    switch (op)
+    {
+        ...
+
+        case SyntaxKind.AddressOfExpression:
+        case SyntaxKind.PropertyReferenceExpression: // the new part
+            return 16;
+        default:
+            return 0;
+    }
+}
+</code></pre><p>For the all-new <code>^</code> operator we have to throw some code in to deal with it. Like I said yesterday, Roslyn's structure seems surprisingly procedural. 
+It's not using functional parser combinators or anything "cool" and/or "academic". It's just a bunch of methods that examine the current token, do 
+switch statements, etc. On the plus side, it is very easy to learn how it works by stepping through it in the debugger. That's the saving grace of 
+procedural code: ease of hacking.</p>
+
+<p>I hooked into the same place that handles pointer syntax, as (again) its closely analogous.</p><pre><code class="csharp">private TypeSyntax ParsePointerTypeMods(TypeSyntax type)
+{
+    // Check for pointer types
+    while (this.CurrentToken.Kind == SyntaxKind.AsteriskToken)
+    {
+        type = syntaxFactory.PointerType(type, this.EatToken());
+    }
+
+    // Check for property reference types (new)
+    while (this.CurrentToken.Kind == SyntaxKind.CaretToken)
+    {
+        type = syntaxFactory.PropertyReferenceType(type, this.EatToken());
+    }
+
+    return type;
+}
+</code></pre><p>Note: we don't have to write that <code>syntaxFactory.PropertyReferenceType</code> method. It's one of the pieces that are auto-generated from what we added to <code>Syntax.xml</code>.</p>
+
+<p>Now, we have the syntax. All we need now is to sort out the binding phase, which figures out whether the syntax actually makes sense (that when it refers 
+to a variable called <code>x</code>, there actually is one called <code>x</code>, and every expression has a type, etc.)</p>
+
+<p>And it is here that I am overcome with one of those attacks of laziness that are the hallmark of the truly great programmer, hem-hem. Faced with a pattern 
+like this:</p><pre><code class="csharp">System.Property.Bind(v =&gt; o = v, () =&gt; o)
+</code></pre><p>We don't want to have to write screeds of code that builds the <code>BoundExpression</code> that make up that pattern (believe me: I got about half-way through the 
+first lambda before realising I would be retired before finishing the whole thing). In any case, the compiler can already do it - that's its job. Ideally we 
+could use the existing parser to get a kind of "syntax template", in which we can replace certain identifiers with chunks of other syntax, and then ask the 
+existing binder to bind it. Then we'd have to do almost <em>no thinking at all</em>! Bliss.</p>
+
+<p>So for example:</p><pre><code class="csharp">private static readonly SyntaxTemplate _propertyReferenceTemplate
+    = new SyntaxTemplate("System.Property.Bind(__v_pr__ =&gt; o = __v_pr__, () =&gt; o)");
+                                        
+private BoundExpression BindPropertyReferenceExpression(PrefixUnaryExpressionSyntax node, DiagnosticBag diagnostics)
+{
+    return RedirectDiagnostics(diagnostics, node, redirected =&gt;
+        BindExpression(_propertyReferenceTemplate.Replace("o", node.Operand).Syntax, redirected));
+}
+</code></pre><p>We'll come back to that <code>RedirectDiagnostics</code> part later. The key point is that I'm creating an instance of my new class <code>SyntaxTemplate</code> as a <code>static</code>, so 
+it is reused for the lifetime of the compiler. It's immutable, hence thread-safe. Then every time I need to bind something like <code>%foo</code>, I can just replace 
+the <code>o</code> in the template with <code>foo</code> (which is in <code>node.Operand</code>). <code>Replace</code> returns a new <code>SyntaxTemplate</code> rather than modifying the original (that's what 
+immutability is all about).</p>
+
+<p>Again, binding is a recursive, procedural system. There's a big switch statement that calls out to methods that bind various things, so we need to hook our 
+new method <code>BindPropertyReferenceExpression</code> into that:</p><pre><code class="csharp">private BoundExpression BindExpressionInternal(ExpressionSyntax node, DiagnosticBag diagnostics, bool invoked, bool indexed)
+{
+    if (IsEarlyAttributeBinder && !EarlyWellKnownAttributeBinder.CanBeValidAttributeArgument(node, this))
+    {
+        return BadExpression(node, LookupResultKind.NotAValue);
+    }
+
+    Debug.Assert(node != null);
+    switch (node.Kind)
+    {
+        ...
+
+        // New part
+        case SyntaxKind.PropertyReferenceExpression:
+            return BindPropertyReferenceExpression((PrefixUnaryExpressionSyntax)node, diagnostics);
+</code></pre><p>See how there's a <code>switch</code> statement on an <code>enum</code>, then a cast - all the kinds of thing that beginners are told not to do when they learn C#, because 
+supposedly virtual method dispatch on a single object solves all problems. (<a href="http://stackoverflow.com/questions/1406860/how-can-i-replace-instanceof-in-this-case">Oh wait, no it doesn't</a>.) 
+But still, it wouldn't make sense to have a built-in type switch in languages like C#, Java or C++ (<a href="http://stackoverflow.com/a/1166083/27423">except apparently in one situation</a>).</p>
+
+<p>Anyway, <code>BindExpression</code> calls <code>BindExpressionInternal</code>, which calls our new <code>BindPropertyReferenceExpression</code> method, which expands our template and passes it 
+to <code>BindExpression</code>... we're going in circles! But it's okay. The reason this doesn't asplode the stack is because our template doesn't include further references to <code>%</code>.</p>
+
+<p>Now, about that <code>RedirectDiagnostics</code> wrinkle. The binding process has a <code>DiagnosticBag</code> object that gets passed around. Any errors found are thrown in the bag. 
+Each error has a <code>Location</code> object, identifying the place in the user's source code where the error was spotted, so the locations were discovered at the parsing 
+stage. The problem we have is that we parse our template code separately, so the locations bear no relation to the user's source code. This means that the IDE's 
+text editor cannot put red squiggles in the right place.</p>
+
+<p>To fix this, I literally fix the diagnostics:</p><pre><code class="csharp">private T RedirectDiagnostics&lt;T&gt;(DiagnosticBag diagnostics, 
+             CSharpSyntaxNode nodeWithLocation, 
+             Func&lt;DiagnosticBag, T&gt; generate)
+{
+    var captured = new DiagnosticBag();
+    var result = generate(captured);
+
+    foreach (var diag in captured.AsEnumerable().OfType&lt;DiagnosticWithInfo&gt;())
+        diagnostics.Add(new CSDiagnostic(diag.Info, nodeWithLocation.Location));
+
+    return result;
+}
+</code></pre><p>The <code>generate</code> function does the binding, but to a "fake" temporary <code>DiagnosticBag</code>, which we then copy into the real one but replacing all the 
+<code>Location</code> objects with a single good location. This isn't ideal. Recall that some of the syntax tree was inserted from the user's source and so 
+had perfectly good locations. I need to figure out a way of detecting whether a location is junk or not. But it sort of works.</p>
+
+<p>So, we have binding for <code>%</code>. For <code>*</code> we have to enhance the existing code, branching based on whether operand is a pointer:</p><pre><code class="csharp">private static readonly SyntaxTemplate _pointerIndirectionTemplate = new SyntaxTemplate("p.Value");
+
+// Based on ExpressionBinder::bindPtrIndirection.
+private BoundExpression BindPointerIndirectionExpression(PrefixUnaryExpressionSyntax node, DiagnosticBag diagnostics)
+{
+    BoundExpression operand = BindValue(node.Operand, diagnostics, GetUnaryAssignmentKind(node.Kind));
+
+    // Try using the template on anything that isn't a pointer
+    if (!operand.Type.IsPointerType())
+        return RedirectDiagnostics(diagnostics, node, redirected =&gt; 
+            BindExpression(_pointerIndirectionTemplate.Replace("p", node.Operand).Syntax, redirected));
+            
+    TypeSymbol pointedAtType;
+    bool hasErrors;
+    BindPointerIndirectionExpressionInternal(node, operand, diagnostics, out pointedAtType, out hasErrors);
+
+    return new BoundPointerIndirectionOperator(node, operand, pointedAtType ?? CreateErrorType(), hasErrors);
+}
+</code></pre><p>We can even use the template technique for type declarations - just replace <code>T</code> with whatever we get from the user:</p><pre><code class="csharp">private static readonly SyntaxTemplate _propertyReferenceTypeTemplate = new SyntaxTemplate("System.IProperty&lt;T&gt;");
+
+internal Symbol BindNamespaceOrTypeOrAliasSymbol(ExpressionSyntax syntax, DiagnosticBag diagnostics, ConsList&lt;Symbol&gt; basesBeingResolved, bool suppressUseSiteDiagnostics)
+{
+    switch (syntax.Kind)
+    {
+        ...
+
+        case SyntaxKind.PropertyReferenceType:
+            {
+                return RedirectDiagnostics(diagnostics, syntax, redirected =&gt; BindNamespaceOrTypeOrAliasSymbol(
+                    _propertyReferenceTypeTemplate.Replace("T", ((PropertyReferenceTypeSyntax)syntax).ElementType).Syntax, 
+                    redirected, basesBeingResolved, suppressUseSiteDiagnostics));
+            }
+</code></pre><p>That's every change needed to support the feature. If you want to play with it (and even add features of your own using the <code>SyntaxTemplate</code> class), I've 
+<a href="https://roslyn.codeplex.com/SourceControl/network/forks/danielearwicker/roslynoperatormethods">updated my fork with all these changes</a>. You will need to 
+define the <code>System.IProperty</code> and <code>System.Property</code> types - it will work if you just paste the code.</p>
+
+            </div>
+            
+            <div class="outer">                
+                <table class="recent" align="center"><tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <strong>A new kind of managed lvalue pointer</strong>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

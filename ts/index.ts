@@ -1,1 +1,0 @@
-import jsonp = require("jsonp");

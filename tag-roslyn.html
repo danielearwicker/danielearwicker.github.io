@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | earwiki</title>
+        <title>Daniel Earwicker | roslyn</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,47 +22,7 @@
             </div>
             
             <div class="content">
-                <h2>TypeScript multicast functions</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-03-13</p>
-<p>Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs 
-from JavaScript. </p>
-
-<ol>
-<li><p>a method's <code>this</code> reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens 
-to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the 
-function internally refers to <code>this</code>.</p></li>
-
-<li><p>a function value (known as a "delegate") has operators <code>+</code>, <code>-</code>, <code>+=</code>, <code>-=</code> that allow it to be combined with other compatible functions 
-to create a new single function that, when invoked, causes the constituent functions to be invoked.</p></li>
-</ol>
-
-<p>The second one is what I'm interested in today, mainly because it's a nice example of something that we can strongly type check in 
-TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, but externally we can guarantee everything will work.</p>
-<p><a href="TypeScript_multicast_functions.html">Read on...</a></p>
-<hr>
-
-<h2>Introducing doop</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a>  2016-03-08</p>
-<p>As great as <a href="https://facebook.github.io/immutable-js/">Immutable.js</a> is, especially with a TypeScript declaration included in the package, the <code>Record</code> class leaves me a little disappointed.</p>
-
-<p><a href="Introducing_doop.html">Read on...</a></p>
-<hr>
-
-<h2>TypeScript is not really a superset of JavaScript and that is a Good Thing</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2015-07-11</p>
-<p>Questions:</p>
-
-<ul>
-<li>What does it mean for a programming language to be a superset of another programming language?</li>
-
-<li>What's a programming language?</li>
-
-<li>What's a program?</li>
-</ul>
-<p><a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">Read on...</a></p>
-<hr>
-
-<h2>A new kind of managed lvalue pointer</h2>
+                <h2>A new kind of managed lvalue pointer</h2>
 <p class="meta"><a href="tag-roslyn.html">ROSLYN</a>  2014-04-27</p>
 <p>It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!</p>
 
@@ -97,22 +57,6 @@ call to a <code>Where</code> method. And it doesn't matter where or how that met
 In fact there are few other language features that map to well known member names: a collection initializer is turned into several calls to a method called 
 <code>Add</code>, and the <code>await</code> keyword expands into calls to several methods.</p>
 <p><a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Read on...</a></p>
-<hr>
-
-<h2>Introducing Carota</h2>
-<p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a>  2013-11-04</p>
-<p><em>This project was a lot of fun, but it has a big roadblock that has to be overcome by any text-based project: internationalisation. Hence I don't see it being 
-generally useful outside of Western-language-only projects without a lot more work.</em></p>
-
-<p>I'm developing a rich text editor from scratch in JavaScript, atop the HTML5 canvas. It's called Carota (Latin for carrot, which sounds like "caret", and I 
-like carrots).</p>
-
-<p><a href="http://earwicker.com/carota/">Here is the demo page</a>, which is very self-explanatory, in that it presents a bunch of information about the editor, inside 
-the editor itself, so you can fiddle with it and instantly see how it persists the text in JSON. As you can see, it's quite far along. In fact I suspect it
-is already good enough for every way I currently make use of rich text in browser applications. If your browser is old, it will not work. (Hint: IE8 is way old.)</p>
-
-<p>So... Why? What a crazy waste of time when browsers already have the marvellous <a href="https://www.google.com/search?q=contentEditable">contentEditable</a> feature, right?</p>
-<p><a href="Introducing_Carota.html">Read on...</a></p>
 <hr>
 
             </div>

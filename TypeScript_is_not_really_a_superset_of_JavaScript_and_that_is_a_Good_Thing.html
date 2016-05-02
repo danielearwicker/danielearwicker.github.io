@@ -1,0 +1,181 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | TypeScript is not really a superset of JavaScript and that is a Good Thing</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="http://www.cnlsoftware.com">CNL Software Ltd<a/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-roslyn.html">ROSLYN</a> <a href="tag-typescript.html">TYPESCRIPT</a></div>
+            </div>
+            
+            <div class="content">
+                <h1>TypeScript is not really a superset of JavaScript and that is a Good Thing</h1>
+<hr>
+<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2015-07-11</p>
+
+<p>Questions:</p>
+
+<ul>
+<li>What does it mean for a programming language to be a superset of another programming language?</li>
+
+<li>What's a programming language?</li>
+
+<li>What's a program?</li>
+</ul>
+
+<p>In this discussion, a program, regardless of language, is a <strong>stream of characters</strong>.</p>
+
+<p>If you generated a random stream of characters, it might be a valid program in some hypothetical language, just as the arrangement of stars in the 
+night sky as viewed from Earth might happen to spell out an <strong>insulting message</strong> in some alien language we'll never know about.</p>
+
+<p>So a programming language is both:</p>
+
+<ul>
+<li>the rules for deciding whether a given stream of characters is a valid program, from that language's point of view, and,</li>
+
+<li>the <strong>set of valid programs</strong>, because they are streams of characters that conform to those rules.</li>
+</ul>
+
+<p>It's the second (slightly surprising) formulation we're interested in here, because it means that when we say "language A is a superset of language 
+B", we mean that A and B are sets of programs, and set A includes all the programs in set B. This is useful information, because it means all the 
+programs we wrote in language B can immediately used in language A, without us needing to change them.</p>
+
+<p>People get very muddled about this, because they think of the programming language as a set of rules instead of a set of programs, and therefore 
+assume that a superset would include all the rules of the subset language, plus some extra rules. This could make it stricter, rejecting some 
+previously valid programs, or it could make it looser, allowing new syntactic forms. So without knowing the details of the extra rules in question, 
+we wouldn't know what's happened. </p>
+
+<p>So the "set of rules" sense is far less useful than the "set of programs" sense, which does actually tell us something about the compatibility 
+between the languages.</p>
+
+<p>The most common statement in introductions and tutorials about TypeScript is that it is a superset of JavaScript. Really? Here's a valid 
+JavaScript program:</p><pre><code class="typescript">var x = 5;
+x = "hello";
+</code></pre><p>Rename it to <code>.ts</code> and compile it with <code>tsc</code> and you'll get an error message:</p>
+
+<pre><code>Type 'string' is not assignable to type 'number'.
+</code></pre>
+
+<p>We can fix it though:</p><pre><code class="typescript">var x: any = "hello";
+x = 5;
+</code></pre><p>We've stopped the compiler from inferring that <code>x</code> is specifically a <code>string</code> variable just because that's what we initialised it with. Plain 
+JavaScript can be <strong>retro-imagined</strong> as a version of TypeScript that assumes every variable is of type <code>any</code>.</p>
+
+<p>In any case, one example is sufficient to show that TypeScript is not a superset of JavaScript in the more useful "set of valid programs" sense, 
+and it seems we've found one. Except it's a bit murkier than that.</p>
+
+<p>If you looked in the folder containing your source file right after you tried to compile the "broken" version, you would have found an output 
+<code>.js</code> file that the TypeScript compiler had generated quite happily.</p>
+
+<p>TypeScript makes your source <strong>jump over two hurdles</strong>:</p>
+
+<ol>
+<li>Is it good enough to produce JavaScript output?</li>
+
+<li>Does it pass type checks?</li>
+</ol>
+
+<p>If your source clears the first hurdle, you get a runnable JavaScript program as output <em>even if it doesn't clear the second hurdle</em>. This 
+quirk allows TypeScript to claim to be a superset of JavaScript in the set-of-programs sense.</p>
+
+<p>But I'm not sure it counts for much. Is anyone seriously going to release a product or publish a site when it has type errors in compilation? 
+They wouldn't be getting any value from TypeScript (over any ES6 transpiler such as Babel). The compiler has a couple of switches that really 
+should be enabled in any serious project:</p>
+
+<ul>
+<li><code>--noEmitOnError</code> - require both hurdles to be cleared (the word "error" here refers to type errors).</li>
+
+<li><code>--noImplicitAny</code> - when type inference can't deduce something more specific than <code>any</code>, halt the compilation.</li>
+</ul>
+
+<p>If you're going to use TypeScript (<em>hint: you are</em>) then use it properly.</p>
+
+<p>And in that case, it is not a superset of JavaScript. And this is a <strong>Good Thing</strong>. The whole point is that existing JavaScript programs, due 
+to the language's dynamically typed looseness, very often contain mistakes that would be trapped by TypeScript. The example above, where a 
+variable is reused for different types, might be a mistake but might not (in performance terms, it's probably a mistake in that it stops 
+modern JS runtimes from optimising code that accesses the variable).</p>
+
+<p>When we want to use JavaScript, unchanged, as part of a TypeScript project, we just leave it as JavaScript and wrap it in <code>d.ts</code> declarations. 
+It's no big deal. You only change the extension to <code>.ts</code> because you want it to be more rigorously checked, so you know that the types make 
+sense all the way down into the nitty gritty.</p>
+
+<p>The parallel with <strong>C++'s relationship to C</strong> is striking. In C (specifically, ANSI C prior to the 1999 standard) it was not necessary to 
+declare a function before you called it. In C++ it became mandatory. This - amongst other differences - meant that C++ was never a superset 
+of C.</p>
+
+<p>But this didn't matter too much, because C++ was a superset of <strong>well-written</strong> C - to the extent that every C example in the 2nd edition 
+of <a href="https://en.wikipedia.org/wiki/The_C_Programming_Language">K&amp;R</a> was valid C++.</p>
+
+<p>So TypeScript, in any meaningful sense, is not a superset of JavaScript, but this is nothing to get hung up over; if it were a superset of 
+JavaScript, it would be considerably less useful.</p>
+
+            </div>
+            
+            <div class="outer">                
+                <table class="recent" align="center"><tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <strong>TypeScript is not really a superset of JavaScript and that is a Good Thing</strong>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

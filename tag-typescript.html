@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | earwiki</title>
+        <title>Daniel Earwicker | typescript</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -60,59 +60,6 @@ TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, 
 <li>What's a program?</li>
 </ul>
 <p><a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">Read on...</a></p>
-<hr>
-
-<h2>A new kind of managed lvalue pointer</h2>
-<p class="meta"><a href="tag-roslyn.html">ROSLYN</a>  2014-04-27</p>
-<p>It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!</p>
-
-<p>Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
-much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an <code>Invoke</code> method.</p>
-
-<p><a href="A_new_kind_of_managed_lvalue_pointer.html">Read on...</a></p>
-<hr>
-
-<h2>Using pointer syntax as a shorthand for IEnumerable</h2>
-<p class="meta"><a href="tag-roslyn.html">ROSLYN</a>  2014-04-26</p>
-<p>Another quickie extension to C#. In the current language, a type declaration <code>T!</code> is shorthand for <code>Nullable</code>.</p>
-
-<p>But equally important in modern C# programs are sequences of values, so a similar shorthand for <code>IEnumerable</code> would be ideal. 
-The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
-this was the choice made by the intriguing <a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/">research language Cω</a> 
-<p><a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Read on...</a></p>
-<hr>
-
-<h2>Adding crazily powerful operator overloading to C# 6</h2>
-<p class="meta"><a href="tag-roslyn.html">ROSLYN</a>  2014-04-23</p>
-<p><strong>I'm going to show you how to enable a new kind of operator overloading by adding exactly four (4) lines of code to a single file in the C# 6 compiler 
-preview. Yes, I was surprised too!</strong></p>
-
-<p>After seeing the video of Anders Hejlsberg showing how easy it is to hack the new open source C# compiler, I had to give it a try.</p>
-
-<p>My aim was (I assumed) a lot more ambitious and crazy than his demo. I thought it would take ages to figure out. But it was still tempting to aim high and 
-actually implement a substantial new feature, because there are a few I've been wondering about over the years.</p>
-
-<p>Ever since LINQ query syntax was added to the language, I've wished that operator overloading worked the same way. The <code>where</code> keyword gets turned into a 
-call to a <code>Where</code> method. And it doesn't matter where or how that method is defined. It can be an extension method, an ordinary method, a <code>virtual</code> method. 
-In fact there are few other language features that map to well known member names: a collection initializer is turned into several calls to a method called 
-<code>Add</code>, and the <code>await</code> keyword expands into calls to several methods.</p>
-<p><a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Read on...</a></p>
-<hr>
-
-<h2>Introducing Carota</h2>
-<p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a>  2013-11-04</p>
-<p><em>This project was a lot of fun, but it has a big roadblock that has to be overcome by any text-based project: internationalisation. Hence I don't see it being 
-generally useful outside of Western-language-only projects without a lot more work.</em></p>
-
-<p>I'm developing a rich text editor from scratch in JavaScript, atop the HTML5 canvas. It's called Carota (Latin for carrot, which sounds like "caret", and I 
-like carrots).</p>
-
-<p><a href="http://earwicker.com/carota/">Here is the demo page</a>, which is very self-explanatory, in that it presents a bunch of information about the editor, inside 
-the editor itself, so you can fiddle with it and instantly see how it persists the text in JSON. As you can see, it's quite far along. In fact I suspect it
-is already good enough for every way I currently make use of rich text in browser applications. If your browser is old, it will not work. (Hint: IE8 is way old.)</p>
-
-<p>So... Why? What a crazy waste of time when browsers already have the marvellous <a href="https://www.google.com/search?q=contentEditable">contentEditable</a> feature, right?</p>
-<p><a href="Introducing_Carota.html">Read on...</a></p>
 <hr>
 
             </div>

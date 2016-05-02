@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | ${title}</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="http://www.cnlsoftware.com">CNL Software Ltd<a/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics">${topics}</div>
+            </div>
+            
+            <div class="content">
+                ${content}
+            </div>
+            
+            <div class="outer">                
+                <table class="recent" align="center">${recent}</table>                
+            </div>
+
+            <div class="outer">
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

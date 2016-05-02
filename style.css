@@ -1,19 +1,68 @@
-.layout {
-  position: absolute;
-  top: 0;
-  bottom: 0;
+body {
+    font-size: 1.2em;
+    font-family: 'Baskerville', 'Georgia', 'Times', 'serif';
+    line-height: 180%;
+    background: steelblue;
+    padding: 8px;
+    color: white;
+}
+
+h1 {
+    line-height: 130%;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+
+.oneColumn {
+    max-width: 50em;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.header td {
+    padding: 0 5px 0 5px;
+    margin: 0;
+}
+
+.username {
+    font-size: 3em;
+}
+
+.meta {
+    font-size: 0.8em;
+    text-align: right;
+    line-height: 90%;
+}
+
+.date {
+    white-space: nowrap;    
+}
+
+code {
+    line-height: 120%;
+}
+
+.outer a, .outer {
+    color: white;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
 }
 
 .content {
-  left: 0;
-  right: 30%;
+    padding: 18px;
+    margin: 12px;
+    background: white;      
+    color: black;
+    border: 2px solid black;     
+    box-shadow: 10px 10px 10px #2b506e;
 }
 
-.sidebar {
-  right: 0;
-  width: 30%;
+.recent {
+    margin-top: 20px;
 }
 
-.margin {
-  margin: 10px;
+.recent td {
+    padding: 2px 8px 6px 8px;
+}
+
+.topics, .rss {
+    text-align: center;
 }
