@@ -4,7 +4,21 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2016-03-13T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2016-07-24T00:00:00Z</lastBuildDate>
+    <item>
+      <title>What's good about Redux</title>
+      <pubDate> 2016-07-24T00:00:00Z</pubDate>
+      <description>&lt;p&gt;&lt;a href="http://redux.js.org/"&gt;Redux&lt;/a&gt; is based on series of really simple &lt;em&gt;what-if&lt;/em&gt; questions:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;em&gt;What if&lt;/em&gt; all the data in your app was immutable?&lt;/li&gt;
+
+&lt;li&gt;Okay, now it's stuck. But &lt;em&gt;what if&lt;/em&gt; there was only a single solitary mutable variable holding the complete state for your entire app? To change any bit of state, you just assign a slightly different immutable tree to that variable.&lt;/li&gt;
+
+&lt;li&gt;And &lt;em&gt;what if&lt;/em&gt; the only way to mutate the state was to create a POJO describing a high-level action, and dispatch it through a single giant processing system, describing the change to make?&lt;/li&gt;
+&lt;/ol&gt;</description>
+      <link>http://danielearwicker.github.io/What_s_good_about_Redux.html</link>
+    </item>
     <item>
       <title>TypeScript multicast functions</title>
       <pubDate> 2016-03-13T00:00:00Z</pubDate>
