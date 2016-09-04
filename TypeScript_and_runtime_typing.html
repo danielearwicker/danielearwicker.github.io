@@ -1,0 +1,192 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | TypeScript and runtime typing</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="http://www.cnlsoftware.com">CNL Software Ltd<a/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-react.html">REACT</a> <a href="tag-roslyn.html">ROSLYN</a> <a href="tag-typescript.html">TYPESCRIPT</a></div>
+            </div>
+            
+            <div class="content">
+                <h1>TypeScript and runtime typing</h1>
+<hr>
+<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-04</p>
+
+<p><em>Prompted by <a href="https://www.reddit.com/r/typescript/comments/50zj95/how_to_make_a_class_type/">this question on Reddit</a>.</em></p>
+
+<blockquote>
+  <p>I'd want to declare a type that points to class extending another class. Please note, a CLASS not INSTANCE.
+  I've tried something like this:</p>
+  
+  <p><code>type EventClass = class extends Event;</code></p>
+  
+  <p><code>type Listener = (data: class extends Event) =&gt; void;</code></p>
+  
+  <p>and later on:</p>
+  
+  <p><code>private handlers: Map&lt;EventClass,Listener[]&gt;;</code></p>
+  
+  <p>But unfortunately this syntax does not work. How I can declare a type that points to CLASS extending another CLASS?</p>
+</blockquote>
+
+<p>You want a runtime value that specifies a type of event, so you can use it as the key in a <code>Map</code>.</p>
+
+<p>In Java you'd use the <code>Class</code> class, in C# you'd use <code>Type</code>. These are runtime type representatives that reflect the compile time types (perfectly in C# thanks to reified generics, imperfectly in Java due to erased generics).</p>
+
+<p>But TypeScript is just JavaScript with static typing added to it, in a way that tries to be of maximum usefulness in real-world JavaScript, as it is used.</p>
+
+<p>It's not an attempt to recreate the environment (including runtime services) of any other language. Unfortunately there is no general runtime representation of a type in standard JavaScript.</p>
+
+<p>The JavaScript <code>typeof</code> operator returns a string, and is only useful for primitives. The TypeScript <code>typeof</code> operator (which can only appear in type positions) has no effect on generated JavaScript, so there is no way to sneak that information into the runtime world.</p>
+
+<p>But all is not lost. The JavaScript <code>instanceof</code> operator checks the constructor of an object's prototype. Assuming the pattern has been followed correctly (which it is if you use the <code>class</code> keyword to declare your types), an object created by <code>new C</code> can be said to be an <code>instanceof</code> class <code>C</code>. Note that <code>C</code> is just a function so it is an object at runtime.</p>
+
+<p>Suppose you have:</p><pre><code class="ts">class FoodEvent extends Event {
+    flavour: string;
+}
+
+class SecurityEvent extends Event {
+    threatLevel: number;
+}
+</code></pre><p>And here's all <code>Listener</code> can do:</p><pre><code class="ts">type Listener = (data: Event) =&gt; void;
+</code></pre><p>Note that saying <code>Event</code> in that context is sufficient to mean anything derived from <code>Event</code>, so you don't need a way to say that. This is standard OO polymorphism. (In TypeScript, which has structural typing, it actually means "anything with a compatible type shape".)</p>
+
+<p>The types <code>FoodEvent</code> and <code>SecurityEvent</code> are also functions at runtime, so they can be stored in a variable:</p><pre><code class="ts">const blah = FoodEvent; // works
+</code></pre><p>How do we declare the type of such a function? In TypeScript we can write:</p><pre><code class="ts">type Constructor&lt;T&gt; = {
+    new(...args: any[]): T;
+};
+</code></pre><p>That is, a function that must be called with the <code>new</code> prefix, takes any number of arguments of whatever type, and returns something compatible with type <code>T</code>.</p>
+
+<p>So now we can define our map of handlers (to shorten the example I've simplified it: a single <code>Listener</code> instead of an array of them.)</p><pre><code class="ts">const handlers = new Map&lt;Constructor&lt;Event&gt;, Listener&gt;();
+</code></pre><p>And I can then register a <code>Listener</code>:</p><pre><code class="ts">handlers.set(FoodEvent, data =&gt; {
+   // handle the food-related event        
+});
+</code></pre><p>This isn't perfect because <code>data</code> is just of type <code>Event</code>. It has to be, of course. The key type of the <code>handlers</code> map has to be some general type - this is no different from Java or C#.</p>
+
+<p>But we can create a helpful way to register a handler for a known type:</p><pre><code class="ts">function setHandler&lt;TEvent extends Event&gt;(
+    constructor: Constructor&lt;TEvent&gt;,
+    handler: (data: TEvent) =&gt; void
+) {
+    handlers.set(constructor, handler);
+}
+</code></pre><p>This is where it becomes meaningful to talk about "a type that extends <code>Event</code>". We want a more specific type than <code>Event</code> so we can use it in the handler, but it must be compatible with <code>Event</code> so it fits with the map.</p>
+
+<p>At first glance you might think this is no improvement because the constructor must be passed both as a runtime value as well as a type parameter. We have to repeat ourselves. Doesn't that leave a type hole?</p>
+
+<p>But no! Type inference comes to the rescue:</p><pre><code class="ts">setHandler(FoodEvent, food =&gt; {
+    console.log(`Food flavour is ${food.flavour}`);
+});
+
+setHandler(SecurityEvent, security =&gt; {
+    console.log(`Security threat-level is ${security.threatLevel}`);
+});
+</code></pre><p>We just specify the event constructor as a runtime parameter, and that is sufficient for TypeScript to "pull out" the return type of the constructor so we can constrain the handler's <code>data</code> parameter. So <code>food</code> is properly typed as <code>FoodEvent</code> etc.</p>
+
+<p>It's a neat example of how TypeScript works strictly within the limits of the existing JavaScript infrastructure, and finds the stuff that works, and gives it full language support at compile time, instead of cooking up some new incompatible approach. TypeScript <em>is</em> JavaScript, only with elegant and powerful static typing added.</p>
+
+<p><strong>Advanced Note</strong>: there's something weird about our <code>setHandler</code> function. The implementation is just:</p>
+
+<pre><code>handlers.set(constructor, handler);
+</code></pre>
+
+<p>Now, <code>handler</code> is of type <code>(data: TEvent) =&gt; void</code>, that is: a function that takes a <code>TEvent</code>. But we're passing it to the <code>set</code> method, which in this case is of type <code>Listener</code>, which is just an alias for <code>(data: Event) =&gt; void</code>. Notice anything strange?</p>
+
+<p>Here it is broken into steps:</p><pre><code class="ts">function myFoodHandler(food: FoodEvent) {
+    console.log(`Food flavour is ${food.flavour}`);
+}
+
+let whateverHandler: (data: Event) =&gt; void;
+
+whateverHandler = myFoodHandler; // This is the strange part!
+
+const evt: Event = // ... get an event...
+
+whateverHandler(evt);
+</code></pre><p>We can pass any old <code>Event</code> when we call through <code>whateverHandler</code>. And yet we're able to assign to it a function that expects to receive a specific derived type of <code>Event</code>! That assignment is breaking the rules. TypeScript allows this deliberately. It's unsound by design, in this particular situation, on the basis that this kind of incompatibility rarely leads to bugs and it would be hard to explain to users if the language was rigidly sound.</p>
+
+<p>It certainly doesn't cause us a problem in this case, because we've wrapped the <code>Map</code> in a type-safe helper. But it is worth bearing in mind that this is one kind of type error that TypeScript prefers not to catch.</p>
+
+            </div>
+            
+            <div class="outer">                                
+                <table class="recent" align="center"><tr>
+    <td>
+        <strong>TypeScript and runtime typing</strong>
+    </td>
+    <td class="date"> 2016-09-04</td>    
+</tr>
+<tr>
+    <td>
+        <a href="What_s_good_about_Redux.html">What's good about Redux</a>
+    </td>
+    <td class="date"> 2016-07-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">  
+                <div class="rss">Want to comment on anything? <a href="https://github.com/danielearwicker/danielearwicker.github.io/issues">Create an issue!</a></div>              
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>
