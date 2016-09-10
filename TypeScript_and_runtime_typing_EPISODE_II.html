@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | typescript</title>
+        <title>Daniel Earwicker | TypeScript and runtime typing - EPISODE II</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,75 +22,26 @@
             </div>
             
             <div class="content">
-                <h2>TypeScript and runtime typing - EPISODE II</h2>
+                <h1>TypeScript and runtime typing - EPISODE II</h1>
+<hr>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-10</p>
+
 <p><em>Prompted by <a href="https://github.com/Microsoft/TypeScript/pull/10676#issuecomment-245653348">this comment from Anders Hejlsberg</a>.</em></p>
 
 <p>Something wonderful happened between <code>typescript@beta</code> and <code>typescript@rc</code> (i.e. just in time for version 2.0).</p>
 
-<p><a href="TypeScript_and_runtime_typing_EPISODE_II.html">Read on...</a></p>
-<hr>
-
-<h2>TypeScript and runtime typing</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-04</p>
-<p><em>Prompted by <a href="https://www.reddit.com/r/typescript/comments/50zj95/how_to_make_a_class_type/">this question on Reddit</a>.</em></p>
-
-<blockquote>
-  <p>I'd want to declare a type that points to class extending another class. Please note, a CLASS not INSTANCE.
-  I've tried something like this:</p>
-  
-  <p><code>type EventClass = class extends Event;</code></p>
-  
-  <p><code>type Listener = (data: class extends Event) =&gt; void;</code></p>
-<p><a href="TypeScript_and_runtime_typing.html">Read on...</a></p>
-<hr>
-
-<h2>TypeScript multicast functions</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-03-13</p>
-<p>Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs 
-from JavaScript. </p>
-
-<ol>
-<li><p>a method's <code>this</code> reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens 
-to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the 
-function internally refers to <code>this</code>.</p></li>
-
-<li><p>a function value (known as a "delegate") has operators <code>+</code>, <code>-</code>, <code>+=</code>, <code>-=</code> that allow it to be combined with other compatible functions 
-to create a new single function that, when invoked, causes the constituent functions to be invoked.</p></li>
-</ol>
-
-<p>The second one is what I'm interested in today, mainly because it's a nice example of something that we can strongly type check in 
-TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, but externally we can guarantee everything will work.</p>
-<p><a href="TypeScript_multicast_functions.html">Read on...</a></p>
-<hr>
-
-<h2>Introducing doop</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a>  2016-03-08</p>
-<p>As great as <a href="https://facebook.github.io/immutable-js/">Immutable.js</a> is, especially with a TypeScript declaration included in the package, the <code>Record</code> class leaves me a little disappointed.</p>
-
-<p><a href="Introducing_doop.html">Read on...</a></p>
-<hr>
-
-<h2>TypeScript is not really a superset of JavaScript and that is a Good Thing</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2015-07-11</p>
-<p>Questions:</p>
-
-<ul>
-<li>What does it mean for a programming language to be a superset of another programming language?</li>
-
-<li>What's a programming language?</li>
-
-<li>What's a program?</li>
-</ul>
-<p><a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">Read on...</a></p>
-<hr>
+<p>Way, way back in TypeScript 1.8 (February 2016!) we gained the ability to use string literals as types:</p><pre><code class="ts">const str1: "hello" = "hello"; // fine
+const str2: "hello" = "goodbye"; // type error
+const str3: string = str1; // fine
+</code></pre><p>The variables <code>str1</code> and <code>str2</code> are not just typed as <code>string</code>; they have to be specific strings. Seems useless
+˜˜</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <a href="TypeScript_and_runtime_typing_EPISODE_II.html">TypeScript and runtime typing - EPISODE II</a>
+        <strong>TypeScript and runtime typing - EPISODE II</strong>
     </td>
     <td class="date"> 2016-09-10</td>    
 </tr>
