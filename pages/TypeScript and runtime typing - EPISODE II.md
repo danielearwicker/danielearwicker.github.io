@@ -64,6 +64,8 @@ n = "Lisa";
 
 It won't bat an eyelid (unless things have moved on by the time you're reading this, in which case use `typescript@1.8`). Then try it with `typescript@rc` and rejoice at the lovely type error:
 
-    Type '"Lisa"' is not assignable to type '"Bart"'
+```
+Type '"Lisa"' is not assignable to type '"Bart"'
+```
 
 So, armed with this we can now do some quite smart things, especially when it comes to frameworks that already use user-chosen strings as type discriminators. One (deservedly) trendy example is Redux, and I'm having much fun thinking about how I might want to use it "at scale".

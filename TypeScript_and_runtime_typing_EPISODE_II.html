@@ -52,12 +52,8 @@ const str3: string = str1; // fine
 
 <p>In TypeScript 2.0, the <code>T extends string</code> idiom will indeed serve as a hint to the compiler that we want to preserve the specific string literal type. Yes, this is a breaking change, but 2.0 is a new major version so... go nuts. Try this in <code>typescript@beta</code>:</p><pre><code class="ts">let n = name("Bart");
 n = "Lisa";
-</code></pre><p>It won't bat an eyelid (unless things have moved on by the time you're reading this, in which case use <code>typescript@1.8</code>). Then try it with <code>typescript@rc</code> and rejoice at the lovely type error:</p>
-
-<pre><code>Type '"Lisa"' is not assignable to type '"Bart"'
-</code></pre>
-
-<p>So, armed with this we can now do some quite smart things, especially when it comes to frameworks that already use user-chosen strings as type discriminators. One (deservedly) trendy example is Redux, and I'm having much fun thinking about how I might want to use it "at scale".</p>
+</code></pre><p>It won't bat an eyelid (unless things have moved on by the time you're reading this, in which case use <code>typescript@1.8</code>). Then try it with <code>typescript@rc</code> and rejoice at the lovely type error:</p><pre><code class="">Type '"Lisa"' is not assignable to type '"Bart"'
+</code></pre><p>So, armed with this we can now do some quite smart things, especially when it comes to frameworks that already use user-chosen strings as type discriminators. One (deservedly) trendy example is Redux, and I'm having much fun thinking about how I might want to use it "at scale".</p>
 
             </div>
             
