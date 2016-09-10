@@ -37,7 +37,13 @@ function name<T>(name: T) {
 }
 ```
 
-Nope, that doesn't work: `name("Daniel")` returns a boring old plain `string`. Okay, how about:
+Nope, that doesn't work: `name("Bart")` returns a boring old plain `string`. We're forced to use the ultra-lame:
+
+```ts
+name<"Bart">("Bart")
+```
+
+which defeats the whole purpose of the helper function, avoiding the repetition (yes, it's perfectly type-safe, in that we are required to write the same thing twice, but then why should we have to?). Okay, how about:
 
 ```ts
 function name<T extends string>(name: T) {
