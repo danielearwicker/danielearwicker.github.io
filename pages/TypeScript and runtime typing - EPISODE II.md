@@ -13,7 +13,7 @@ const str2: "hello" = "goodbye"; // type error
 const str3: string = str1; // fine
 ```
 
-The variables `str1` and `str2` are not just typed as `string`; they have to be specific strings. They are also of type string, so they are a sub-type of `string` that can only have one possible value (not including `null | undefined`, and nor should we in 2.0).
+The variables `str1` and `str2` are not just typed as `string`; they have to be specific strings. They are also of type string, so they are a sub-type of `string`, sort-of `T extends string`, that can only have one possible value (if we're not including `null | undefined`, and nor should we in 2.0).
 
 A type that can only have one value might seem useless until you realise it's a building block. You can combine several in a union type and so you instantly have string-enums:
 
