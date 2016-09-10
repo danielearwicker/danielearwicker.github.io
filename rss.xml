@@ -8,7 +8,7 @@
     <item>
       <title>TypeScript and runtime typing - EPISODE II</title>
       <pubDate> 2016-09-10T00:00:00Z</pubDate>
-      <description>&lt;p&gt;&lt;em&gt;Prompted by &lt;a href="https://github.com/Microsoft/TypeScript/pull/10676#issuecomment-245653348"&gt;this comment from Anders Hejlsberg&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+      <description>&lt;p&gt;&lt;em&gt;Prompted by &lt;a href="https://github.com/Microsoft/TypeScript/pull/10676#issuecomment-245653348"&gt;a revealing comment from Anders Hejlsberg&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Something wonderful happened between &lt;code&gt;typescript@beta&lt;/code&gt; and &lt;code&gt;typescript@rc&lt;/code&gt; (i.e. just in time for version 2.0).&lt;/p&gt;
 </description>

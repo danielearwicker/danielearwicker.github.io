@@ -26,15 +26,35 @@
 <hr>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-10</p>
 
-<p><em>Prompted by <a href="https://github.com/Microsoft/TypeScript/pull/10676#issuecomment-245653348">this comment from Anders Hejlsberg</a>.</em></p>
+<p><em>Prompted by <a href="https://github.com/Microsoft/TypeScript/pull/10676#issuecomment-245653348">a revealing comment from Anders Hejlsberg</a>.</em></p>
 
 <p>Something wonderful happened between <code>typescript@beta</code> and <code>typescript@rc</code> (i.e. just in time for version 2.0).</p>
 
 <p>Way, way back in TypeScript 1.8 (February 2016!) we gained the ability to use string literals as types:</p><pre><code class="ts">const str1: "hello" = "hello"; // fine
 const str2: "hello" = "goodbye"; // type error
 const str3: string = str1; // fine
-</code></pre><p>The variables <code>str1</code> and <code>str2</code> are not just typed as <code>string</code>; they have to be specific strings. Seems useless
-˜˜</p>
+</code></pre><p>The variables <code>str1</code> and <code>str2</code> are not just typed as <code>string</code>; they have to be specific strings. Maybe seems useless until you realise you can combine them with union types and so you instantly have string-enums:</p><pre><code class="ts">type Fruit = "lychee" | "tomato" | "kumquat";
+</code></pre><p>But what got me excited was the potential to use these as another route to dynamic type information. If some data type were to be somehow stamped with a string literal, it would be necessary to initialise it with an instance of the same string, meaning we'd have matching information at compile time and runtime.</p>
+
+<p>But I hit a slight irritation. Although it was possible to build interesting libraries around this idea, there was no way to avoid the phenomenon seen in the above snippet, where I had to state the string twice:</p><pre><code class="ts">const str1: "hello" = "hello";
+</code></pre><p>I know what you're thinking: can't we make up a helper function that takes a string argument and captures its specific type?</p><pre><code class="ts">function name&lt;T&gt;(name: T) {
+    return name;
+}
+</code></pre><p>Nope, that doesn't work: <code>name("Daniel")</code> returns a boring old plain <code>string</code>. Okay, how about:</p><pre><code class="ts">function name&lt;T extends string&gt;(name: T) {
+    return name;
+}
+</code></pre><p>After all, that's a big hint that <code>T</code> is a type that we can't specify in advance but which must also be a string; what else could we mean by this apart from "We want to know which specific string"? But no, I tried it already and it didn't work.</p>
+
+<p><strong>UNTIL NOW!</strong></p>
+
+<p>In TypeScript 2.0, the <code>T extends string</code> idiom will indeed serve as a hint to the compiler that we want to preserve the specific string literal type. Yes, this is a breaking change, but 2.0 is a new major version so... go nuts. Try this in <code>typescript@beta</code>:</p><pre><code class="ts">let n = name("Bart");
+n = "Lisa";
+</code></pre><p>It won't bat an eyelid (unless things have moved on by the time you're reading this, in which case use <code>typescript@1.8</code>). Then try it with <code>typescript@rc</code> and rejoice at the lovely type error:</p>
+
+<pre><code>Type '"Lisa"' is not assignable to type '"Bart"'
+</code></pre>
+
+<p>So, armed with this we can now do some quite smart things, especially when it comes to frameworks that already use user-chosen strings as type discriminators. One (deservedly) trendy example is Redux, and I'm having much fun thinking about how I might want to use it "at scale".</p>
 
             </div>
             
