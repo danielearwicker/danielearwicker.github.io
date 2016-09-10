@@ -33,7 +33,9 @@
 <p>Way, way back in TypeScript 1.8 (February 2016!) we gained the ability to use string literals as types:</p><pre><code class="ts">const str1: "hello" = "hello"; // fine
 const str2: "hello" = "goodbye"; // type error
 const str3: string = str1; // fine
-</code></pre><p>The variables <code>str1</code> and <code>str2</code> are not just typed as <code>string</code>; they have to be specific strings. Maybe seems useless until you realise you can combine them with union types and so you instantly have string-enums:</p><pre><code class="ts">type Fruit = "lychee" | "tomato" | "kumquat";
+</code></pre><p>The variables <code>str1</code> and <code>str2</code> are not just typed as <code>string</code>; they have to be specific strings. They are also of type string, so they are a sub-type of <code>string</code> that can only have one possible value (not including <code>null | undefined</code>, and nor should we in 2.0).</p>
+
+<p>A type that can only have one value might seem useless until you realise it's a building block. You can combine several in a union type and so you instantly have string-enums:</p><pre><code class="ts">type Fruit = "lychee" | "tomato" | "kumquat";
 </code></pre><p>But what got me excited was the potential to use these as another route to dynamic type information. If some data type were to be somehow stamped with a string literal, it would be necessary to initialise it with an instance of the same string, meaning we'd have matching information at compile time and runtime.</p>
 
 <p>But I hit a slight irritation. Although it was possible to build interesting libraries around this idea, there was no way to avoid the phenomenon seen in the above snippet, where I had to state the string twice:</p><pre><code class="ts">const str1: "hello" = "hello";
