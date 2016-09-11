@@ -337,7 +337,7 @@ namespace Shelf {
 }
 ```
 
-So now I have a function `Shelf.reduce` that is the reducer for a `Shelf` object, and also a function method `Shelf.books` from which I can conveniently make cursors:
+So now I have a function `Shelf.reduce` that is the reducer for a `Shelf` object, and also a function `Shelf.books` from which I can conveniently make cursors:
 
 ```ts
 const restrictedShelf = // ... cursor from somewhere

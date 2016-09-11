@@ -253,7 +253,7 @@ bookStore.dispatch(Car.changeGear(2));
         .action(setDescription)
         .action(books);
 }
-</code></pre><p>So now I have a function <code>Shelf.reduce</code> that is the reducer for a <code>Shelf</code> object, and also a function method <code>Shelf.books</code> from which I can conveniently make cursors:</p><pre><code class="ts">const restrictedShelf = // ... cursor from somewhere
+</code></pre><p>So now I have a function <code>Shelf.reduce</code> that is the reducer for a <code>Shelf</code> object, and also a function <code>Shelf.books</code> from which I can conveniently make cursors:</p><pre><code class="ts">const restrictedShelf = // ... cursor from somewhere
 
 const horcruxBook = Shelf.books(restrictedShelf, 666);
 
