@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | immutability</title>
+        <title>Daniel Earwicker | TypeScript - What is a class?</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,26 +22,18 @@
             </div>
             
             <div class="content">
-                <h2>What's good about Redux</h2>
-<p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-react.html">REACT</a>  2016-07-24</p>
-<p><a href="http://redux.js.org/">Redux</a> is based on series of really simple <em>what-if</em> questions:</p>
-
-<ol>
-<li><em>What if</em> all the data in your app was immutable?</li>
-
-<li>Okay, now it's stuck. But <em>what if</em> there was only a single solitary mutable variable holding the complete state for your entire app? To change any bit of state, you just assign a slightly different immutable tree to that variable.</li>
-
-<li>And <em>what if</em> the only way to mutate the state was to create a POJO describing a high-level action, and dispatch it through a single giant processing system, describing the change to make?</li>
-</ol>
-<p><a href="What_s_good_about_Redux.html">Read on...</a></p>
+                <h1>TypeScript - What is a class?</h1>
 <hr>
+<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-11</p>
 
-<h2>Introducing doop</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a>  2016-03-08</p>
-<p>As great as <a href="https://facebook.github.io/immutable-js/">Immutable.js</a> is, especially with a TypeScript declaration included in the package, the <code>Record</code> class leaves me a little disappointed.</p>
+<p>In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:</p><pre><code class="ts">class C {
+    foo() {}
+}
 
-<p><a href="Introducing_doop.html">Read on...</a></p>
-<hr>
+const c1: typeof C = C;
+const c2: C = new C();
+const c3: C = C;
+</code></pre><p>Note that <code>c3</code> is a type error. <code>C</code> is not of type <code>C</code>. <code>C</code> is a function, a named object that exists at runtime, and like any identifier its type can be written as <code>typeof C</code>, so <code>c1</code> has to work. But at compile time, <code>C</code> is an interface, conformed to by the object we get back from <code>new C()</code>, so that's why <code>c2</code> works.</p>
 
             </div>
             
@@ -54,7 +46,7 @@
 </tr>
 <tr>
     <td>
-        <a href="TypeScript_What_is_a_class_.html">TypeScript - What is a class?</a>
+        <strong>TypeScript - What is a class?</strong>
     </td>
     <td class="date"> 2016-09-11</td>    
 </tr>
