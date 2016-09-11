@@ -38,17 +38,17 @@ But really the action type and its interpretation go together. Suppose we could 
 
 ```ts
 export const setTitle = action("SET_TITLE",
-    (book: Book, title: string) => modify(book, { title }));
+    (book: Book, title: string) => amend(book, { title }));
 ```
 
-The `modify` function is a slightly honed version of `Object.assign`, to stand in for the cool `{ ...book, title }` syntax we're all looking forward to. A couple more actions:
+The `amend` function is a slightly honed version of `Object.assign`, to stand in for the cool `{ ...book, title }` syntax we're all looking forward to. A couple more actions:
 
 ```ts
 export const setPrice = action("SET_PRICE",
-    (book: Book, price: number) => modify(book, { price }));
+    (book: Book, price: number) => amend(book, { price }));
 
 export const addAuthor = action("ADD_AUTHOR",
-    (book: Book, author: string) => modify(book, {
+    (book: Book, author: string) => amend(book, {
         authors: book.authors.push(author)
     }));
 ```
@@ -263,7 +263,7 @@ const books = collection({
     reducer: Book.reduce,
     operations: /* ... TBD... */,
     get: (shelf: Shelf) => shelf.books,
-    set: (shelf, books) => modify(shelf, { books })
+    set: (shelf, books) => amend(shelf, { books })
 });
 ```
 
@@ -321,14 +321,14 @@ namespace Shelf {
     export const empty: Shelf = { ... };
 
     export const setDescription = action("SET_DESCRIPTION",
-        (shelf: Shelf, description: string) => modify(shelf, { description }));
+        (shelf: Shelf, description: string) => amend(shelf, { description }));
 
     export const books = collection({
         type: "BOOKS",
         reducer: Book.reduce,
         operations: immutableMap<number, Book>(),
         get: (shelf: Shelf) => shelf.books,
-        set: (shelf, books) => modify(shelf, { books })
+        set: (shelf, books) => amend(shelf, { books })
     });
 
     export const reduce = reducer(empty)
