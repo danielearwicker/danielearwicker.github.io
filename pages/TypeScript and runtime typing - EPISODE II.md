@@ -69,3 +69,5 @@ Type '"Lisa"' is not assignable to type '"Bart"'
 ```
 
 So, armed with this we can now do some quite smart things, especially when it comes to frameworks that already use user-chosen strings as type discriminators. One (deservedly) trendy example is Redux, and I'm having much fun thinking about how I might want to use it "at scale".
+
+**Case study**: [[Immuto - Strongly Typed Redux Composition]]
