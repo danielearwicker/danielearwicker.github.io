@@ -123,9 +123,7 @@ bookStore.dispatch(Car.changeGear(2));
 
 <p>In our example, a shelf contains many books. How do we send actions to a book with a shelf? We send an action to the shelf such that it figures out which book to send it on to. This is possible because the payload of an action <em>can contain another action</em>.</p>
 
-<p>Here I'm going to send the shelf an action of type <code>BOOKS</code>, which the shelf knows it must delegate to one of its collection of books:</p>
-
-<p>{
+<p>Here I'm going to send the shelf an action of type <code>BOOKS</code>, which the shelf knows it must delegate to one of its collection of books:</p><pre><code class="">{
     type: "BOOKS",
     payload: {
         key: 3,
@@ -134,9 +132,8 @@ bookStore.dispatch(Car.changeGear(2));
             3.99
         }
     }
-}</p>
-
-<p>The outer action's payload has a <code>key</code>, which identifies which book in the collection to delegate to, and an <code>update</code> action, which must be an action supported by our <code>Book</code> reducer (as indeed <code>"SET_PRICE"</code> is - see above!). The <code>Shelf</code> reducer asks the <code>Book</code> reducer to create a modified book with the price change applied to it, and then in turn it creates a new shelf with the new version of book 3 in its collection, so the change ripples up the tree producing a whole new version (but naturally sharing all the unchanged nodes from the previous version).</p>
+}
+</code></pre><p>The outer action's payload has a <code>key</code>, which identifies which book in the collection to delegate to, and an <code>update</code> action, which must be an action supported by our <code>Book</code> reducer (as indeed <code>"SET_PRICE"</code> is - see above!). The <code>Shelf</code> reducer asks the <code>Book</code> reducer to create a modified book with the price change applied to it, and then in turn it creates a new shelf with the new version of book 3 in its collection, so the change ripples up the tree producing a whole new version (but naturally sharing all the unchanged nodes from the previous version).</p>
 
 <p>So we can see how actions may be nested in a way that exactly maps to the nested structure to which they will apply. It's a very natural way to reflect composition of data structures in the composition of operations on those data structures.</p>
 

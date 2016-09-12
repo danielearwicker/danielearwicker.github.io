@@ -164,6 +164,7 @@ In our example, a shelf contains many books. How do we send actions to a book wi
 
 Here I'm going to send the shelf an action of type `BOOKS`, which the shelf knows it must delegate to one of its collection of books:
 
+```
 {
     type: "BOOKS",
     payload: {
@@ -174,6 +175,7 @@ Here I'm going to send the shelf an action of type `BOOKS`, which the shelf know
         }
     }
 }
+```
 
 The outer action's payload has a `key`, which identifies which book in the collection to delegate to, and an `update` action, which must be an action supported by our `Book` reducer (as indeed `"SET_PRICE"` is - see above!). The `Shelf` reducer asks the `Book` reducer to create a modified book with the price change applied to it, and then in turn it creates a new shelf with the new version of book 3 in its collection, so the change ripples up the tree producing a whole new version (but naturally sharing all the unchanged nodes from the previous version).
 
