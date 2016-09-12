@@ -383,6 +383,6 @@ I've put these various utilities together in a library called [Immuto](https://g
 npm install immuto
 ```
 
-Naturally it has built-in type definitions, no need to install any separately. If you look at the rough tests in [spec/immutoSpec.ts](https://github.com/danielearwicker/immuto/blob/master/spec/immutoSpec.ts) you'll see they're based on the same book/shelf/shop example I used here.
+Naturally it has built-in type definitions, no need to install any separately. If you look at the rough tests in [immuto/spec](https://github.com/danielearwicker/immuto/blob/master/spec) you'll see they're based on the same book/shelf/shop example I used here.
 
 Happy type-safe composable Reduxing!
