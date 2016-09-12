@@ -28,7 +28,7 @@
 
 <p>There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.</p>
 
-<p>One composition feature is <code>combineReducers</code>, which from a static typing perspective is a hopeless non-starter. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.</p>
+<p>One composition feature is <code>combineReducers</code>, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.</p>
 
 <h3 id="reducers">Reducers</h3>
 <p><a href="Immuto_Strongly_Typed_Redux_Composition.html">Read on...</a></p>

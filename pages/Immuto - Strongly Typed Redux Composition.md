@@ -5,7 +5,7 @@ date: 2016-09-11
 
 There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.
 
-One composition feature is `combineReducers`, which from a static typing perspective is a hopeless non-starter. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.
+One composition feature is `combineReducers`, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.
 
 ### Reducers
 A reducer is a function of the form `(state, action) => state`. It makes a new state from an old one by interpreting an action, which is an instruction on how the state should be altered.
@@ -177,7 +177,9 @@ Here I'm going to send the shelf an action of type `BOOKS`, which the shelf know
 
 The outer action's payload has a `key`, which identifies which book in the collection to delegate to, and an `update` action, which must be an action supported by our `Book` reducer (as indeed `"SET_PRICE"` is - see above!). The `Shelf` reducer asks the `Book` reducer to create a modified book with the price change applied to it, and then in turn it creates a new shelf with the new version of book 3 in its collection, so the change ripples up the tree producing a whole new version (but naturally sharing all the unchanged nodes from the previous version).
 
-So we can see how actions may be nested in a way that exactly maps to the nested structure to which they will apply. It's a very natural way to reflect composition of data structures in the composition of operations on those data structures. And if we stick to this approach then we will always be able to exactly describe the types involved.
+So we can see how actions may be nested in a way that exactly maps to the nested structure to which they will apply. It's a very natural way to reflect composition of data structures in the composition of operations on those data structures.
+
+And if we stick to this approach then we will always be able to exactly describe the types involved. This is very different from the composition approach of Redux's built-in `combineReducers`. By design, that implies a front end interface that works by "action soup".
 
 Let's call this an *action path*. It's purely an action from Redux's perspective, nothing magic about it. It just happens to follow a well-defined structural pattern.
 
