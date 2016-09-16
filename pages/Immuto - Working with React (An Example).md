@@ -104,7 +104,7 @@ As you can see, it wouldn't be that much bother to use `<input>` directly. But t
 
 ## All About Properties
 
-So what is `property` and how does it work? If you look at how `Book.title` is used in `BookEditor`, you'll see that we call it (so it's a function), passing it a `Book` cursor, and we must get back a `Property<string>` because we pass that sucker directly into `TextInput`'s '`property`.
+So what is `property` and how does it work? If you look at how `Book.title` is used in `BookEditor`, you'll see that we call it (so it's a function), passing it a `Book` cursor, and we must get back a `Property<string>` because we pass that sucker directly into `TextInput`'s `property` prop.
 
 If you made it through the last episode, you'll have seen the most general way of declaring an action:
 

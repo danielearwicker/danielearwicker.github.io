@@ -105,7 +105,7 @@ http-server
 
 <h2 id="allaboutproperties">All About Properties</h2>
 
-<p>So what is <code>property</code> and how does it work? If you look at how <code>Book.title</code> is used in <code>BookEditor</code>, you'll see that we call it (so it's a function), passing it a <code>Book</code> cursor, and we must get back a <code>Property&lt;string&gt;</code> because we pass that sucker directly into <code>TextInput</code>'s '<code>property</code>.</p>
+<p>So what is <code>property</code> and how does it work? If you look at how <code>Book.title</code> is used in <code>BookEditor</code>, you'll see that we call it (so it's a function), passing it a <code>Book</code> cursor, and we must get back a <code>Property&lt;string&gt;</code> because we pass that sucker directly into <code>TextInput</code>'s <code>property</code> prop.</p>
 
 <p>If you made it through the last episode, you'll have seen the most general way of declaring an action:</p><pre><code class="ts">export const setTitle = action("SET_TITLE",
     (book: Book, title: string) =&gt; amend(book, { title }));
