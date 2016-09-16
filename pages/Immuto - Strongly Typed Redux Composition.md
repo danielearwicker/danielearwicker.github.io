@@ -1,4 +1,4 @@
-tags: typescript
+tags: typescript immuto
 date: 2016-09-11
 
 [[What's good about Redux]], I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. [Read the docs, they're easy](http://redux.js.org/docs/basics/Actions.html).

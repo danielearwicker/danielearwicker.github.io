@@ -4,7 +4,19 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2016-09-11T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2016-09-16T00:00:00Z</lastBuildDate>
+    <item>
+      <title>Immuto - Working with React (An Example)</title>
+      <pubDate> 2016-09-16T00:00:00Z</pubDate>
+      <description>&lt;p&gt;In &lt;a href="Immuto_Strongly_Typed_Redux_Composition.html"&gt;Immuto - Strongly Typed Redux Composition&lt;/a&gt; I introduced the &lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto library&lt;/a&gt; by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!&lt;/p&gt;
+
+&lt;p&gt;What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;npm install immuto-react&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;</description>
+      <link>http://danielearwicker.github.io/Immuto_Working_with_React_An_Example_.html</link>
+    </item>
     <item>
       <title>Immuto - Strongly Typed Redux Composition</title>
       <pubDate> 2016-09-11T00:00:00Z</pubDate>
@@ -12,15 +24,20 @@
 
 &lt;p&gt;There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.&lt;/p&gt;
 
-&lt;p&gt;One composition feature is &lt;code&gt;combineReducers&lt;/code&gt;, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.&lt;/p&gt;
-
-&lt;h3 id="reducers"&gt;Reducers&lt;/h3&gt;</description>
+&lt;p&gt;One composition feature is &lt;code&gt;combineReducers&lt;/code&gt;, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Immuto_Strongly_Typed_Redux_Composition.html</link>
     </item>
     <item>
       <title>TypeScript - What is a class?</title>
       <pubDate> 2016-09-11T00:00:00Z</pubDate>
-      <description/>
+      <description>&lt;p&gt;In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:&lt;/p&gt;&lt;pre&gt;&lt;code class="ts"&gt;class C {
+    foo() {}
+}
+
+const c1: typeof C = C;
+const c2: C = new C();
+const c3: C = C;
+&lt;/code&gt;&lt;/pre&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_What_is_a_class_.html</link>
     </item>
     <item>
@@ -29,7 +46,8 @@
       <description>&lt;p&gt;&lt;em&gt;Prompted by &lt;a href="https://github.com/Microsoft/TypeScript/pull/10676#issuecomment-245653348"&gt;a revealing comment from Anders Hejlsberg&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;Something wonderful happened between &lt;code&gt;typescript@beta&lt;/code&gt; and &lt;code&gt;typescript@rc&lt;/code&gt; (i.e. just in time for version 2.0).&lt;/p&gt;
-</description>
+
+&lt;p&gt;Way, way back in TypeScript 1.8 (February 2016!) we gained the ability to use string literals as types:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_and_runtime_typing_EPISODE_II.html</link>
     </item>
     <item>
@@ -43,7 +61,16 @@
   
   &lt;p&gt;&lt;code&gt;type EventClass = class extends Event;&lt;/code&gt;&lt;/p&gt;
   
-  &lt;p&gt;&lt;code&gt;type Listener = (data: class extends Event) =&amp;gt; void;&lt;/code&gt;&lt;/p&gt;</description>
+  &lt;p&gt;&lt;code&gt;type Listener = (data: class extends Event) =&amp;gt; void;&lt;/code&gt;&lt;/p&gt;
+  
+  &lt;p&gt;and later on:&lt;/p&gt;
+  
+  &lt;p&gt;&lt;code&gt;private handlers: Map&amp;lt;EventClass,Listener[]&amp;gt;;&lt;/code&gt;&lt;/p&gt;
+  
+  &lt;p&gt;But unfortunately this syntax does not work. How I can declare a type that points to CLASS extending another CLASS?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;You want a runtime value that specifies a type of event, so you can use it as the key in a &lt;code&gt;Map&lt;/code&gt;.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_and_runtime_typing.html</link>
     </item>
     <item>
@@ -57,33 +84,38 @@
 &lt;li&gt;Okay, now it's stuck. But &lt;em&gt;what if&lt;/em&gt; there was only a single solitary mutable variable holding the complete state for your entire app? To change any bit of state, you just assign a slightly different immutable tree to that variable.&lt;/li&gt;
 
 &lt;li&gt;And &lt;em&gt;what if&lt;/em&gt; the only way to mutate the state was to create a POJO describing a high-level action, and dispatch it through a single giant processing system, describing the change to make?&lt;/li&gt;
-&lt;/ol&gt;</description>
+&lt;/ol&gt;
+
+&lt;p&gt;A number of interesting advantages follow from sticking to this discipline. It's ideal for &lt;a href="https://facebook.github.io/react/"&gt;ReactJS&lt;/a&gt;. You can log everything your users do and replay it, stuff like that. You can store the state snapshots, or just the actions, or both. You can recover your app by loading in an old snapshot and then playing the recent actions to bring it up to date. If you want to know the complete story of how your application ended up in the state it's in now, you've got it. And aside from these nice capabilities, it's worth remembering a lot of bugs arise from fiddling with mutable state at the wrong time. Who needs that?&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/What_s_good_about_Redux.html</link>
     </item>
     <item>
       <title>TypeScript multicast functions</title>
       <pubDate> 2016-03-13T00:00:00Z</pubDate>
-      <description>&lt;p&gt;Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs 
-from JavaScript. &lt;/p&gt;
+      <description>&lt;p&gt;Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs
+from JavaScript.&lt;/p&gt;
 
 &lt;ol&gt;
-&lt;li&gt;&lt;p&gt;a method's &lt;code&gt;this&lt;/code&gt; reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens 
-to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the 
+&lt;li&gt;&lt;p&gt;a method's &lt;code&gt;this&lt;/code&gt; reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens
+to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the
 function internally refers to &lt;code&gt;this&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 
-&lt;li&gt;&lt;p&gt;a function value (known as a "delegate") has operators &lt;code&gt;+&lt;/code&gt;, &lt;code&gt;-&lt;/code&gt;, &lt;code&gt;+=&lt;/code&gt;, &lt;code&gt;-=&lt;/code&gt; that allow it to be combined with other compatible functions 
+&lt;li&gt;&lt;p&gt;a function value (known as a "delegate") has operators &lt;code&gt;+&lt;/code&gt;, &lt;code&gt;-&lt;/code&gt;, &lt;code&gt;+=&lt;/code&gt;, &lt;code&gt;-=&lt;/code&gt; that allow it to be combined with other compatible functions
 to create a new single function that, when invoked, causes the constituent functions to be invoked.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;The second one is what I'm interested in today, mainly because it's a nice example of something that we can strongly type check in 
-TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, but externally we can guarantee everything will work.&lt;/p&gt;</description>
+&lt;/ol&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_multicast_functions.html</link>
     </item>
     <item>
       <title>Introducing doop</title>
       <pubDate> 2016-03-08T00:00:00Z</pubDate>
       <description>&lt;p&gt;As great as &lt;a href="https://facebook.github.io/immutable-js/"&gt;Immutable.js&lt;/a&gt; is, especially with a TypeScript declaration included in the package, the &lt;code&gt;Record&lt;/code&gt; class leaves me a little disappointed.&lt;/p&gt;
-</description>
+
+&lt;p&gt;In an ordinary class with public properties we're used to being able to say:&lt;/p&gt;
+
+&lt;p&gt;```typescript
+const a = new Animal();
+a.hasTail = true;
+a.legs = 2;&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Introducing_doop.html</link>
     </item>
     <item>
@@ -97,7 +129,9 @@ TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, 
 &lt;li&gt;What's a programming language?&lt;/li&gt;
 
 &lt;li&gt;What's a program?&lt;/li&gt;
-&lt;/ul&gt;</description>
+&lt;/ul&gt;
+
+&lt;p&gt;In this discussion, a program, regardless of language, is a &lt;strong&gt;stream of characters&lt;/strong&gt;.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html</link>
     </item>
     <item>
@@ -107,7 +141,8 @@ TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, 
 
 &lt;p&gt;Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
 much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an &lt;code&gt;Invoke&lt;/code&gt; method.&lt;/p&gt;
-</description>
+
+&lt;p&gt;So all we need is an interface with a &lt;code&gt;Value&lt;/code&gt; property. Objects supporting that interface can represent a single property that can be passed around like any other value:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/A_new_kind_of_managed_lvalue_pointer.html</link>
     </item>
     <item>
@@ -117,7 +152,11 @@ much better served in this regard: delegates are a way to treat a method as a va
 
 &lt;p&gt;But equally important in modern C# programs are sequences of values, so a similar shorthand for &lt;code&gt;IEnumerable&lt;/code&gt; would be ideal. 
 The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
-this was the choice made by the intriguing &lt;a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/"&gt;research language Cω&lt;/a&gt; </description>
+this was the choice made by the intriguing &lt;a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/"&gt;research language Cω&lt;/a&gt; 
+that influenced LINQ, so let's copy that:&lt;/p&gt;
+
+&lt;p&gt;```csharp
+int* numbers = new[] { 1, 6, 55, 4, 11 };&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html</link>
     </item>
     <item>
@@ -129,12 +168,7 @@ preview. Yes, I was surprised too!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;After seeing the video of Anders Hejlsberg showing how easy it is to hack the new open source C# compiler, I had to give it a try.&lt;/p&gt;
 
 &lt;p&gt;My aim was (I assumed) a lot more ambitious and crazy than his demo. I thought it would take ages to figure out. But it was still tempting to aim high and 
-actually implement a substantial new feature, because there are a few I've been wondering about over the years.&lt;/p&gt;
-
-&lt;p&gt;Ever since LINQ query syntax was added to the language, I've wished that operator overloading worked the same way. The &lt;code&gt;where&lt;/code&gt; keyword gets turned into a 
-call to a &lt;code&gt;Where&lt;/code&gt; method. And it doesn't matter where or how that method is defined. It can be an extension method, an ordinary method, a &lt;code&gt;virtual&lt;/code&gt; method. 
-In fact there are few other language features that map to well known member names: a collection initializer is turned into several calls to a method called 
-&lt;code&gt;Add&lt;/code&gt;, and the &lt;code&gt;await&lt;/code&gt; keyword expands into calls to several methods.&lt;/p&gt;</description>
+actually implement a substantial new feature, because there are a few I've been wondering about over the years.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Adding_crazily_powerful_operator_overloading_to_C_6.html</link>
     </item>
     <item>
@@ -148,9 +182,7 @@ like carrots).&lt;/p&gt;
 
 &lt;p&gt;&lt;a href="http://earwicker.com/carota/"&gt;Here is the demo page&lt;/a&gt;, which is very self-explanatory, in that it presents a bunch of information about the editor, inside 
 the editor itself, so you can fiddle with it and instantly see how it persists the text in JSON. As you can see, it's quite far along. In fact I suspect it
-is already good enough for every way I currently make use of rich text in browser applications. If your browser is old, it will not work. (Hint: IE8 is way old.)&lt;/p&gt;
-
-&lt;p&gt;So... Why? What a crazy waste of time when browsers already have the marvellous &lt;a href="https://www.google.com/search?q=contentEditable"&gt;contentEditable&lt;/a&gt; feature, right?&lt;/p&gt;</description>
+is already good enough for every way I currently make use of rich text in browser applications. If your browser is old, it will not work. (Hint: IE8 is way old.)&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Introducing_Carota.html</link>
     </item>
   </channel>

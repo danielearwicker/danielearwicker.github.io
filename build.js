@@ -106,19 +106,23 @@ var articles = fs.readdirSync(inputPath).map(function (name) {
         throw new Error("Article has no date header: " + name);
     }
     var linked = process(headers["rest"], "[[", "]]", convertLink);
-    var body = process(linked, codeTicks, codeTicks, function (code) {
-        var newLine = code.indexOf('\n');
-        if (newLine === -1) {
-            return code;
-        }
-        var lang = code.substr(0, newLine).replace(/\s/g, "");
-        var rest = code.substr(newLine + 1);
-        return "<pre><code class=\"" + lang + "\">" + rest.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</code></pre>";
-    }, function (plain) { return new showdown.Converter().makeHtml(plain); });
+    var getBody = function (source) {
+        return process(source, codeTicks, codeTicks, function (code) {
+            var newLine = code.indexOf('\n');
+            if (newLine === -1) {
+                return code;
+            }
+            var lang = code.substr(0, newLine).replace(/\s/g, "");
+            var rest = code.substr(newLine + 1);
+            return "<pre><code class=\"" + lang + "\">" +
+                rest.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</code></pre>";
+        }, function (plain) { return new showdown.Converter().makeHtml(plain); });
+    };
+    var body = getBody(linked);
     var formattedTags = formatTags(tags.trim().split(" "));
     var article = { title: title, tags: tags, date: date, body: body, formattedTags: formattedTags, link: makeHtmlName(title) };
     article.content = template("article", article);
-    article.snippet = getSnippet(article.body);
+    article.snippet = getBody(getSnippet(linked));
     return article;
 });
 articles.sort(function (a, b) { return b.date.localeCompare(a.date); });

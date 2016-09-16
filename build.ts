@@ -8,15 +8,15 @@ const templatePath = "templates";
 const outputPath = ".";
 
 function process(
-    text: string, 
-    prefix: string, 
-    suffix: string, 
-    callback: (text: string) => string, 
+    text: string,
+    prefix: string,
+    suffix: string,
+    callback: (text: string) => string,
     callbackPlain?: (text: string) => string) {
-        
+
     const output: string[] = [];
     let pos = 0;
-    
+
     const plain = (text: string) => {
         if (callbackPlain) {
             text = callbackPlain(text);
@@ -30,33 +30,33 @@ function process(
             plain(text.substr(pos));
             break;
         }
-        
-        const endOfPlain = start;        
+
+        const endOfPlain = start;
         start += prefix.length;
-        
+
         const end = text.indexOf(suffix, start);
         if (end === -1) {
             plain(text.substr(pos));
             break;
         }
-        
+
         plain(text.substring(pos, endOfPlain));
         output.push(callback(text.substring(start, end)));
-        
+
         pos = end + suffix.length;
     }
-    
+
     return output.join("");
 }
 
 interface StringMap {
-    [name: string]: string 
+    [name: string]: string
 };
 
 function getHeaders(text: string) {
     const lines = text.split("\n"), result: StringMap = {};
     let end = 0;
-    
+
     for (; end < lines.length; end++) {
         const line = lines[end].trim(), eq = line.indexOf(":");
         if (!line || eq === -1) {
@@ -64,7 +64,7 @@ function getHeaders(text: string) {
         }
         result[line.substr(0, eq)] = line.substr(eq + 1);
     }
-    
+
     result["rest"] = lines.slice(end).join("\n");
     return result;
 }
@@ -73,7 +73,7 @@ const cachedTemplates: StringMap = {};
 
 function template(name: string, params: StringMap) {
 
-    const template = cachedTemplates[name] || 
+    const template = cachedTemplates[name] ||
         (cachedTemplates[name] = fs.readFileSync(path.join(templatePath, name + ".html"), "utf8"));
 
     return process(template, "${", "}", param => params[param]);
@@ -90,17 +90,17 @@ function makeTitle(name: string) {
     return name;
 }
 
-function makeHtmlName(title: string) {    
+function makeHtmlName(title: string) {
     return title.replace(/[^a-z0-9_]+/gi, "_") + ".html";
 }
 
-function convertLink(link: string) {    
-    const bar = link.indexOf("|");    
+function convertLink(link: string) {
+    const bar = link.indexOf("|");
     if (bar == -1) {
         return "[" + link + "](" + makeHtmlName(link) + ")";
     }
     const label = link.substr(0, bar), target = link.substr(bar + 1);
-    
+
     return "[" + label + "](" + makeHtmlName(target) + ")";
 }
 
@@ -111,7 +111,7 @@ function getSnippet(text: string) {
         var line = lines[end].trim();
         if (line.indexOf("<pre><code") !== -1) {
             break;
-        }        
+        }
         if (!line) {
             blankCount++;
         }
@@ -130,7 +130,7 @@ interface Article extends StringMap {
     body: string;           // just the HTML text (no header)
     link: string;           // HTML filename
     content?: string;       // header + body
-    snippet?: string;    
+    snippet?: string;
 }
 
 const codeTicks = "```";
@@ -140,7 +140,7 @@ function formatTags(tags: string[]) {
 }
 
 const articles = fs.readdirSync(inputPath).map(name => {
-    
+
     const text = fs.readFileSync(path.join(inputPath, name), "utf8");
     const headers = getHeaders(text);
     const date = headers["date"];
@@ -153,32 +153,36 @@ const articles = fs.readdirSync(inputPath).map(name => {
 
     const linked = process(headers["rest"], "[[", "]]", convertLink);
 
-    const body = process(linked, codeTicks, codeTicks, code => {
+    const getBody = (source: string) =>
+        process(source, codeTicks, codeTicks, code => {
 
-        var newLine = code.indexOf('\n');
-        if (newLine === -1) {
-            return code;
-        }
+            var newLine = code.indexOf('\n');
+            if (newLine === -1) {
+                return code;
+            }
 
-        var lang = code.substr(0, newLine).replace(/\s/g, "");
-        var rest = code.substr(newLine + 1);
-        return "<pre><code class=\"" + lang + "\">" + rest.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</code></pre>";
+            var lang = code.substr(0, newLine).replace(/\s/g, "");
+            var rest = code.substr(newLine + 1);
+            return "<pre><code class=\"" + lang + "\">" +
+                rest.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</code></pre>";
 
-    }, plain => new showdown.Converter().makeHtml(plain));
+        }, plain => new showdown.Converter().makeHtml(plain));
+
+    const body = getBody(linked);
 
     var formattedTags = formatTags(tags.trim().split(" "));
 
     const article: Article = { title, tags, date, body, formattedTags, link: makeHtmlName(title) };
 
     article.content = template("article", article);
-    article.snippet = getSnippet(article.body);
+    article.snippet = getBody(getSnippet(linked));
 
     return article;
 });
 
 articles.sort((a, b) => b.date.localeCompare(a.date));
 
-function articleList(list: Article[], current?: Article) {    
+function articleList(list: Article[], current?: Article) {
     return list.map(article => template(article === current ? "selected" : "recent", article)).join("");
 }
 
@@ -190,18 +194,18 @@ for (const name of fs.readdirSync(outputPath)) {
 
 const articlesByTag: { [name: string]: Article[] } = {};
 
-for (const article of articles) {    
+for (const article of articles) {
     for (const tag of article.tags.trim().split(" ")) {
         const articlesForTag = articlesByTag[tag] || (articlesByTag[tag] = []);
-        articlesForTag.push(article); 
+        articlesForTag.push(article);
     }
 }
 
 const topics = formatTags(Object.keys(articlesByTag).sort());
 
-for (const article of articles) {    
+for (const article of articles) {
     fs.writeFileSync(
-        path.join(outputPath, makeHtmlName(article.title)), 
+        path.join(outputPath, makeHtmlName(article.title)),
         template("shell", {
             recent: articleList(articles, article),
             content: article.content,
@@ -210,9 +214,9 @@ for (const article of articles) {
         }));
 }
 
-for (const tag of Object.keys(articlesByTag)) {    
+for (const tag of Object.keys(articlesByTag)) {
     fs.writeFileSync(
-        path.join(outputPath, `tag-${tag}.html`), 
+        path.join(outputPath, `tag-${tag}.html`),
         template("shell", {
             recent: articleList(articles),
             content: articlesByTag[tag].map(article => template("snippet", article)).join("\n"),
@@ -222,7 +226,7 @@ for (const tag of Object.keys(articlesByTag)) {
 }
 
 fs.writeFileSync(
-    path.join(outputPath, makeHtmlName("index")), 
+    path.join(outputPath, makeHtmlName("index")),
     template("shell", {
         recent: articleList(articles),
         content: articles.map(article => template("snippet", article)).join("\n"),
@@ -253,7 +257,7 @@ interface RssRoot {
 }
 
 export function rss(baseUrl: string, history: Article[]) {
-    let items: RssItem[] = history.map(h => ({ 
+    let items: RssItem[] = history.map(h => ({
         title: h.title,
         pubDate: h.date + "T00:00:00Z",
         description: h.snippet,
@@ -276,7 +280,7 @@ export function rss(baseUrl: string, history: Article[]) {
         }
     };
 
-    return new xml2js.Builder().buildObject(rssJson);    
+    return new xml2js.Builder().buildObject(rssJson);
 }
 
 fs.writeFileSync(

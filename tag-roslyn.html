@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-react.html">REACT</a> <a href="tag-roslyn.html">ROSLYN</a> <a href="tag-typescript.html">TYPESCRIPT</a></div>
+                <div class="topics"><a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-immuto.html">IMMUTO</a> <a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-react.html">REACT</a> <a href="tag-roslyn.html">ROSLYN</a> <a href="tag-typescript.html">TYPESCRIPT</a></div>
             </div>
             
             <div class="content">
@@ -29,6 +29,7 @@
 <p>Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
 much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an <code>Invoke</code> method.</p>
 
+<p>So all we need is an interface with a <code>Value</code> property. Objects supporting that interface can represent a single property that can be passed around like any other value:</p>
 <p><a href="A_new_kind_of_managed_lvalue_pointer.html">Read on...</a></p>
 <hr>
 
@@ -39,6 +40,10 @@ much better served in this regard: delegates are a way to treat a method as a va
 <p>But equally important in modern C# programs are sequences of values, so a similar shorthand for <code>IEnumerable</code> would be ideal. 
 The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
 this was the choice made by the intriguing <a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/">research language Cω</a> 
+that influenced LINQ, so let's copy that:</p>
+
+<p>```csharp
+int* numbers = new[] { 1, 6, 55, 4, 11 };</p>
 <p><a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Read on...</a></p>
 <hr>
 
@@ -51,11 +56,6 @@ preview. Yes, I was surprised too!</strong></p>
 
 <p>My aim was (I assumed) a lot more ambitious and crazy than his demo. I thought it would take ages to figure out. But it was still tempting to aim high and 
 actually implement a substantial new feature, because there are a few I've been wondering about over the years.</p>
-
-<p>Ever since LINQ query syntax was added to the language, I've wished that operator overloading worked the same way. The <code>where</code> keyword gets turned into a 
-call to a <code>Where</code> method. And it doesn't matter where or how that method is defined. It can be an extension method, an ordinary method, a <code>virtual</code> method. 
-In fact there are few other language features that map to well known member names: a collection initializer is turned into several calls to a method called 
-<code>Add</code>, and the <code>await</code> keyword expands into calls to several methods.</p>
 <p><a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Read on...</a></p>
 <hr>
 
@@ -64,13 +64,19 @@ In fact there are few other language features that map to well known member name
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+        <a href="Immuto_Working_with_React_An_Example_.html">Immuto - Working with React (An Example)</a>
+    </td>
+    <td class="date"> 2016-09-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_is_a_class_.html">TypeScript - What is a class?</a>
     </td>
     <td class="date"> 2016-09-11</td>    
 </tr>
 <tr>
     <td>
-        <a href="TypeScript_What_is_a_class_.html">TypeScript - What is a class?</a>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
     </td>
     <td class="date"> 2016-09-11</td>    
 </tr>

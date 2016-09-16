@@ -18,26 +18,43 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-react.html">REACT</a> <a href="tag-roslyn.html">ROSLYN</a> <a href="tag-typescript.html">TYPESCRIPT</a></div>
+                <div class="topics"><a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-immuto.html">IMMUTO</a> <a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-react.html">REACT</a> <a href="tag-roslyn.html">ROSLYN</a> <a href="tag-typescript.html">TYPESCRIPT</a></div>
             </div>
             
             <div class="content">
-                <h2>Immuto - Strongly Typed Redux Composition</h2>
+                <h2>Immuto - Working with React (An Example)</h2>
+<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-16</p>
+<p>In <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a> I introduced the <a href="https://github.com/danielearwicker/immuto">Immuto library</a> by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!</p>
+
+<p>What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:</p>
+
+<ul>
+<li><code>npm install immuto-react</code></li>
+</ul>
+<p><a href="Immuto_Working_with_React_An_Example_.html">Read on...</a></p>
+<hr>
+
+<h2>TypeScript - What is a class?</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-11</p>
+<p>In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:</p><pre><code class="ts">class C {
+    foo() {}
+}
+
+const c1: typeof C = C;
+const c2: C = new C();
+const c3: C = C;
+</code></pre>
+<p><a href="TypeScript_What_is_a_class_.html">Read on...</a></p>
+<hr>
+
+<h2>Immuto - Strongly Typed Redux Composition</h2>
+<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-11</p>
 <p><a href="What_s_good_about_Redux.html">What's good about Redux</a>, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. <a href="http://redux.js.org/docs/basics/Actions.html">Read the docs, they're easy</a>.</p>
 
 <p>There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.</p>
 
 <p>One composition feature is <code>combineReducers</code>, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.</p>
-
-<h3 id="reducers">Reducers</h3>
 <p><a href="Immuto_Strongly_Typed_Redux_Composition.html">Read on...</a></p>
-<hr>
-
-<h2>TypeScript - What is a class?</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-11</p>
-
-<p><a href="TypeScript_What_is_a_class_.html">Read on...</a></p>
 <hr>
 
 <h2>TypeScript and runtime typing - EPISODE II</h2>
@@ -46,6 +63,7 @@
 
 <p>Something wonderful happened between <code>typescript@beta</code> and <code>typescript@rc</code> (i.e. just in time for version 2.0).</p>
 
+<p>Way, way back in TypeScript 1.8 (February 2016!) we gained the ability to use string literals as types:</p>
 <p><a href="TypeScript_and_runtime_typing_EPISODE_II.html">Read on...</a></p>
 <hr>
 
@@ -60,25 +78,31 @@
   <p><code>type EventClass = class extends Event;</code></p>
   
   <p><code>type Listener = (data: class extends Event) =&gt; void;</code></p>
+  
+  <p>and later on:</p>
+  
+  <p><code>private handlers: Map&lt;EventClass,Listener[]&gt;;</code></p>
+  
+  <p>But unfortunately this syntax does not work. How I can declare a type that points to CLASS extending another CLASS?</p>
+</blockquote>
+
+<p>You want a runtime value that specifies a type of event, so you can use it as the key in a <code>Map</code>.</p>
 <p><a href="TypeScript_and_runtime_typing.html">Read on...</a></p>
 <hr>
 
 <h2>TypeScript multicast functions</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-03-13</p>
-<p>Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs 
-from JavaScript. </p>
+<p>Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs
+from JavaScript.</p>
 
 <ol>
-<li><p>a method's <code>this</code> reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens 
-to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the 
+<li><p>a method's <code>this</code> reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens
+to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the
 function internally refers to <code>this</code>.</p></li>
 
-<li><p>a function value (known as a "delegate") has operators <code>+</code>, <code>-</code>, <code>+=</code>, <code>-=</code> that allow it to be combined with other compatible functions 
+<li><p>a function value (known as a "delegate") has operators <code>+</code>, <code>-</code>, <code>+=</code>, <code>-=</code> that allow it to be combined with other compatible functions
 to create a new single function that, when invoked, causes the constituent functions to be invoked.</p></li>
 </ol>
-
-<p>The second one is what I'm interested in today, mainly because it's a nice example of something that we can strongly type check in 
-TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, but externally we can guarantee everything will work.</p>
 <p><a href="TypeScript_multicast_functions.html">Read on...</a></p>
 <hr>
 
@@ -86,6 +110,12 @@ TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, 
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a>  2016-03-08</p>
 <p>As great as <a href="https://facebook.github.io/immutable-js/">Immutable.js</a> is, especially with a TypeScript declaration included in the package, the <code>Record</code> class leaves me a little disappointed.</p>
 
+<p>In an ordinary class with public properties we're used to being able to say:</p>
+
+<p>```typescript
+const a = new Animal();
+a.hasTail = true;
+a.legs = 2;</p>
 <p><a href="Introducing_doop.html">Read on...</a></p>
 <hr>
 
@@ -100,6 +130,8 @@ TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, 
 
 <li>What's a program?</li>
 </ul>
+
+<p>In this discussion, a program, regardless of language, is a <strong>stream of characters</strong>.</p>
 <p><a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">Read on...</a></p>
 <hr>
 
@@ -108,13 +140,19 @@ TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, 
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+        <a href="Immuto_Working_with_React_An_Example_.html">Immuto - Working with React (An Example)</a>
+    </td>
+    <td class="date"> 2016-09-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_is_a_class_.html">TypeScript - What is a class?</a>
     </td>
     <td class="date"> 2016-09-11</td>    
 </tr>
 <tr>
     <td>
-        <a href="TypeScript_What_is_a_class_.html">TypeScript - What is a class?</a>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
     </td>
     <td class="date"> 2016-09-11</td>    
 </tr>

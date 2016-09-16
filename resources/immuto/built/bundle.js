@@ -49,20 +49,24 @@
 	var React = __webpack_require__(1);
 	var ReactDOM = __webpack_require__(34);
 	var immuto_react_1 = __webpack_require__(172);
-	var shop_1 = __webpack_require__(189);
-	var ShopEditor_1 = __webpack_require__(192);
-	var exampleData_1 = __webpack_require__(198);
+	var shop_1 = __webpack_require__(191);
+	var ShopEditor_1 = __webpack_require__(194);
+	var exampleData_1 = __webpack_require__(200);
 	var store = shop_1.Shop.reduce.store();
 	for (var _i = 0, actions_1 = exampleData_1.actions; _i < actions_1.length; _i++) {
 	    var action = actions_1[_i];
 	    store.dispatch(action);
 	}
+	var StoreShopEditor = immuto_react_1.bindToStore(store, function (shop) {
+	    return React.createElement(ShopEditor_1.ShopEditor, { shop: shop });
+	});
+	ReactDOM.render(React.createElement(StoreShopEditor, null), document.querySelector("#root"));
 	/*
 	
 	type Action = typeof Shop.reduce.actionType;
-	
+
 	const log: Action[] = [];
-	
+
 	const store: Store<Shop, Action> = {
 	    dispatch(action: Action) {
 	        log.push(action);
@@ -75,13 +79,12 @@
 	        return realStore.subscribe(func);
 	    }
 	}
-	
+
 	store.subscribe(() => {
 	    console.log(JSON.stringify(log, null, 4));
 	});
+
 	*/
-	var StoreShopEditor = immuto_react_1.bindToStore(ShopEditor_1.ShopEditor, store);
-	ReactDOM.render(React.createElement(StoreShopEditor, null), document.querySelector("#root"));
 
 /***/ },
 /* 1 */
@@ -21459,94 +21462,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var __extends = (this && this.__extends) || function (d, b) {
-	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-	    function __() { this.constructor = d; }
-	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-	};
-	var I = __webpack_require__(173);
-	var React = __webpack_require__(1);
-	var Subscriber = (function (_super) {
-	    __extends(Subscriber, _super);
-	    function Subscriber(renderInner) {
-	        _super.call(this);
-	        this.renderInner = renderInner;
-	        this.state = {};
-	    }
-	    Subscriber.prototype.subscribe = function (subscribable) {
-	        var _this = this;
-	        if (subscribable === this.sub) {
-	            return;
-	        }
-	        this.unsubscribe();
-	        this.sub = subscribable;
-	        this.unsub = subscribable.subscribe(function () { return _this.storeChanged(); });
-	    };
-	    Subscriber.prototype.unsubscribe = function () {
-	        if (this.unsub) {
-	            this.unsub();
-	            this.unsub = undefined;
-	            this.sub = undefined;
-	        }
-	    };
-	    Subscriber.prototype.componentWillUnmount = function () {
-	        this.unsubscribe();
-	    };
-	    Subscriber.prototype.storeChanged = function () {
-	        if (this.state.inner) {
-	            this.setState({
-	                inner: this.state.inner.refresh()
-	            });
-	        }
-	    };
-	    Subscriber.prototype.render = function () {
-	        return this.state.inner
-	            ? this.renderInner(this.props, this.state.inner)
-	            : null;
-	    };
-	    return Subscriber;
-	}(React.Component));
-	function bindToStore(render, store) {
-	    return (function (_super) {
-	        __extends(class_1, _super);
-	        function class_1() {
-	            _super.call(this, render);
-	        }
-	        class_1.prototype.componentWillMount = function () {
-	            this.setState({
-	                inner: I.snapshot(store)
-	            });
-	            this.subscribe(store);
-	        };
-	        return class_1;
-	    }(Subscriber));
-	}
-	exports.bindToStore = bindToStore;
-	function bindToCursor(render, traverse) {
-	    return (function (_super) {
-	        __extends(class_2, _super);
-	        function class_2() {
-	            _super.call(this, render);
-	        }
-	        class_2.prototype.updateFromProps = function (newProps) {
-	            this.subscribe(newProps.cursor.subscribable);
-	            var traversed = traverse(newProps.cursor, newProps.path);
-	            if (!this.state.inner || traversed.state !== this.state.inner.state) {
-	                this.setState({
-	                    inner: traversed
-	                });
-	            }
-	        };
-	        class_2.prototype.componentWillMount = function () {
-	            this.updateFromProps(this.props);
-	        };
-	        class_2.prototype.componentWillUpdate = function (nextProps) {
-	            this.updateFromProps(this.props);
-	        };
-	        return class_2;
-	    }(Subscriber));
-	}
-	exports.bindToCursor = bindToCursor;
+	var bindToStore_1 = __webpack_require__(173);
+	exports.bindToStore = bindToStore_1.bindToStore;
+	var optimize_1 = __webpack_require__(190);
+	exports.optimize = optimize_1.optimize;
 	//# sourceMappingURL=index.js.map
 
 /***/ },
@@ -21554,7 +21473,52 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var redux_1 = __webpack_require__(174);
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var immuto_1 = __webpack_require__(174);
+	var React = __webpack_require__(1);
+	/**
+	 * Given a store, and a function from cursor to JSX.Element, we return
+	 * a ComponentClass. The resulting component has no props - the idea
+	 * is to do this at the root, to produce an App component ready to be
+	 * rendered.
+	 */
+	function bindToStore(store, render) {
+	    return (function (_super) {
+	        __extends(class_1, _super);
+	        function class_1() {
+	            var _this = this;
+	            _super.call(this);
+	            this.unsub = store.subscribe(function () { return _this.storeChanged(); });
+	            this.state = { cursor: immuto_1.snapshot(store) };
+	        }
+	        class_1.prototype.componentWillUnmount = function () {
+	            if (this.unsub) {
+	                this.unsub();
+	                this.unsub = undefined;
+	            }
+	        };
+	        class_1.prototype.storeChanged = function () {
+	            this.setState({ cursor: immuto_1.snapshot(store) });
+	        };
+	        class_1.prototype.render = function () {
+	            return this.state.cursor ? render(this.state.cursor) : null;
+	        };
+	        return class_1;
+	    }(React.Component));
+	}
+	exports.bindToStore = bindToStore;
+	//# sourceMappingURL=bindToStore.js.map
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var redux_1 = __webpack_require__(175);
 	/**
 	 * Defines an action, for later inclusion in a reducer.
 	 */
@@ -21616,10 +21580,9 @@
 	    return assign(dispatch, {
 	        exists: true,
 	        state: state,
-	        refresh: function () {
-	            return snapshot(store);
-	        },
-	        subscribable: store
+	        valueOf: function () {
+	            return state;
+	        }
 	    });
 	}
 	exports.snapshot = snapshot;
@@ -21641,17 +21604,8 @@
 	        }
 	        ;
 	        return assign(dispatch, fetched, {
-	            subscribable: outer.subscribable,
-	            refresh: function () {
-	                var latestOuter = outer.refresh();
-	                if (latestOuter.state === outer.state) {
-	                    return this;
-	                }
-	                var latestFetched = fetch(latestOuter.state, key);
-	                if (latestFetched.state === fetched.state) {
-	                    return this;
-	                }
-	                return cursor(fetch, update)(latestOuter, key);
+	            valueOf: function () {
+	                return fetched.state;
 	            }
 	        });
 	    };
@@ -21711,8 +21665,24 @@
 	    };
 	}
 	exports.numberMapOperations = numberMapOperations;
-	function collection(_a) {
-	    var type = _a.type, operations = _a.operations, reducer = _a.reducer, get = _a.get, set = _a.set;
+	function collection(optionsOrType, opt_reducer, opt_operations, opt_get, set) {
+	    var type;
+	    var operations;
+	    var reducer;
+	    var get;
+	    if (typeof optionsOrType === "string") {
+	        type = optionsOrType;
+	        operations = opt_operations;
+	        reducer = opt_reducer;
+	        get = opt_get;
+	    }
+	    else {
+	        type = optionsOrType.type;
+	        operations = optionsOrType.operations;
+	        reducer = optionsOrType.reducer;
+	        get = optionsOrType.get;
+	        set = optionsOrType.set;
+	    }
 	    function add(key) {
 	        return { type: type, payload: { key: key } };
 	    }
@@ -21729,11 +21699,12 @@
 	            state: item.exists ? item.state : reducer.empty
 	        };
 	    }
+	    var ensuredSet = ensureReducer("collection(" + type + ")", get, set);
 	    function reduce(state, _a) {
 	        var key = _a.key, update = _a.update, remove = _a.remove;
 	        var collection = get(state);
 	        var value = fetch(collection, key).state;
-	        return set(state, remove
+	        return ensuredSet(state, remove
 	            ? operations.remove(collection, key)
 	            : operations.set(collection, key, update
 	                ? reducer(value, update)
@@ -21758,8 +21729,27 @@
 	}
 	exports.collection = collection;
 	// Oh yes, I went there...
-	var matchFunction = /function\s*\(\s*([a-z]+)\s*\)\s*\{\s*return\s+([a-z]+)\.([a-z]+)/i;
+	var matchFunction = /function\s*[a-z]*\s*\(\s*([a-z]+)\s*\)\s*\{\s*return\s+([a-z]+)\.([a-z]+)/i;
 	var matchLambda = /\(?\s*([a-z]+)\s*\)?\s*\=\>\s*([a-z]+)\.([a-z]+)/i;
+	function ensureReducer(context, fetch, reduce) {
+	    if (reduce) {
+	        return reduce;
+	    }
+	    // We might be able to generate reduce by parsing the source of fetch!
+	    var src = fetch.toString();
+	    matchFunction.lastIndex = 0;
+	    matchLambda.lastIndex = 0;
+	    var matched = matchFunction.exec(src) || matchLambda.exec(src);
+	    if (!matched) {
+	        throw new Error(("Cannot generate reducer for " + context + " ")
+	            + "- too complex to parse, needs explicit reduce");
+	    }
+	    if (matched[1] !== matched[2]) {
+	        throw new Error(("Cannot generate reducer for " + context + " ") +
+	            ("- inconsistent parameter usage: " + matched[1] + ", " + matched[2]));
+	    }
+	    return function (state, value) { return amend(state, (_a = {}, _a[matched[3]] = value, _a)); var _a; };
+	}
 	function property(type, fetch, reduce) {
 	    function update(payload) {
 	        return { type: type, payload: payload };
@@ -21769,50 +21759,48 @@
 	            outer(update(value));
 	        }
 	        return assign(dispatch, {
-	            state: fetch(outer.state)
+	            state: fetch(outer.state),
+	            valueOf: function () {
+	                return outer.state;
+	            }
 	        });
-	    }
-	    if (!reduce) {
-	        // We might be able to generate reduce by parsing the source of fetch!
-	        var src = fetch.toString();
-	        var matched_1 = matchFunction.exec(src) || matchLambda.exec(src);
-	        if (!matched_1) {
-	            throw new Error("Immuto.property " + type + " too complex to parse, needs explicit reduce");
-	        }
-	        if (matched_1[1] !== matched_1[2]) {
-	            throw new Error("Immuto.property " + type + " inconsistent parameter usage: " + matched_1[1] + ", " + matched_1[2]);
-	        }
-	        console.log("Immuto.property " + type + ": generated reduce automatically for " + matched_1[3]);
-	        reduce = function (state, value) { return amend(state, (_a = {}, _a[matched_1[3]] = value, _a)); var _a; };
 	    }
 	    return assign(create, {
 	        update: update,
 	        type: type,
-	        reduce: reduce,
+	        reduce: ensureReducer("property(" + type + ")", fetch, reduce),
 	        payloadType: undefined,
 	        stateType: undefined
 	    });
 	}
 	exports.property = property;
-	function reference(_a) {
-	    var type = _a.type, reducer = _a.reducer, get = _a.get, set = _a.set;
-	    var col = collection({
-	        type: type,
-	        operations: {
-	            get: function (items, key) {
-	                return { exists: true, state: items };
-	            },
-	            set: function (items, key, item) {
-	                return item;
-	            },
-	            remove: function (items, key) {
-	                return items;
-	            }
+	function reference(optionsOrType, opt_reducer, opt_get, set) {
+	    var type;
+	    var reducer;
+	    var get;
+	    if (typeof optionsOrType === "string") {
+	        type = optionsOrType;
+	        reducer = opt_reducer;
+	        get = opt_get;
+	    }
+	    else {
+	        type = optionsOrType.type;
+	        reducer = optionsOrType.reducer;
+	        get = optionsOrType.get;
+	        set = optionsOrType.set;
+	    }
+	    var ops = {
+	        get: function (items, key) {
+	            return { exists: true, state: items };
 	        },
-	        reducer: reducer,
-	        get: get,
-	        set: set
-	    });
+	        set: function (items, key, item) {
+	            return item;
+	        },
+	        remove: function (items, key) {
+	            return items;
+	        }
+	    };
+	    var col = collection(type, reducer, ops, get, set);
 	    var refCursors = function (outer) {
 	        return col(outer, undefined);
 	    };
@@ -21858,7 +21846,7 @@
 	//# sourceMappingURL=index.js.map
 
 /***/ },
-/* 174 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -21866,27 +21854,27 @@
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 	
-	var _createStore = __webpack_require__(175);
+	var _createStore = __webpack_require__(176);
 	
 	var _createStore2 = _interopRequireDefault(_createStore);
 	
-	var _combineReducers = __webpack_require__(184);
+	var _combineReducers = __webpack_require__(185);
 	
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 	
-	var _bindActionCreators = __webpack_require__(186);
+	var _bindActionCreators = __webpack_require__(187);
 	
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 	
-	var _applyMiddleware = __webpack_require__(187);
+	var _applyMiddleware = __webpack_require__(188);
 	
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 	
-	var _compose = __webpack_require__(188);
+	var _compose = __webpack_require__(189);
 	
 	var _compose2 = _interopRequireDefault(_compose);
 	
-	var _warning = __webpack_require__(185);
+	var _warning = __webpack_require__(186);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -21910,7 +21898,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 175 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21919,11 +21907,11 @@
 	exports.ActionTypes = undefined;
 	exports['default'] = createStore;
 	
-	var _isPlainObject = __webpack_require__(176);
+	var _isPlainObject = __webpack_require__(177);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _symbolObservable = __webpack_require__(181);
+	var _symbolObservable = __webpack_require__(182);
 	
 	var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
 	
@@ -22176,12 +22164,12 @@
 	}
 
 /***/ },
-/* 176 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getPrototype = __webpack_require__(177),
-	    isHostObject = __webpack_require__(179),
-	    isObjectLike = __webpack_require__(180);
+	var getPrototype = __webpack_require__(178),
+	    isHostObject = __webpack_require__(180),
+	    isObjectLike = __webpack_require__(181);
 	
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -22252,10 +22240,10 @@
 
 
 /***/ },
-/* 177 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var overArg = __webpack_require__(178);
+	var overArg = __webpack_require__(179);
 	
 	/** Built-in value references. */
 	var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -22264,7 +22252,7 @@
 
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports) {
 
 	/**
@@ -22285,7 +22273,7 @@
 
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports) {
 
 	/**
@@ -22311,7 +22299,7 @@
 
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports) {
 
 	/**
@@ -22346,14 +22334,14 @@
 
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(182);
+	module.exports = __webpack_require__(183);
 
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {'use strict';
@@ -22362,7 +22350,7 @@
 		value: true
 	});
 	
-	var _ponyfill = __webpack_require__(183);
+	var _ponyfill = __webpack_require__(184);
 	
 	var _ponyfill2 = _interopRequireDefault(_ponyfill);
 	
@@ -22381,7 +22369,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22409,7 +22397,7 @@
 	};
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -22417,13 +22405,13 @@
 	exports.__esModule = true;
 	exports['default'] = combineReducers;
 	
-	var _createStore = __webpack_require__(175);
+	var _createStore = __webpack_require__(176);
 	
-	var _isPlainObject = __webpack_require__(176);
+	var _isPlainObject = __webpack_require__(177);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _warning = __webpack_require__(185);
+	var _warning = __webpack_require__(186);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -22557,7 +22545,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22587,7 +22575,7 @@
 	}
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22643,7 +22631,7 @@
 	}
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22654,7 +22642,7 @@
 	
 	exports['default'] = applyMiddleware;
 	
-	var _compose = __webpack_require__(188);
+	var _compose = __webpack_require__(189);
 	
 	var _compose2 = _interopRequireDefault(_compose);
 	
@@ -22706,7 +22694,7 @@
 	}
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22749,68 +22737,76 @@
 	}
 
 /***/ },
-/* 189 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var immuto_1 = __webpack_require__(173);
-	var shelf_1 = __webpack_require__(190);
-	var Shop;
-	(function (Shop) {
-	    Shop.setName = immuto_1.action("SET_NAME", function (shop, name) {
-	        return immuto_1.amend(shop, { name: name });
-	    });
-	    Shop.selectShelf = immuto_1.action("SELECT_SHELF", function (shop, selectedShelf) {
-	        return immuto_1.amend(shop, { selectedShelf: selectedShelf });
-	    });
-	    Shop.shelves = immuto_1.collection({
-	        type: "SHELVES",
-	        reducer: shelf_1.Shelf.reduce,
-	        operations: immuto_1.numberMapOperations(),
-	        get: function get(shop) {
-	            return shop.shelves;
-	        },
-	        set: function set(shop, shelves) {
-	            return immuto_1.amend(shop, { shelves: shelves });
-	        }
-	    });
-	    Shop.empty = { name: "", shelves: {} };
-	    Shop.reduce = immuto_1.reducer(Shop.empty).action(Shop.setName).action(Shop.selectShelf).action(Shop.shelves);
-	})(Shop = exports.Shop || (exports.Shop = {}));
-
-/***/ },
 /* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	
-	var immuto_1 = __webpack_require__(173);
-	var book_1 = __webpack_require__(191);
-	var Shelf;
-	(function (Shelf) {
-	    Shelf.description = immuto_1.property("SET_DESCRIPTION", function (shelf) {
-	        return shelf.description;
-	    }, function (shelf, description) {
-	        return immuto_1.amend(shelf, { description: description });
-	    });
-	    Shelf.selectBook = immuto_1.action("SELECT_BOOK", function (shelf, selectedBook) {
-	        return immuto_1.amend(shelf, { selectedBook: selectedBook });
-	    });
-	    Shelf.books = immuto_1.collection({
-	        type: "BOOKS",
-	        reducer: book_1.Book.reduce,
-	        operations: immuto_1.numberMapOperations(),
-	        get: function get(shelf) {
-	            return shelf.books;
-	        },
-	        set: function set(shelf, books) {
-	            return immuto_1.amend(shelf, { books: books });
+	var __extends = (this && this.__extends) || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+	var React = __webpack_require__(1);
+	/**
+	 * Given a react stateless component, we return a ComponentClass
+	 * which implements shouldComponentUpdate by comparing the values
+	 * of all the props to see if they've changed.
+	 *
+	 * Note that for each prop we call its valueOf method, to ensure
+	 * we are not comparing the identity of a wrapper for the actual
+	 * value of importance. Two wrappers may refer to the same value
+	 * and should be treated as equal.
+	 *
+	 * This protocol is obeyed by certain built-in JS types and also
+	 * by any immuto object with a state property (valueOf returns
+	 * the state.)
+	 *
+	 * Sometimes functions are passed in as props and if they are
+	 * regenerated this does not imply a change in any value that
+	 * affects rendering. Hence they should be ignored by the
+	 * comparison. To cause this, list their prop names in the
+	 * optional ignore parameter.
+	 *
+	 * Aside from this, the comparison is shallow. This will only cause
+	 * repaint bugs if prop values are not immutable.
+	 */
+	function getValue(props, key) {
+	    var val = props[key];
+	    if (val === undefined || val === null) {
+	        return;
+	    }
+	    return val === undefined || val === null ? val : val.valueOf();
+	}
+	function optimize(statelessComponent, ignore) {
+	    var ignoreSet = {};
+	    if (ignore) {
+	        for (var _i = 0, ignore_1 = ignore; _i < ignore_1.length; _i++) {
+	            var str = ignore_1[_i];
+	            ignoreSet[str] = true;
 	        }
-	    });
-	    Shelf.empty = { description: "", books: {} };
-	    Shelf.reduce = immuto_1.reducer(Shelf.empty).action(Shelf.description).action(Shelf.selectBook).action(Shelf.books);
-	})(Shelf = exports.Shelf || (exports.Shelf = {}));
+	    }
+	    return (function (_super) {
+	        __extends(class_1, _super);
+	        function class_1() {
+	            _super.apply(this, arguments);
+	        }
+	        class_1.prototype.shouldComponentUpdate = function (newProps) {
+	            var oldProps = this.props;
+	            return !(Object.keys(newProps).every(function (oldKey) {
+	                return ignoreSet[oldKey] || Object.prototype.hasOwnProperty.call(newProps, oldKey);
+	            }) &&
+	                Object.keys(newProps).every(function (key) {
+	                    return ignoreSet[key] || getValue(newProps, key) === getValue(oldProps, key);
+	                }));
+	        };
+	        class_1.prototype.render = function () {
+	            return statelessComponent(this.props);
+	        };
+	        return class_1;
+	    }(React.Component));
+	}
+	exports.optimize = optimize;
+	//# sourceMappingURL=optimize.js.map
 
 /***/ },
 /* 191 */
@@ -22818,7 +22814,53 @@
 
 	"use strict";
 	
-	var immuto_1 = __webpack_require__(173);
+	var immuto_1 = __webpack_require__(174);
+	var shelf_1 = __webpack_require__(192);
+	var Shop;
+	(function (Shop) {
+	    Shop.name = immuto_1.property("NAME", function (shop) {
+	        return shop.name;
+	    });
+	    Shop.selectShelf = immuto_1.action("SELECT_SHELF", function (shop, selectedShelf) {
+	        return immuto_1.amend(shop, { selectedShelf: selectedShelf });
+	    });
+	    Shop.shelves = immuto_1.collection("SHELVES", shelf_1.Shelf.reduce, immuto_1.numberMapOperations(), function (shop) {
+	        return shop.shelves;
+	    });
+	    Shop.empty = { name: "", shelves: {} };
+	    Shop.reduce = immuto_1.reducer(Shop.empty).action(Shop.name).action(Shop.selectShelf).action(Shop.shelves);
+	})(Shop = exports.Shop || (exports.Shop = {}));
+
+/***/ },
+/* 192 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var immuto_1 = __webpack_require__(174);
+	var book_1 = __webpack_require__(193);
+	var Shelf;
+	(function (Shelf) {
+	    Shelf.description = immuto_1.property("DESCRIPTION", function (shelf) {
+	        return shelf.description;
+	    });
+	    Shelf.selectBook = immuto_1.action("SELECT_BOOK", function (shelf, selectedBook) {
+	        return immuto_1.amend(shelf, { selectedBook: selectedBook });
+	    });
+	    Shelf.books = immuto_1.collection("BOOKS", book_1.Book.reduce, immuto_1.numberMapOperations(), function (shelf) {
+	        return shelf.books;
+	    });
+	    Shelf.empty = { description: "", books: {} };
+	    Shelf.reduce = immuto_1.reducer(Shelf.empty).action(Shelf.description).action(Shelf.selectBook).action(Shelf.books);
+	})(Shelf = exports.Shelf || (exports.Shelf = {}));
+
+/***/ },
+/* 193 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var immuto_1 = __webpack_require__(174);
 	var Book;
 	(function (Book) {
 	    Book.title = immuto_1.property("TITLE", function (book) {
@@ -22835,58 +22877,55 @@
 	})(Book = exports.Book || (exports.Book = {}));
 
 /***/ },
-/* 192 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
 	var React = __webpack_require__(1);
 	var immuto_react_1 = __webpack_require__(172);
-	var shop_1 = __webpack_require__(189);
-	var ShelfEditor_1 = __webpack_require__(193);
-	var util_1 = __webpack_require__(197);
-	var ShopShelfEditor = immuto_react_1.bindToCursor(ShelfEditor_1.ShelfEditor, shop_1.Shop.shelves);
-	function ShopEditor(props, shop) {
-	    var _a = shop.state,
-	        name = _a.name,
-	        shelves = _a.shelves,
-	        selectedShelf = _a.selectedShelf;
+	var shop_1 = __webpack_require__(191);
+	var ShelfEditor_1 = __webpack_require__(195);
+	var TextInput_1 = __webpack_require__(198);
+	var util_1 = __webpack_require__(199);
+	exports.ShopEditor = immuto_react_1.optimize(function (_a) {
+	    var shop = _a.shop;
+	    var _b = shop.state,
+	        name = _b.name,
+	        shelves = _b.shelves,
+	        selectedShelf = _b.selectedShelf;
 	    var addShelf = function addShelf() {
 	        return shop(shop_1.Shop.shelves.add(util_1.getNextId(shelves)));
 	    };
 	    var removeShelf = function removeShelf(id) {
 	        return shop(shop_1.Shop.shelves.remove(id));
 	    };
-	    return React.createElement("div", { className: "shop" }, React.createElement("div", { className: "shop-header" }, React.createElement("input", { type: "text", value: name, placeholder: "Shop name", onChange: function onChange(e) {
-	            return shop(shop_1.Shop.setName(e.currentTarget.value));
-	        } }), React.createElement("button", { onClick: addShelf }, "Add a shelf")), React.createElement("div", { className: "shop-shelves>" }, util_1.getIds(shelves).map(function (shelf) {
+	    return React.createElement("div", { className: "shop" }, React.createElement("div", { className: "shop-header" }, React.createElement(TextInput_1.TextInput, { property: shop_1.Shop.name(shop), placeholder: "Shop name" }), React.createElement("button", { onClick: addShelf }, "Add a shelf")), React.createElement("div", { className: "shop-shelves>" }, util_1.getIds(shelves).map(function (shelf) {
 	        return React.createElement("div", { className: "shop-shelf>", key: shelf, onClick: function onClick() {
 	                return shop(shop_1.Shop.selectShelf(shelf));
-	            } }, React.createElement(ShopShelfEditor, { cursor: shop, path: shelf, enableEditing: shelf === selectedShelf, remove: function remove() {
+	            } }, React.createElement(ShelfEditor_1.ShelfEditor, { shelf: shop_1.Shop.shelves(shop, shelf), enableEditing: shelf === selectedShelf, remove: function remove() {
 	                return removeShelf(shelf);
 	            } }));
 	    })));
-	}
-	exports.ShopEditor = ShopEditor;
+	});
 
 /***/ },
-/* 193 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
 	var React = __webpack_require__(1);
 	var immuto_react_1 = __webpack_require__(172);
-	var shelf_1 = __webpack_require__(190);
-	var BookEditor_1 = __webpack_require__(194);
-	var TextInput_1 = __webpack_require__(196);
-	var util_1 = __webpack_require__(197);
-	var ShelfBookEditor = immuto_react_1.bindToCursor(BookEditor_1.BookEditor, shelf_1.Shelf.books);
-	function ShelfEditor(_a, shelf) {
-	    var enableEditing = _a.enableEditing,
+	var shelf_1 = __webpack_require__(192);
+	var BookEditor_1 = __webpack_require__(196);
+	var TextInput_1 = __webpack_require__(198);
+	var util_1 = __webpack_require__(199);
+	exports.ShelfEditor = immuto_react_1.optimize(function (_a) {
+	    var shelf = _a.shelf,
+	        enableEditing = _a.enableEditing,
 	        remove = _a.remove;
 	    var _b = shelf.state,
-	        description = _b.description,
 	        books = _b.books,
 	        selectedBook = _b.selectedBook;
 	    var addBook = function addBook() {
@@ -22899,40 +22938,36 @@
 	    return React.createElement("div", { className: mainClass }, React.createElement("div", { className: "shelf-header" }, React.createElement(TextInput_1.TextInput, { property: shelf_1.Shelf.description(shelf), placeholder: "Shelf description" }), enableEditing ? React.createElement("span", null, React.createElement("button", { onClick: addBook }, "Add a book"), React.createElement("button", { onClick: remove }, "Remove shelf")) : null), React.createElement("div", { className: "shelf-books" }, util_1.getIds(books).map(function (book) {
 	        return React.createElement("div", { className: "shelf-book", key: book, onClick: function onClick() {
 	                return shelf(shelf_1.Shelf.selectBook(book));
-	            } }, React.createElement(ShelfBookEditor, { cursor: shelf, path: book, enableEditing: enableEditing && book === selectedBook, remove: function remove() {
+	            } }, React.createElement(BookEditor_1.BookEditor, { book: shelf_1.Shelf.books(shelf, book), enableEditing: enableEditing && book === selectedBook, remove: function remove() {
 	                return removeBook(book);
 	            } }));
 	    })));
-	}
-	exports.ShelfEditor = ShelfEditor;
+	}, ["remove"]);
 
 /***/ },
-/* 194 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
 	var React = __webpack_require__(1);
-	var book_1 = __webpack_require__(191);
-	var DecimalInput_1 = __webpack_require__(195);
-	var TextInput_1 = __webpack_require__(196);
-	function BookEditor(_a, book) {
-	    var enableEditing = _a.enableEditing,
+	var immuto_react_1 = __webpack_require__(172);
+	var book_1 = __webpack_require__(193);
+	var DecimalInput_1 = __webpack_require__(197);
+	var TextInput_1 = __webpack_require__(198);
+	exports.BookEditor = immuto_react_1.optimize(function (_a) {
+	    var book = _a.book,
+	        enableEditing = _a.enableEditing,
 	        remove = _a.remove;
-	    var _b = book.state,
-	        title = _b.title,
-	        price = _b.price,
-	        authors = _b.authors;
 	    var mainClass = "book" + (enableEditing ? " editing" : "");
 	    var visibleIfEditing = {
 	        visibility: enableEditing ? "visible" : "hidden"
 	    };
 	    return React.createElement("div", { className: mainClass }, React.createElement("div", { className: "book-title" }, React.createElement(TextInput_1.TextInput, { property: book_1.Book.title(book), placeholder: "Book title" }), React.createElement("button", { onClick: remove, style: visibleIfEditing }, "X")), React.createElement("div", { className: "book-price" }, React.createElement(DecimalInput_1.DecimalInput, { property: book_1.Book.price(book), placeholder: "Price", decimalPlaces: 2 })));
-	}
-	exports.BookEditor = BookEditor;
+	}, ["remove"]);
 
 /***/ },
-/* 195 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22983,7 +23018,7 @@
 	exports.DecimalInput = DecimalInput;
 
 /***/ },
-/* 196 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -22999,7 +23034,7 @@
 	exports.TextInput = TextInput;
 
 /***/ },
-/* 197 */
+/* 199 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -23018,13 +23053,13 @@
 	exports.getNextId = getNextId;
 
 /***/ },
-/* 198 */
+/* 200 */
 /***/ function(module, exports) {
 
 	"use strict";
 	
 	exports.actions = [{
-	    "type": "SET_NAME",
+	    "type": "NAME",
 	    "payload": "Crazy Joe's Bookarama"
 	}, {
 	    "type": "SHELVES",
@@ -23036,7 +23071,7 @@
 	    "payload": {
 	        "key": 1,
 	        "update": {
-	            "type": "SET_DESCRIPTION",
+	            "type": "DESCRIPTION",
 	            "payload": "Romance"
 	        }
 	    }
@@ -23131,7 +23166,7 @@
 	    "payload": {
 	        "key": 2,
 	        "update": {
-	            "type": "SET_DESCRIPTION",
+	            "type": "DESCRIPTION",
 	            "payload": "History"
 	        }
 	    }
