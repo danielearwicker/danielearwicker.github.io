@@ -49,7 +49,7 @@ Another thing we can only do with the `interface` style of function-type is to d
 ```ts
 interface F {
     (num: number, str: string): { num: number, str: string };
-    blah(): void;
+    (num: number): boolean;
 }
 ```
 

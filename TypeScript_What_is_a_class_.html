@@ -46,7 +46,7 @@ const c3: C = C;
 }
 </code></pre><p>Another thing we can only do with the <code>interface</code> style of function-type is to define multiple ways to call the function:</p><pre><code class="ts">interface F {
     (num: number, str: string): { num: number, str: string };
-    blah(): void;
+    (num: number): boolean;
 }
 </code></pre><p>And finally (especially relevant here), we can say that the function must be called with the <code>new</code> prefix:</p><pre><code class="ts">interface F {
     new (num: number, str: string): { num: number, str: string };
