@@ -35,6 +35,64 @@ const c2: C = new C();
 const c3: C = C;
 </code></pre><p>Note that <code>c3</code> is a type error. <code>C</code> is not of type <code>C</code>. <code>C</code> is a function, a named object that exists at runtime, and like any identifier its type can be written as <code>typeof C</code>, so <code>c1</code> has to work. But at compile time, <code>C</code> is an interface, conformed to by the object we get back from <code>new C()</code>, so that's why <code>c2</code> works.</p>
 
+<p>Interfaces are used in TypeScript to describe anything that has properties. In JavaScript a function can have properties of its own, so the definitive way to describe a function is with an interface. This lambda-like style:</p><pre><code class="ts">type F = (arg1: number, arg2: string) =&gt; string
+</code></pre><p>is an abbreviation for:</p><pre><code class="ts">interface F {
+    (arg1: number, arg2: string): string
+}
+</code></pre><p>It looks just like a method, except without a name. So if we have <code>f</code> that implements <code>F</code>, we can directly call it:</p><pre><code class="ts">f(5, "hi");
+</code></pre><p>But it may be that we can also say <code>f.blah()</code>, because <code>F</code> also has a <code>blah</code> property that happens to be another function:</p><pre><code class="ts">interface F {
+    (num: number, str: string): { num: number, str: string };
+    blah(): void;
+}
+</code></pre><p>Another thing we can only do with the <code>interface</code> style of function-type is to define multiple ways to call the function:</p><pre><code class="ts">interface F {
+    (num: number, str: string): { num: number, str: string };
+    blah(): void;
+}
+</code></pre><p>And finally (especially relevant here), we can say that the function must be called with the <code>new</code> prefix:</p><pre><code class="ts">interface F {
+    new (num: number, str: string): { num: number, str: string };
+}
+</code></pre><p>Though we can also do that with the lambda-like version:</p><pre><code class="ts">type F = new (num: number, str: string) =&gt; { num: number, str: string };
+</code></pre><p>Putting these pieces together, suppose we have class</p><pre><code class="ts">class C {
+    i = 5;
+    static s = "hi";
+}
+
+// Usage:
+console.log(C.s);
+console.log(new C().i);
+</code></pre><p>We can completely describe the type of <code>C</code> "by hand" like this:</p><pre><code class="ts">interface TypeOfC {
+
+    new (): {
+        i: number;
+    }
+
+    s: string;
+}
+</code></pre><p>So <code>TypeOfC</code> describes a <code>new</code>-able function, because we declare that it has <code>new</code>-able function with no name. <code>s</code> is a property of the function, whereas <code>i</code> is a property of the objects created when you call the function.</p>
+
+<p>We can declare a <code>const</code> of type <code>TypeOfC</code> and assign <code>C</code> to it:</p><pre><code class="">// Compatible:
+const c2: TypeOfC = C;
+
+// Usage:
+console.log(c2.s);
+console.log(new c2().i);
+</code></pre><p>Now, we can abbreviate our <code>TypeOfC</code> re-declaration because TypeScript already gives a name to the type returned from the function: it's called <code>C</code>:</p><pre><code class="ts">interface TypeOfC {
+
+    new (): C
+    s: string;
+}
+</code></pre><p>Recall what we established right at the start: when you write a class <code>C</code>, you give two meanings to that name. In the namespace of types, you create a type <code>C</code> that describes the objects returned by <code>new C()</code>. In the namespace of runtime objects, you create a function <code>C</code>. TypeScript never confuses the two meanings because every spot in your code is unambiguously referring to either a compile-time type or a runtime object.</p>
+
+<p>And we don't need to declare <code>TypeOfC</code> at all, because we can just use TypeScript's built-in feature for getting the type of a named object: <code>typeof C</code>. In JavaScript, <code>typeof</code> takes an expression and returns a string describing its type (to an extent...) In TypeScript that is still exactly the same, of course, but also <code>typeof</code> can be used in type declarations to get the type of an expression.</p>
+
+<p>Hence:</p><pre><code class="">// Compatible:
+const c2: typeof C = C;
+
+// Usage:
+console.log(c2.s);
+console.log(new c2().i);
+</code></pre>
+
             </div>
             
             <div class="outer">                                
