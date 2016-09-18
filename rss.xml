@@ -8,13 +8,11 @@
     <item>
       <title>Immuto - Working with React (An Example)</title>
       <pubDate> 2016-09-16T00:00:00Z</pubDate>
-      <description>&lt;p&gt;In &lt;a href="Immuto_Strongly_Typed_Redux_Composition.html"&gt;Immuto - Strongly Typed Redux Composition&lt;/a&gt; I introduced the &lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto library&lt;/a&gt; by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!&lt;/p&gt;
+      <description>&lt;p&gt;&lt;em&gt;UPDATE - I'm in the move-fast-and-break-things phase so a couple of details in here are already out of date. In particular, properties are now unified with cursors. See the various repos for details.&lt;/em&gt;&lt;/p&gt;
 
-&lt;p&gt;What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:&lt;/p&gt;
+&lt;p&gt;In &lt;a href="Immuto_Strongly_Typed_Redux_Composition.html"&gt;Immuto - Strongly Typed Redux Composition&lt;/a&gt; I introduced the &lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto library&lt;/a&gt; by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!&lt;/p&gt;
 
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;npm install immuto-react&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;</description>
+&lt;p&gt;What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Immuto_Working_with_React_An_Example_.html</link>
     </item>
     <item>

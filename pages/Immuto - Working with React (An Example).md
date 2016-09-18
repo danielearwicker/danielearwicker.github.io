@@ -1,6 +1,8 @@
 tags: typescript immuto
 date: 2016-09-16
 
+*UPDATE - I'm in the move-fast-and-break-things phase so a couple of details in here are already out of date. In particular, properties are now unified with cursors. See the various repos for details.*
+
 In [[Immuto - Strongly Typed Redux Composition]] I introduced the [Immuto library](https://github.com/danielearwicker/immuto) by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!
 
 What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:
