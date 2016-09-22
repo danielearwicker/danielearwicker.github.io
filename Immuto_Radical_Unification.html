@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | immuto</title>
+        <title>Daniel Earwicker | Immuto - Radical Unification</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,41 +22,50 @@
             </div>
             
             <div class="content">
-                <h2>Immuto - Radical Unification</h2>
+                <h1>Immuto - Radical Unification</h1>
+<hr>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-22</p>
+
 <p><a href="https://github.com/danielearwicker/immuto">Immuto</a> continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.</p>
 
 <p>The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:</p><pre><code class="ts">declare function getBook(shelf: Shelf, id: number): Book;
-</code></pre>
-<p><a href="Immuto_Radical_Unification.html">Read on...</a></p>
-<hr>
+</code></pre><p>And here's one that gets a shelf from a shop:</p><pre><code class="ts">declare function getShelf(shop: Shop, id: number): Shelf;
+</code></pre><p>If we have a <code>shelfId</code> and a <code>bookId</code>, to go straight from shop to book:</p><pre><code class="ts">const book = getBook(getShelf(shop, shelfId), bookId);
+</code></pre><p>Ugh. The nesting makes it confusing. This is why people like methods on objects:</p><pre><code class="ts">const book = shop.getShelf(shelfId).getBook(bookId);
+</code></pre><p>That's the clarity of left-to-right composition. In Immuto we have clean pure-data interfaces, and we declare actions on them and form them into reducers. One kind of action is called a <code>reference</code> and it builds a function that works a bit like <code>getBook</code> and <code>getShelf</code>, except it deals with cursors to data. So it suffered from the same nested composition ugliness.</p>
 
-<h2>Immuto - Working with React (An Example)</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-16</p>
-<p><em>UPDATE - I'm in the move-fast-and-break-things phase so a couple of details in here are already out of date. In particular, properties are now unified with cursors. See the various repos for details.</em></p>
+<p>What we need, taking a leaf out of functional programming, is a piping operator. I've added a method called <code>$</code> to the <code>Cursor</code> interface, which means "look up", and corresponds to the familiar <code>.</code> operator in many object orientated languages.</p>
 
-<p>In <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a> I introduced the <a href="https://github.com/danielearwicker/immuto">Immuto library</a> by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!</p>
+<p>So if my <code>Shop</code> has a collection <code>shelves</code> (of type <code>Shelves</code>) in which each item is a <code>Shelf</code>, and a <code>Shelf</code> has a collection <code>books</code> (of type <code>Books</code>) in which each item is a <code>Book</code>, I can get a cursor to a book like this:</p><pre><code class="ts">const book = shop.$(Shop.shelves)
+                 .$(Shelves.at(shelfId))
+                 .$(Shelf.books)
+                 .$(Books.at(bookId))
+</code></pre><p>It makes complicated manoeuvres pretty readable and logical. Each step is like:</p><pre><code class="ts">whatIGot.$(whatIWant)
+</code></pre><p>So it's easy to understand by analogy with the ordinary <code>.</code> operator, although a bit more syntactically noisy. It would be nice if I could implement the <code>[]</code> operator, and so get:</p><pre><code class="ts">const book = shop[Shop.shelves]
+                 [Shelves.at(shelfId)]
+                 [Shelf.books]
+                 [Books.at(bookId)]
+</code></pre><p>But indexers are very special in JavaScript and you can't just implement them like any function.</p>
 
-<p>What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:</p>
-<p><a href="Immuto_Working_with_React_An_Example_.html">Read on...</a></p>
-<hr>
+<p>One other change I made yesterday which I've hinted at above is that I've ripped out the special treatment of collections. It was an unnecessary concept that needed special explanation, it was a bit too magical which made the explanation difficult, and it baked in too much functionality that you might not want. Not all collections need to support random access deletion, for example. Also there are fundamental difference between kinds of collections: if you delete item 4 from an array, you renumber items 5, 6, 7... whereas that doesn't happen with a map. Do I hide that difference or let it leak out? These are all decisions I shouldn't be taking.</p>
 
-<h2>Immuto - Strongly Typed Redux Composition</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-11</p>
-<p><a href="What_s_good_about_Redux.html">What's good about Redux</a>, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. <a href="http://redux.js.org/docs/basics/Actions.html">Read the docs, they're easy</a>.</p>
+<p>So now collections are just a data type with a reducer and some actions, same as anything else:</p><pre><code class="ts">export type Books = { [id: number]: Book };
 
-<p>There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.</p>
+export namespace Books {
+    export const empty: Books = {};
+    export const at = objectByNumber(Book);
+    export const reduce = reducer(empty).action(at);
+}
+</code></pre><p>I give the collection type a name, then I write a namespace for it, exposing only the actions I want. The <code>objectByNumber</code> function provides a way to get a cursor to a <code>Book</code> out of a collection of <code>Books</code>, i.e. it returns a traversal function suitable for passing to the new <code>.$()</code> piping operator.</p>
 
-<p>One composition feature is <code>combineReducers</code>, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.</p>
-<p><a href="Immuto_Strongly_Typed_Redux_Composition.html">Read on...</a></p>
-<hr>
+<p>There are now quite a few examples of this in <a href="https://github.com/danielearwicker/immuto-react">immuto-react</a> and <a href="https://github.com/danielearwicker/immuto-example">immuto-example</a>.</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <a href="Immuto_Radical_Unification.html">Immuto - Radical Unification</a>
+        <strong>Immuto - Radical Unification</strong>
     </td>
     <td class="date"> 2016-09-22</td>    
 </tr>

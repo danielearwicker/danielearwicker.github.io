@@ -4,7 +4,16 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2016-09-16T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2016-09-22T00:00:00Z</lastBuildDate>
+    <item>
+      <title>Immuto - Radical Unification</title>
+      <pubDate> 2016-09-22T00:00:00Z</pubDate>
+      <description>&lt;p&gt;&lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto&lt;/a&gt; continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.&lt;/p&gt;
+
+&lt;p&gt;The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:&lt;/p&gt;&lt;pre&gt;&lt;code class="ts"&gt;declare function getBook(shelf: Shelf, id: number): Book;
+&lt;/code&gt;&lt;/pre&gt;</description>
+      <link>http://danielearwicker.github.io/Immuto_Radical_Unification.html</link>
+    </item>
     <item>
       <title>Immuto - Working with React (An Example)</title>
       <pubDate> 2016-09-16T00:00:00Z</pubDate>
@@ -14,16 +23,6 @@
 
 &lt;p&gt;What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Immuto_Working_with_React_An_Example_.html</link>
-    </item>
-    <item>
-      <title>Immuto - Strongly Typed Redux Composition</title>
-      <pubDate> 2016-09-11T00:00:00Z</pubDate>
-      <description>&lt;p&gt;&lt;a href="What_s_good_about_Redux.html"&gt;What's good about Redux&lt;/a&gt;, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. &lt;a href="http://redux.js.org/docs/basics/Actions.html"&gt;Read the docs, they're easy&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.&lt;/p&gt;
-
-&lt;p&gt;One composition feature is &lt;code&gt;combineReducers&lt;/code&gt;, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.&lt;/p&gt;</description>
-      <link>http://danielearwicker.github.io/Immuto_Strongly_Typed_Redux_Composition.html</link>
     </item>
     <item>
       <title>TypeScript - What is a class?</title>
@@ -37,6 +36,16 @@ const c2: C = new C();
 const c3: C = C;
 &lt;/code&gt;&lt;/pre&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_What_is_a_class_.html</link>
+    </item>
+    <item>
+      <title>Immuto - Strongly Typed Redux Composition</title>
+      <pubDate> 2016-09-11T00:00:00Z</pubDate>
+      <description>&lt;p&gt;&lt;a href="What_s_good_about_Redux.html"&gt;What's good about Redux&lt;/a&gt;, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. &lt;a href="http://redux.js.org/docs/basics/Actions.html"&gt;Read the docs, they're easy&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.&lt;/p&gt;
+
+&lt;p&gt;One composition feature is &lt;code&gt;combineReducers&lt;/code&gt;, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Immuto_Strongly_Typed_Redux_Composition.html</link>
     </item>
     <item>
       <title>TypeScript and runtime typing - EPISODE II</title>
