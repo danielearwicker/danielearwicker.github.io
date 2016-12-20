@@ -4,7 +4,26 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2016-09-22T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2016-12-20T00:00:00Z</lastBuildDate>
+    <item>
+      <title>Immuto - Epilogue</title>
+      <pubDate> 2016-12-20T00:00:00Z</pubDate>
+      <description>&lt;p&gt;It's been a couple of months since I had a scrap of time to do anything with &lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto&lt;/a&gt; - 
+I've been up to my knees in WPF/C# instead (working for a living).&lt;/p&gt;
+
+&lt;p&gt;This break has given me a new perspective (aside from the obvious one that WPF is yucky). The executive summary is that I don't 
+see myself ever using Immuto seriously. The way I look at it now is almost as a satire on the rigid idea of "single reducer 
+function for the whole application state". It wasn't intended that way! I was genuinely into it and was expecting to use it in
+my job. But now it looks very different. And as Immuto is just a flavour of Redux, it's a broader comment on Redux itself.&lt;/p&gt;
+
+&lt;p&gt;What do I mean by a satire? I mean it's like I was trying to show the absurdity of something by pretending to take it seriously. 
+(Except I &lt;em&gt;was&lt;/em&gt; taking it seriously). My dad told me a story from around 1969 when he went to a conference. The latest hot 
+debate topic at the time was &lt;a href="http://www.cs.utexas.edu/users/EWD/ewd02xx/EWD215.PDF"&gt;Goto Considered Harmful&lt;/a&gt;, and some speaker 
+put some source code on the overhead projector and invited the room to critique it. Hands went up and all the suggestions were 
+to get rid of the GOTOs, of course. So as a group they began editing the code to try and get rid of the GOTOs and be good 
+Structured Programmers, and the structure of the program become more and more absurd and unreadable as the exercise progressed. &lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Immuto_Epilogue.html</link>
+    </item>
     <item>
       <title>Immuto - Radical Unification</title>
       <pubDate> 2016-09-22T00:00:00Z</pubDate>
@@ -25,6 +44,16 @@
       <link>http://danielearwicker.github.io/Immuto_Working_with_React_An_Example_.html</link>
     </item>
     <item>
+      <title>Immuto - Strongly Typed Redux Composition</title>
+      <pubDate> 2016-09-11T00:00:00Z</pubDate>
+      <description>&lt;p&gt;&lt;a href="What_s_good_about_Redux.html"&gt;What's good about Redux&lt;/a&gt;, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. &lt;a href="http://redux.js.org/docs/basics/Actions.html"&gt;Read the docs, they're easy&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.&lt;/p&gt;
+
+&lt;p&gt;One composition feature is &lt;code&gt;combineReducers&lt;/code&gt;, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Immuto_Strongly_Typed_Redux_Composition.html</link>
+    </item>
+    <item>
       <title>TypeScript - What is a class?</title>
       <pubDate> 2016-09-11T00:00:00Z</pubDate>
       <description>&lt;p&gt;In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:&lt;/p&gt;&lt;pre&gt;&lt;code class="ts"&gt;class C {
@@ -36,16 +65,6 @@ const c2: C = new C();
 const c3: C = C;
 &lt;/code&gt;&lt;/pre&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_What_is_a_class_.html</link>
-    </item>
-    <item>
-      <title>Immuto - Strongly Typed Redux Composition</title>
-      <pubDate> 2016-09-11T00:00:00Z</pubDate>
-      <description>&lt;p&gt;&lt;a href="What_s_good_about_Redux.html"&gt;What's good about Redux&lt;/a&gt;, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. &lt;a href="http://redux.js.org/docs/basics/Actions.html"&gt;Read the docs, they're easy&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.&lt;/p&gt;
-
-&lt;p&gt;One composition feature is &lt;code&gt;combineReducers&lt;/code&gt;, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.&lt;/p&gt;</description>
-      <link>http://danielearwicker.github.io/Immuto_Strongly_Typed_Redux_Composition.html</link>
     </item>
     <item>
       <title>TypeScript and runtime typing - EPISODE II</title>

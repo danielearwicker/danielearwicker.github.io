@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | immuto</title>
+        <title>Daniel Earwicker | Immuto - Epilogue</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,8 +22,10 @@
             </div>
             
             <div class="content">
-                <h2>Immuto - Epilogue</h2>
+                <h1>Immuto - Epilogue</h1>
+<hr>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-12-20</p>
+
 <p>It's been a couple of months since I had a scrap of time to do anything with <a href="https://github.com/danielearwicker/immuto">Immuto</a> - 
 I've been up to my knees in WPF/C# instead (working for a living).</p>
 
@@ -38,44 +40,64 @@ debate topic at the time was <a href="http://www.cs.utexas.edu/users/EWD/ewd02xx
 put some source code on the overhead projector and invited the room to critique it. Hands went up and all the suggestions were 
 to get rid of the GOTOs, of course. So as a group they began editing the code to try and get rid of the GOTOs and be good 
 Structured Programmers, and the structure of the program become more and more absurd and unreadable as the exercise progressed. </p>
-<p><a href="Immuto_Epilogue.html">Read on...</a></p>
-<hr>
 
-<h2>Immuto - Radical Unification</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-22</p>
-<p><a href="https://github.com/danielearwicker/immuto">Immuto</a> continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.</p>
+<p>The moral is that <em>sometimes</em> a GOTO is the least bad option, so don't be too dogmatic in applying your precious rules. But the
+point is, the presenter of that talk let the absurdity of the situation become apparent all by itself, merely by taking it 
+seriously and seeing where that led. I feel I've done the same thing with Redux, except by accident.</p>
 
-<p>The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:</p><pre><code class="ts">declare function getBook(shelf: Shelf, id: number): Book;
-</code></pre>
-<p><a href="Immuto_Radical_Unification.html">Read on...</a></p>
-<hr>
+<p>If we have a single reducer function, in a large complex application its going to end up large and complex. So we need to break
+it down into composable pieces and tie those pieces together. With a really slick declaritive way of creating and composing
+those pieces, this becomes second nature, and we can build applications of unlimited scope and cleverness, all the while fully
+conforming <em>to the letter if not the spirit</em> of the law that there must be a single reducer function for our whole app.</p>
 
-<h2>Immuto - Working with React (An Example)</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-16</p>
-<p><em>UPDATE - I'm in the move-fast-and-break-things phase so a couple of details in here are already out of date. In particular, properties are now unified with cursors. See the various repos for details.</em></p>
+<p>There is a single reducer function... you just wouldn't know this from looking at the code. Nor would you ever care.</p>
 
-<p>In <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a> I introduced the <a href="https://github.com/danielearwicker/immuto">Immuto library</a> by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!</p>
+<p>The same goes for the "single state atom", the variable that holds the result of the most recent execution of the whole-app 
+reducer. There is only one mutable variable in the entire app. But again, who cares? The value of that variable is some deep
+nested hierarchy within which their are many islands that each encapsulate some separate portion of the application state. So
+in any meaningful sense it's not one value. It's many.</p>
 
-<p>What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:</p>
-<p><a href="Immuto_Working_with_React_An_Example_.html">Read on...</a></p>
-<hr>
+<p>Yes, we artificially stitch them together so we can store them in a single state variable, but by doing so we introduce a need 
+to constantly discard and rebuild all the outer structure every time something lower down is modified.</p>
 
-<h2>Immuto - Strongly Typed Redux Composition</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-11</p>
-<p><a href="What_s_good_about_Redux.html">What's good about Redux</a>, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. <a href="http://redux.js.org/docs/basics/Actions.html">Read the docs, they're easy</a>.</p>
+<p>All so that we can comply with a rule: single reducer, single state variable. What does this give us? In theory, easier
+debugging, and other facilities that depend on keeping old versions of our state tree. The killer demo is "look how easily I
+can implement undo!"</p>
 
-<p>There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.</p>
+<p>But the truth is that you can add undo to any application that has the ability load/save its state to JSON. It doesn't need
+to keep its state in one immutable tree. It just needs to be able to assemble all the pieces of its live state into a single
+"snapshot" tree when asked, and then later be able to parse such a snapshot and assign pieces of it to wherever they belong
+in the live state. <a href="https://github.com/danielearwicker/nimbah/blob/master/js/undo.js">Here's an example I wrote four years ago</a>.</p>
 
-<p>One composition feature is <code>combineReducers</code>, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.</p>
-<p><a href="Immuto_Strongly_Typed_Redux_Composition.html">Read on...</a></p>
-<hr>
+<p>As for debugging and understanding the correctness of your app, of course there's no substitute for having a simple requirement
+so your app doesn't need to be complex. In the real world, requirements are not simple. But we in software we (over and over) 
+apply the golden rule of "divide and conquer", breaking complex problems down into simple pieces that can be independently
+solved, reasoned about and tested. This is why Immuto was my necessary response to Redux.</p>
+
+<p>But if my large complex app is really just a lot of small simple apps stuck together, it doesn't matter that much <em>how</em> I
+stick them together. Does it really create any issues if I have multiple independent stores, one for each piece? Of course 
+not. Does it help much with anything if I insist on making them share a single store? Not really, no.</p>
+
+<p>I did progress somewhat with Immuto beyond what I committed/pushed. In particular, I got some way with polymorphism: a
+React component that could have multiple implementations, each implementation being able to store data of its own type within
+the state. I implemented recursive structures (e.g. a tree in which some nodes are folders with child nodes and others are 
+leaves or terminals). It was kind of working! But it was complex. I loved that complexity, because I'm a nerd.</p>
+
+<p>But now I have the strange feeling that when I got exciting about Redux, I accepted its basic principles not because they 
+conferred any advantage, but because I could see that they didn't present any obstacles to a sufficiently smart person, and I
+wanted to prove it. It provided me with a nice challenge or diversion. It was a brain-teaser and I got deeply into it. But
+the end product is, I suspect, hard for anyone else to pick up and learn, so that in itself is an obstacle. If I were to 
+foist it onto my team and someone asks me "But <em>why</em> do we need to do it this way?" there is no answer. It was just cool to 
+figure out.</p>
+
+<p>RIP Immuto. You were fun!</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <a href="Immuto_Epilogue.html">Immuto - Epilogue</a>
+        <strong>Immuto - Epilogue</strong>
     </td>
     <td class="date"> 2016-12-20</td>    
 </tr>
