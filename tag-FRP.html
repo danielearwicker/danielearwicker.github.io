@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | roslyn</title>
+        <title>Daniel Earwicker | FRP</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,41 +22,19 @@
             </div>
             
             <div class="content">
-                <h2>A new kind of managed lvalue pointer</h2>
-<p class="meta"><a href="tag-roslyn.html">ROSLYN</a>  2014-04-27</p>
-<p>It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!</p>
+                <h2>Eventless - XAML Flavoured</h2>
+<p class="meta"><a href="tag-FRP.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-Eventless.html">EVENTLESS</a>  2016-12-24</p>
+<p>About four years ago, being so taken with data modeling approach used in 
+<a href="http://knockoutjs.com">Knockout.js</a>, I wanted to 
+<a href="https://smellegantcode.wordpress.com/2013/02/25/eventless-programming-part-1-why-the-heck/">recreate it for C#</a>.
+At the time I wasn't actively using C# so I never got to really use it and left it alone.</p>
 
-<p>Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
-much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an <code>Invoke</code> method.</p>
+<p>But in the last year and a half I've written a few view models for a WPF application. The first time
+I did it I couldn't believe how primitive and laborious it was in comparison. So I started idly 
+messing with Eventless in my spare time - mostly deleting stuff - to make it XAML-friendly.</p>
 
-<p>So all we need is an interface with a <code>Value</code> property. Objects supporting that interface can represent a single property that can be passed around like any other value:</p>
-<p><a href="A_new_kind_of_managed_lvalue_pointer.html">Read on...</a></p>
-<hr>
-
-<h2>Using pointer syntax as a shorthand for IEnumerable</h2>
-<p class="meta"><a href="tag-roslyn.html">ROSLYN</a>  2014-04-26</p>
-<p>Another quickie extension to C#. In the current language, a type declaration <code>T!</code> is shorthand for <code>Nullable</code>.</p>
-
-<p>But equally important in modern C# programs are sequences of values, so a similar shorthand for <code>IEnumerable</code> would be ideal. 
-The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
-this was the choice made by the intriguing <a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/">research language Cω</a> 
-that influenced LINQ, so let's copy that:</p>
-
-<p>```csharp
-int* numbers = new[] { 1, 6, 55, 4, 11 };</p>
-<p><a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Read on...</a></p>
-<hr>
-
-<h2>Adding crazily powerful operator overloading to C# 6</h2>
-<p class="meta"><a href="tag-roslyn.html">ROSLYN</a>  2014-04-23</p>
-<p><strong>I'm going to show you how to enable a new kind of operator overloading by adding exactly four (4) lines of code to a single file in the C# 6 compiler 
-preview. Yes, I was surprised too!</strong></p>
-
-<p>After seeing the video of Anders Hejlsberg showing how easy it is to hack the new open source C# compiler, I had to give it a try.</p>
-
-<p>My aim was (I assumed) a lot more ambitious and crazy than his demo. I thought it would take ages to figure out. But it was still tempting to aim high and 
-actually implement a substantial new feature, because there are a few I've been wondering about over the years.</p>
-<p><a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Read on...</a></p>
+<p>Just like Knockout, and now <a href="https://github.com/mobxjs/mobx">MobX</a>, it makes the process delightfully simple. You just declare stuff and it works!</p>
+<p><a href="Eventless_XAML_Flavoured.html">Read on...</a></p>
 <hr>
 
             </div>

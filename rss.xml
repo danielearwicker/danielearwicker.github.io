@@ -4,7 +4,22 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2016-12-20T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2016-12-24T00:00:00Z</lastBuildDate>
+    <item>
+      <title>Eventless - XAML Flavoured</title>
+      <pubDate> 2016-12-24T00:00:00Z</pubDate>
+      <description>&lt;p&gt;About four years ago, being so taken with data modeling approach used in 
+&lt;a href="http://knockoutjs.com"&gt;Knockout.js&lt;/a&gt;, I wanted to 
+&lt;a href="https://smellegantcode.wordpress.com/2013/02/25/eventless-programming-part-1-why-the-heck/"&gt;recreate it for C#&lt;/a&gt;.
+At the time I wasn't actively using C# so I never got to really use it and left it alone.&lt;/p&gt;
+
+&lt;p&gt;But in the last year and a half I've written a few view models for a WPF application. The first time
+I did it I couldn't believe how primitive and laborious it was in comparison. So I started idly 
+messing with Eventless in my spare time - mostly deleting stuff - to make it XAML-friendly.&lt;/p&gt;
+
+&lt;p&gt;Just like Knockout, and now &lt;a href="https://github.com/mobxjs/mobx"&gt;MobX&lt;/a&gt;, it makes the process delightfully simple. You just declare stuff and it works!&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Eventless_XAML_Flavoured.html</link>
+    </item>
     <item>
       <title>Immuto - Epilogue</title>
       <pubDate> 2016-12-20T00:00:00Z</pubDate>
