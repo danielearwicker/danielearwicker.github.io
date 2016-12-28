@@ -195,7 +195,7 @@ for (const name of fs.readdirSync(outputPath)) {
 const articlesByTag: { [name: string]: Article[] } = {};
 
 for (const article of articles) {
-    for (const tag of article.tags.trim().split(" ")) {
+    for (const tag of article.tags.trim().split(" ").map(t => t.toLowerCase())) {
         const articlesForTag = articlesByTag[tag] || (articlesByTag[tag] = []);
         articlesForTag.push(article);
     }

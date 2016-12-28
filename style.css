@@ -1,6 +1,6 @@
 body {
-    font-size: 1.2em;
-    font-family: 'Baskerville', 'Georgia', 'Times', 'serif';
+    font-size: 1em;
+    font-family: 'Helvetica', 'Arial', 'sans-serif';
     line-height: 180%;
     background: steelblue;
     padding: 8px;
@@ -10,6 +10,10 @@ body {
 h1 {
     line-height: 130%;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+
+code {
+    font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
 }
 
 .oneColumn {
@@ -38,7 +42,8 @@ h1 {
 }
 
 code {
-    line-height: 120%;
+    line-height: 130%;
+    color: #04b;
 }
 
 .outer a, .outer {
@@ -55,6 +60,11 @@ code {
     box-shadow: 10px 10px 10px #2b506e;
 }
 
+.content a {
+    font-weight: bold;
+    color: black;
+}
+
 .recent {
     margin-top: 20px;
 }
@@ -65,4 +75,9 @@ code {
 
 .topics, .rss {
     text-align: center;
+}
+
+.topics {
+    font-size: 1.5em;
+    opacity: 0.5;
 }

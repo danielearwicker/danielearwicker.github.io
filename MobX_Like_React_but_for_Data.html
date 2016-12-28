@@ -1,0 +1,249 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | MobX - Like React, but for Data</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="http://www.cnlsoftware.com">CNL Software Ltd<a/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-eventless.html">EVENTLESS</a> <a href="tag-frp.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-immuto.html">IMMUTO</a> <a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-redux.html">REDUX</a> <a href="tag-roslyn.html">ROSLYN</a> <a href="tag-typescript.html">TYPESCRIPT</a></div>
+            </div>
+            
+            <div class="content">
+                <h1>MobX - Like React, but for Data</h1>
+<hr>
+<p class="meta"><a href="tag-FRP.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-MobX.html">MOBX</a> <a href="tag-redux.html">REDUX</a> <a href="tag-react.html">REACT</a>  2016-12-28</p>
+
+<p>Catching up on blogged opinions about MobX and where it fits in (especially in relation to Redux), I see much confusion. There is a suspicion of it arising from fear of mutability. It has none of the frameworky ceremony of Redux, and that seems to cause anxiety in some.</p>
+
+<p>Even its defenders seem a little apologetic, like MobX is okay <em>despite</em> the heresy of allowing data to be mutable and object-oriented. The great Basarat even humorously <a href="https://twitter.com/basarat/status/812150927947800578">welcomed me to the dark side!</a></p>
+
+<p>I'm fine with being on the edgy team. You'll usually find me in my leather jacket and shades, posing on my parked Harley Davidson and chewing on a matchstick, intimidating the townspeople. Why? I don't have to explain myself to you, Mister.</p>
+
+<p>But (try to keep this quiet, for the sake of my dangerous image) the truth is more reassuring. In fact MobX is based on some of the very same basic concepts that make React itself so fantastic. It implements those ideas in a way that is more seamless (reducing syntactic noise) and automatic (reducing opportunities for mistakes), while generalising them to cover a wider set of problems.</p>
+
+<p>Increased power with reduced responsibility! What's not to love?</p>
+
+<h2 id="immutability">Immutability</h2>
+
+<p>In functional programming, most data is immutable. With the arrival of <code>const</code> for local variables (but sadly not parameters) in JavaScript (along with <code>readonly</code> for properties in TypeScript), most people soon realise that they use <code>const</code> far more than <code>let</code> and even try to organise their code so as to minimise the unnecessary use of <code>let</code>.</p>
+
+<p>But even hardcore FP languages recognise the practical need to work with changing data. The universe is stateful and it's a poor programming language that can't deal with such a fundamental aspect of reality. Hence Clojure provides <a href="http://clojure.org/reference/vars">four different ways</a> to tame mutable values.</p>
+
+<p>Even Haskell, that purest of pure FP languages, is in a sense two languages, one of which <a href="https://www.haskell.org/tutorial/io.html#sect7.5">emulates imperative programming</a> and enables a variety of ways to deal with mutable data.</p>
+
+<p>It's not necessary, nor practical, to eliminate mutable data. But it is important to handle it carefully. What these solutions have in common is a special way of referring to a mutable value, so it can be managed. They have a way for an immutable object to store a kind of "handle" to a piece of mutable data, shielding its owner from the need to be mutable, but enabling the data to be accessed safely.</p>
+
+<h2 id="deriveddataandpartialupdating">Derived data and partial updating</h2>
+
+<p>The <code>render</code> function of a React component is a pure function that returns a tree of lightweight objects describing the desired UI. How pure is it? <em>Very</em>, even though it doesn't look that way at first because it has no formal parameters. There are strict rules about what data it can depend on: props and state. React re-renders automatically if either of those change. If <code>render</code> depended on anything else that might change, the system breaks down.</p>
+
+<p>Even so, there is a method called <code>forceUpdate</code> available on any component, which means that it is possible to extend the scope of <code>render</code>, causing a render whenever necessary. This means we can broaden our definition of "state" to include anything that is able to trigger a re-render of any component that depends on it. We call such things <em>observables</em>.</p>
+
+<p>So, <code>render</code> is a pure function of props and state, <em>where state may be any data that has been properly set up to trigger a re-render when it changes</em>; this includes React's own <code>this.state</code> out-of-the-box, of course.</p>
+
+<p>The beauty of this is how easy it is to code for. The downside is that if you prepared your entire UI using a single <code>render</code> function, you might be repeating a lot of work (and throwing away a lot of temporary objects) every time the slightest thing changes in the state data.</p>
+
+<p>But React has a solution for this, one that happily has other spin-off benefits: <em>componentization</em>. Each component is a bounded sub-application. The data depended on by a component may change, and cause that component to re-render, and the parent component is not affected at all.</p>
+
+<p>[<em>Sidebar:</em> Unfortunately, this does not automatically benefit you if you rely on props. The way a component's props change is by the parent being re-rendered, so it passes different props to the child. To improve on this, React offers the overridable <code>shouldComponentRender</code>, which is an opportunity for hand-written optimisation, and therefore an opportunity for hand-written bugs.]</p>
+
+<p>The correctness of React's built-in <code>this.state</code> is obvious: when you change the state with <code>this.setState</code>, it triggers a re-render. The only problem is the tendency of relevant state data to be needed across multiple components.</p>
+
+<p>So why not dissociate the state observable(s) from the components? That would introduce the problem of how/when to wire up the change notifications to the re-rendering of components. What you need, and what MobX takes care of, is for components to <em>automatically detect</em> which observables they depend on.</p>
+
+<p>The point I want to make here is that <code>render</code> generates some derived data (the virtual DOM tree it returns is mere data like any other), and a React component is a <em>unit of memoization and re-evaluation</em>. If you re-executed a single whole-app <code>render</code> function in response to any state change, you would mostly be repeatedly computing the exact same stuff. But by dividing it up into little islands of cached results and only re-executing them when <em>their</em> specific inputs change, you greatly cut down the work to be done. This is why the React devtools include a neat feature that highlights the components that just refreshed.</p>
+
+<p>In MobX, <a href="https://mobxjs.github.io/mobx/refguide/computed-decorator.html">computed</a> provides this exact same facility, but generalised to cover functions that generate <em>any</em> kind of data, not just virtual DOM trees. The function must be pure in the sense that it may only depend on the values of observables. A <code>computed</code> property is like a component that "renders" data: a bounded unit of memoization and re-evaluation. It re-renders automatically when there is a change in any of the observables it depends on.</p>
+
+<p>See? MobX isn't weird or dangerous. It's just like React itself. Just generalised and more powerful. It's React for data.</p>
+
+<h2 id="observables">Observables</h2>
+
+<p>Let's be precise about what an observable is. The <code>this.state</code> feature of React is a disguised instance of the observable pattern.</p>
+
+<p>An observable is an object that stores a single value. You can <code>get</code> or <code>set</code> the current value, and you can <code>listen</code> to it so your callback will be executed whenever the value changes. Also you can quit listening (very important). That's it.</p>
+
+<p>In a React component, the <code>get</code> function is represented by <code>this.state</code>, and the <code>set</code> function becomes <code>this.setState</code>. But there is no public <code>listen</code> function. Instead React assumes that only the component's own <code>render</code> function (or rather, the built-in logic that calls <code>render</code>) needs to be listening, and so it sets that up (and tears it down) for you.</p>
+
+<p>Redux also contains this pattern. A Redux store is an observable. It has <code>subscribe</code> and <code>getState</code> functions. Rather than a raw <code>setState</code> it has an associated reducer function that defines the action-based API by which you can update the state (although there's nothing stopping you from including a <code>SET_STATE</code> action in that API, and this is often the simplest way to initialise the state).</p>
+
+<h2 id="howmanyobservableswhentolisten">How many observables? When to listen?</h2>
+
+<p>Although it's not enforced at all, Redux also has a rule: there should be only one such observable for the entire app. This is obviously open to interpretation: what are the boundaries of an app? What if you're building a reusable component? It's potentially more of a guideline than a rule, but it is an important part of Redux nonetheless.</p>
+
+<p>Redux's "single store" rule, and Reacts's own built-in subscription approach, help address the one tricky aspect of the observable pattern: how do you know when to listen and (just as importantly) stop listening? Anywhere that you <code>get</code> the value of an observable, you are presumably going to use that value to generate some other data <em>derived</em> from it. So you better be doing this in some context in which you are listening to the observable, or else the derived data will be out of date as soon as the observable's value changes. And then you better figure out when it's time to stop listening, or you'll cause memory leaks and unnecessary background computation.</p>
+
+<p>React solves this problem by building an observable into each component and tying the subscription to the component's lifecycle.</p>
+
+<p>Redux does it by having one observable, so at least you don't have to figure out which one to listen to.</p>
+
+<p>MobX does it by automating the entire thing. Merely getting the current value of an observable is sufficient to listen to it (although only in relevant contexts: in the <code>render</code> function of an <a href="https://mobxjs.github.io/mobx/refguide/observer-component.html">observer</a> component, or in the body of a <code>computed</code> property).</p>
+
+<h2 id="mutabilityviaimmutability">Mutability via immutability</h2>
+
+<p>Suppose you have a <code>Person</code> type and you need to store an instance of it as part of your UI state. Roughly:</p><pre><code class="ts">interface Person {
+    firstName: string;
+    lastName: string;
+}
+</code></pre><p>Option 1 is to store it in a single observable, and update it by creating a whole new <code>Person</code> instance whenever you need to change either field. So the type can become:</p><pre><code class="ts">interface Person {
+    readonly firstName: string;
+    readonly lastName: string;
+}
+</code></pre><p>And you can update the <code>firstName</code> of <code>person1</code> like this:</p><pre><code class="ts">person1.set({ ...person1.get(), firstName: "Homer" });
+</code></pre><p>Option 2 is to always hold the same instance of <code>Person</code>, which has been tweaked thus:</p><pre><code class="ts">interface Person {
+    readonly firstName: Observable&lt;string&gt;;
+    readonly lastName: Observable&lt;string&gt;;
+}
+</code></pre><p>Now to update <code>firstName</code>, you say:</p><pre><code class="ts">person1.firstName.set("Homer");
+</code></pre><p>Note that in <em>both</em> cases, <code>Person</code> is at least shallow-immutable; its properties are <code>readonly</code>. The person itself is never modified. In option 2 we change the observables, not the <code>Person</code> that owns them (nor the string objects they contain: they are replaced with different strings). Observables act as a bridge to the immutable world.</p>
+
+<p><strong>Important:</strong> Everything else, apart from the one value stored in an observable, is immutable. The thing that owns the observable is immutable; it always owns the same immutable. The thing stored in the observable is immutable. This is still true even if the immutable stores a simple string or number: changing the value means stuffing a different string or number into the observable.</p>
+
+<p>Of course, in modern JS runtimes (available in practically all browsers now in use) we can define a property with custom get/set functions. This means that we can make an object with observable properties but go back to the original interface:</p><pre><code class="ts">interface Person {
+    firstName: string;
+    lastName: string;
+}
+</code></pre><p>And then we can update <code>firstName</code> like this:</p><pre><code class="ts">person1.firstName = "Homer";
+</code></pre><p>This makes it extremely familiar and user-friendly. But from a theoretical standpoint it's important to realise that this is only a syntactic shift. We are still not modifying a field in a <code>Person</code>! It just looks like we are. The <code>Person</code> owns an observable, always the same one: <code>Person</code> is immutable. We are just stuffing a different string into the observable.</p>
+
+<p>Clearly there is little difference between any of these options in terms of immediate capabilities. It's more a practical matter of which things you want to make easy and fast. The key point here is that mutable data is ultimately unavoidable, but this is not a disaster as long as you have some consistent pattern for referring to it, holding it at arms length, and thus mitigating the problems it can cause.</p>
+
+<p>Immutability is a <em>tool</em> that places a vital role, but is means to an end, not the end itself. It has to coexist with mutability somehow.</p>
+
+<h2 id="postscriptknockoutjs">Postscript: Knockout.JS</h2>
+
+<p>If you need any more convincing of the middle-of-the-road-ness, safety and reliability of the concepts in MobX, look no further than <a href="http://knockoutjs.com">Knockout.JS</a>. From its first version in summer 2010 it had <code>observable</code>, <code>computed</code> (originally called <a href="http://knockoutjs.com/documentation/dependentObservables.html">dependentObservables</a>) and automatic dependency tracking between them. All are functionally identical to the equivalents in MobX.</p>
+
+<p>KO is almost <em>ridiculously</em> stable. Even the website has barely changed in <a href="http://web.archive.org/web/20110325183117/http://knockoutjs.com/">over five years</a>! Google's Angular 1.x arose and fell in that time, while the core concepts of KO stayed the same, and they live on now in MobX.</p>
+
+            </div>
+            
+            <div class="outer">                                
+                <table class="recent" align="center"><tr>
+    <td>
+        <strong>MobX - Like React, but for Data</strong>
+    </td>
+    <td class="date"> 2016-12-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
+    </td>
+    <td class="date"> 2016-12-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Epilogue.html">Immuto - Epilogue</a>
+    </td>
+    <td class="date"> 2016-12-20</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Radical_Unification.html">Immuto - Radical Unification</a>
+    </td>
+    <td class="date"> 2016-09-22</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Working_with_React_An_Example_.html">Immuto - Working with React (An Example)</a>
+    </td>
+    <td class="date"> 2016-09-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_is_a_class_.html">TypeScript - What is a class?</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing_EPISODE_II.html">TypeScript and runtime typing - EPISODE II</a>
+    </td>
+    <td class="date"> 2016-09-10</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing.html">TypeScript and runtime typing</a>
+    </td>
+    <td class="date"> 2016-09-04</td>    
+</tr>
+<tr>
+    <td>
+        <a href="What_s_good_about_Redux.html">What's good about Redux</a>
+    </td>
+    <td class="date"> 2016-07-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">  
+                <div class="rss">Want to comment on anything? <a href="https://github.com/danielearwicker/danielearwicker.github.io/issues">Create an issue!</a></div>              
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

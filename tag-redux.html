@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | react</title>
+        <title>Daniel Earwicker | redux</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -30,22 +30,6 @@
 
 <p>I'm fine with being on the edgy team. You'll usually find me in my leather jacket and shades, posing on my parked Harley Davidson and chewing on a matchstick, intimidating the townspeople. Why? I don't have to explain myself to you, Mister.</p>
 <p><a href="MobX_Like_React_but_for_Data.html">Read on...</a></p>
-<hr>
-
-<h2>What's good about Redux</h2>
-<p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-react.html">REACT</a>  2016-07-24</p>
-<p><a href="http://redux.js.org/">Redux</a> is based on series of really simple <em>what-if</em> questions:</p>
-
-<ol>
-<li><em>What if</em> all the data in your app was immutable?</li>
-
-<li>Okay, now it's stuck. But <em>what if</em> there was only a single solitary mutable variable holding the complete state for your entire app? To change any bit of state, you just assign a slightly different immutable tree to that variable.</li>
-
-<li>And <em>what if</em> the only way to mutate the state was to create a POJO describing a high-level action, and dispatch it through a single giant processing system, describing the change to make?</li>
-</ol>
-
-<p>A number of interesting advantages follow from sticking to this discipline. It's ideal for <a href="https://facebook.github.io/react/">ReactJS</a>. You can log everything your users do and replay it, stuff like that. You can store the state snapshots, or just the actions, or both. You can recover your app by loading in an old snapshot and then playing the recent actions to bring it up to date. If you want to know the complete story of how your application ended up in the state it's in now, you've got it. And aside from these nice capabilities, it's worth remembering a lot of bugs arise from fiddling with mutable state at the wrong time. Who needs that?</p>
-<p><a href="What_s_good_about_Redux.html">Read on...</a></p>
 <hr>
 
             </div>

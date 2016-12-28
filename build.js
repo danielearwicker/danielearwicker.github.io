@@ -94,7 +94,7 @@ function getSnippet(text) {
 }
 var codeTicks = "```";
 function formatTags(tags) {
-    return tags.map(function (t) { return ("<a href=\"tag-" + t + ".html\">" + t.toUpperCase() + "</a>"); }).join(" ");
+    return tags.map(function (t) { return "<a href=\"tag-" + t + ".html\">" + t.toUpperCase() + "</a>"; }).join(" ");
 }
 var articles = fs.readdirSync(inputPath).map(function (name) {
     var text = fs.readFileSync(path.join(inputPath, name), "utf8");
@@ -138,7 +138,7 @@ for (var _i = 0, _a = fs.readdirSync(outputPath); _i < _a.length; _i++) {
 var articlesByTag = {};
 for (var _b = 0, articles_1 = articles; _b < articles_1.length; _b++) {
     var article = articles_1[_b];
-    for (var _c = 0, _d = article.tags.trim().split(" "); _c < _d.length; _c++) {
+    for (var _c = 0, _d = article.tags.trim().split(" ").map(function (t) { return t.toLowerCase(); }); _c < _d.length; _c++) {
         var tag = _d[_c];
         var articlesForTag = articlesByTag[tag] || (articlesByTag[tag] = []);
         articlesForTag.push(article);
