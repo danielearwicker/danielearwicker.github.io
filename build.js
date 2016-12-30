@@ -96,6 +96,9 @@ var codeTicks = "```";
 function formatTags(tags) {
     return tags.map(function (t) { return "<a href=\"tag-" + t + ".html\">" + t.toUpperCase() + "</a>"; }).join(" ");
 }
+function formatCountedTags(tags) {
+    return tags.map(function (t) { return "<a href=\"tag-" + t + ".html\">" + t.toUpperCase() + " (" + articlesByTag[t].length + ")</a>"; }).join(" ");
+}
 var articles = fs.readdirSync(inputPath).map(function (name) {
     var text = fs.readFileSync(path.join(inputPath, name), "utf8");
     var headers = getHeaders(text);
@@ -144,7 +147,7 @@ for (var _b = 0, articles_1 = articles; _b < articles_1.length; _b++) {
         articlesForTag.push(article);
     }
 }
-var topics = formatTags(Object.keys(articlesByTag).sort());
+var topics = formatCountedTags(Object.keys(articlesByTag).sort());
 for (var _e = 0, articles_2 = articles; _e < articles_2.length; _e++) {
     var article = articles_2[_e];
     fs.writeFileSync(path.join(outputPath, makeHtmlName(article.title)), template("shell", {

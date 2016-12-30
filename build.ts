@@ -139,6 +139,10 @@ function formatTags(tags: string[]) {
     return tags.map(t => `<a href="tag-${t}.html">${t.toUpperCase()}</a>`).join(" ");
 }
 
+function formatCountedTags(tags: string[]) {
+    return tags.map(t => `<a href="tag-${t}.html">${t.toUpperCase()} (${articlesByTag[t].length})</a>`).join(" ");
+}
+
 const articles = fs.readdirSync(inputPath).map(name => {
 
     const text = fs.readFileSync(path.join(inputPath, name), "utf8");
@@ -201,7 +205,7 @@ for (const article of articles) {
     }
 }
 
-const topics = formatTags(Object.keys(articlesByTag).sort());
+const topics = formatCountedTags(Object.keys(articlesByTag).sort());
 
 for (const article of articles) {
     fs.writeFileSync(
