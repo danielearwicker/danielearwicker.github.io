@@ -138,3 +138,7 @@ Immutability is a *tool* that places a vital role, but is means to an end, not t
 If you need any more convincing of the middle-of-the-road-ness, safety and reliability of the concepts in MobX, look no further than [Knockout.JS](http://knockoutjs.com). From its first version in summer 2010 it had `observable`, `computed` (originally called [dependentObservables](http://knockoutjs.com/documentation/dependentObservables.html)) and automatic dependency tracking between them. All are functionally identical to the equivalents in MobX.
 
 KO is almost *ridiculously* stable. Even the website has barely changed in [over five years](http://web.archive.org/web/20110325183117/http://knockoutjs.com/)! Google's Angular 1.x arose and fell in that time, while the core concepts of KO stayed the same, and they live on now in MobX.
+
+## See also
+
+[computed-async-mobx](https://github.com/danielearwicker/computed-async-mobx/) - a library I just published that extends the power of `computed` to expressions that return promises, integration asynchronous data into your nice pure MobX declarations.
