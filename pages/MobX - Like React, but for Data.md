@@ -23,7 +23,7 @@ It's not necessary, nor practical, to eliminate mutable data. But it is importan
 
 ## Derived data and partial updating
 
-The `render` function of a React component is a pure function that returns a tree of lightweight objects describing the desired UI. How pure is it? *Very*, even though it doesn't look that way at first because it has no formal parameters. There are strict rules about what data it can depend on: props and state. React manages these two things, and from the `render` function's perspective they are treated like they are the immutable parameters parameters to a pure function. React re-renders automatically if these parameters change. If `render` depended on anything else that might change, the system breaks down.
+The `render` function of a React component is a pure function that returns a tree of lightweight objects describing the desired UI. How pure is it? *Very*, even though it doesn't look that way at first because it has no formal parameters. There are strict rules about what data it can depend on: props and state. React manages these two things, and from the `render` function's perspective they are treated like they are the immutable parameters to a pure function. React re-renders automatically if these parameters change. If `render` depended on anything else that might change, the system breaks down.
 
 Even so, there is a method called `forceUpdate` available on any component, which means that it is possible to extend the scope of `render`, causing a render whenever necessary. This means we can broaden our definition of "state" to include anything that is able to trigger a re-render of any component that depends on it. We call such things *observables*.
 
