@@ -5,7 +5,7 @@ Catching up on blogged opinions about MobX and where it fits in (especially in r
 
 Even its defenders seem a little apologetic, like MobX is okay *despite* the heresy of allowing data to be mutable and object-oriented. The great Basarat even humorously [welcomed me to the dark side!](https://twitter.com/basarat/status/812150927947800578)
 
-I'm fine with being on the edgy team. You'll usually find me in my leather jacket and shades, posing on my parked Harley Davidson and chewing on a matchstick, intimidating the townspeople. Why? I don't have to explain myself to you, Mister.
+I'm fine with being on the edgy team. You'll usually find me in my leather jacket and shades, posing on my parked Harley Davidson and chewing on a matchstick, intimidating the townspeople. Why? I don't have to explain myself to you, lady.
 
 But (try to keep this quiet, for the sake of my dangerous image) the truth is more reassuring. In fact MobX is based on some of the very same basic concepts that make React itself so fantastic. It implements those ideas in a way that is more seamless (reducing syntactic noise) and automatic (reducing opportunities for mistakes), while generalising them to cover a wider set of problems.
 
