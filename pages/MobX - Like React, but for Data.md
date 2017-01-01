@@ -131,7 +131,7 @@ This makes it extremely familiar and user-friendly. But from a theoretical stand
 
 Clearly there is little difference between any of these options in terms of immediate capabilities. It's more a practical matter of which things you want to make easy and fast. The key point here is that mutable data is ultimately unavoidable, but this is not a disaster as long as you have some consistent pattern for referring to it, holding it at arms length, and thus mitigating the problems it can cause.
 
-Immutability is a *tool* that places a vital role, but is means to an end, not the end itself. It has to coexist with mutability somehow.
+Immutability is a *tool* that plays a vital role, but is means to an end, not the end itself. It has to coexist with mutability somehow.
 
 ## Postscript: Knockout.JS
 

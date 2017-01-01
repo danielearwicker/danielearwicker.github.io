@@ -4,7 +4,23 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2016-12-28T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2017-01-01T00:00:00Z</lastBuildDate>
+    <item>
+      <title>TypeScript - What's up with this?</title>
+      <pubDate> 2017-01-01T00:00:00Z</pubDate>
+      <description>&lt;p&gt;JavaScript's &lt;code&gt;this&lt;/code&gt; keyword is horrible. The value it assumes inside a function depends on precisely how the function is called:&lt;/p&gt;
+
+&lt;p&gt;```js
+// node has 'global', browsers don't
+if (typeof global === "undefined") {
+    window.global = window;
+}&lt;/p&gt;
+
+&lt;p&gt;function f() { 
+    console.log(this === o, this === global, this === undefined);
+}&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/TypeScript_What_s_up_with_this_.html</link>
+    </item>
     <item>
       <title>MobX - Like React, but for Data</title>
       <pubDate> 2016-12-28T00:00:00Z</pubDate>
