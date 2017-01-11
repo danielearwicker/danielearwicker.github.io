@@ -1,7 +1,7 @@
 tags: typescript mobx react boxm
 date: 2017-01-11
 
-This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility `observable.box` [docs](https://mobx.js.org/refguide/boxed.html). But I don't want to use that create all my properties. I want to use the cool `@observable` decorator and just use my properties directly. What I need is a way to box a property.
+This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility `observable.box` ([docs](https://mobx.js.org/refguide/boxed.html)). But I don't want to use that create all my properties. I want to use the cool `@observable` decorator and just use my properties directly. What I need is a way to box a property.
 
 For the overall idea, see [the project page](https://github.com/danielearwicker/boxm), or just look at the takeaway:
 
