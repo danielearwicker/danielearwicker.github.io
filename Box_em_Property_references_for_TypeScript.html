@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | MetaObject - Property references for TypeScript</title>
+        <title>Daniel Earwicker | Box 'em! - Property references for TypeScript</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -18,17 +18,17 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (3)</a> <a href="tag-immutability.html">IMMUTABILITY (2)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-javascript.html">JAVASCRIPT (2)</a> <a href="tag-mobx.html">MOBX (2)</a> <a href="tag-react.html">REACT (3)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (1)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-typescript.html">TYPESCRIPT (12)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (3)</a> <a href="tag-immutability.html">IMMUTABILITY (2)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-javascript.html">JAVASCRIPT (2)</a> <a href="tag-mobx.html">MOBX (2)</a> <a href="tag-react.html">REACT (3)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (1)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-typescript.html">TYPESCRIPT (12)</a></div>
             </div>
             
             <div class="content">
-                <h1>MetaObject - Property references for TypeScript</h1>
+                <h1>Box 'em! - Property references for TypeScript</h1>
 <hr>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a>  2017-01-07</p>
+<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-boxm.html">BOXM</a>  2017-01-11</p>
 
-<p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX.</p>
+<p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility <code>observable.box</code> <a href="https://mobx.js.org/refguide/boxed.html">docs</a>. But I don't want to use that create all my properties. I want to use the cool <code>@observable</code> decorator and just use my properties directly. What I need is a way to box a property.</p>
 
-<p>For the overall idea, see <a href="https://github.com/danielearwicker/meta-object">the project page</a>, or just look at the takeaway:</p><pre><code class="tsx">// MobX model:
+<p>For the overall idea, see <a href="https://github.com/danielearwicker/boxm">the project page</a>, or just look at the takeaway:</p><pre><code class="tsx">// MobX model:
 class Person {
     @observable firstName: string;
     @observable lastName: string;
@@ -36,7 +36,7 @@ class Person {
 }
 
 // Two-way binding in React component:
-const { firstName, lastName, dateOfBirth } = from(props.person);
+const { firstName, lastName, dateOfBirth } = box(props.person);
 return (
     &lt;div&gt;
         &lt;label&gt;First name: &lt;TextInput value={firstName} /&gt;&lt;/label&gt;
@@ -64,18 +64,18 @@ return (
 }
 </code></pre><p>The magic part is the <code>[P in keyof T]</code> which roughly means "repeat this line for each property of T", so if <code>T</code> has five properties then so will <code>Readonly&lt;T&gt;</code>. This is like <code>Array#map</code>, but operating on types at compile time instead of values at runtime. It might grow into a compile-time form of <a href="https://en.wikipedia.org/wiki/List_comprehension">list comprehension</a>.</p>
 
-<p>My use of these features is structurally very similar to <code>Readonly&lt;T&gt;</code>, except I wrap each property in another type:</p><pre><code class="ts">export type MetaObject&lt;T&gt; = {
-    readonly [K in keyof T]: MetaValue&lt;T[K]&gt;;
+<p>My use of these features is structurally very similar to <code>Readonly&lt;T&gt;</code>, except I wrap each property in another type:</p><pre><code class="ts">export type BoxedObject&lt;T&gt; = {
+    readonly [K in keyof T]: BoxedValue&lt;T[K]&gt;;
 };
-</code></pre><p>And that type is:</p><pre><code class="ts">export interface MetaValue&lt;P&gt; { 
+</code></pre><p>And that type is:</p><pre><code class="ts">export interface BoxedValue&lt;P&gt; { 
     get(): P;
     set(v: P): void;
 }
-</code></pre><p>So a <code>MetaObject&lt;T&gt;</code> has properties who have the same name as the properties of <code>T</code>, and each property type <code>P</code> is "amplified" (wrapped) to become <code>MetaValue&lt;P&gt;</code>.</p>
+</code></pre><p>So a <code>BoxedObject&lt;T&gt;</code> has properties that have the same name as the properties of <code>T</code>, and each property type <code>P</code> is "amplified" (wrapped) to become <code>BoxedValue&lt;P&gt;</code>. By the way, <code>BoxedValue</code> has been designed to match the shape of those boxed objects available at a low level in MobX. So if you define React components to accept <code>BoxedValue</code> props, they will be broadly compatible.</p>
 
-<p>The only other thing is to look at the implementation. Actually there are two. Implementing <code>MetaValue</code> is trivial, but <code>MetaObject</code> must <em>seem</em> to have a property when you ask it for one. The fast way to do this (I've timed it) is to use <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Proxy">Proxy</a>.</p><pre><code class="ts">const handler: ProxyHandler&lt;any&gt; = {
+<p>The only other thing is to look at the implementation. Actually there are two. Implementing <code>BoxedValue</code> is trivial, but <code>BoxedObject</code> must <em>seem</em> to have a property when you ask it for one. The fast way to do this (I've timed it) is to use <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Proxy">Proxy</a>.</p><pre><code class="ts">const handler: ProxyHandler&lt;any&gt; = {
     get(target: any, key: PropertyKey) {
-        return makeMetaValue(target, key);
+        return makeBoxedValue(target, key);
     }
 }
 </code></pre><p>How neat is that? Unfortunately no version of IE has <code>Proxy</code>, so there's a fallback that just generates an object that has every property of the underlying object created on it.</p>
@@ -85,9 +85,9 @@ return (
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <strong>MetaObject - Property references for TypeScript</strong>
+        <strong>Box 'em! - Property references for TypeScript</strong>
     </td>
-    <td class="date"> 2017-01-07</td>    
+    <td class="date"> 2017-01-11</td>    
 </tr>
 <tr>
     <td>

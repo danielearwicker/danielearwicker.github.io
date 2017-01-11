@@ -1,9 +1,9 @@
-tags: typescript mobx react
-date: 2017-01-07
+tags: typescript mobx react boxm
+date: 2017-01-11
 
-This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX.
+This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility `observable.box` [docs](https://mobx.js.org/refguide/boxed.html). But I don't want to use that create all my properties. I want to use the cool `@observable` decorator and just use my properties directly. What I need is a way to box a property.
 
-For the overall idea, see [the project page](https://github.com/danielearwicker/meta-object), or just look at the takeaway:
+For the overall idea, see [the project page](https://github.com/danielearwicker/boxm), or just look at the takeaway:
 
 ```tsx
 // MobX model:
@@ -14,7 +14,7 @@ class Person {
 }
 
 // Two-way binding in React component:
-const { firstName, lastName, dateOfBirth } = from(props.person);
+const { firstName, lastName, dateOfBirth } = box(props.person);
 return (
     <div>
         <label>First name: <TextInput value={firstName} /></label>
@@ -52,28 +52,28 @@ The magic part is the `[P in keyof T]` which roughly means "repeat this line for
 My use of these features is structurally very similar to `Readonly<T>`, except I wrap each property in another type:
 
 ```ts
-export type MetaObject<T> = {
-    readonly [K in keyof T]: MetaValue<T[K]>;
+export type BoxedObject<T> = {
+    readonly [K in keyof T]: BoxedValue<T[K]>;
 };
 ```
 
 And that type is:
 
 ```ts
-export interface MetaValue<P> { 
+export interface BoxedValue<P> { 
     get(): P;
     set(v: P): void;
 }
 ```
 
-So a `MetaObject<T>` has properties who have the same name as the properties of `T`, and each property type `P` is "amplified" (wrapped) to become `MetaValue<P>`.
+So a `BoxedObject<T>` has properties that have the same name as the properties of `T`, and each property type `P` is "amplified" (wrapped) to become `BoxedValue<P>`. By the way, `BoxedValue` has been designed to match the shape of those boxed objects available at a low level in MobX. So if you define React components to accept `BoxedValue` props, they will be broadly compatible.
 
-The only other thing is to look at the implementation. Actually there are two. Implementing `MetaValue` is trivial, but `MetaObject` must *seem* to have a property when you ask it for one. The fast way to do this (I've timed it) is to use [Proxy](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Proxy).
+The only other thing is to look at the implementation. Actually there are two. Implementing `BoxedValue` is trivial, but `BoxedObject` must *seem* to have a property when you ask it for one. The fast way to do this (I've timed it) is to use [Proxy](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Proxy).
 
 ```ts
 const handler: ProxyHandler<any> = {
     get(target: any, key: PropertyKey) {
-        return makeMetaValue(target, key);
+        return makeBoxedValue(target, key);
     }
 }
 ```

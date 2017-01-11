@@ -4,14 +4,14 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2017-01-07T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2017-01-11T00:00:00Z</lastBuildDate>
     <item>
-      <title>MetaObject - Property references for TypeScript</title>
-      <pubDate> 2017-01-07T00:00:00Z</pubDate>
-      <description>&lt;p&gt;This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX.&lt;/p&gt;
+      <title>Box 'em! - Property references for TypeScript</title>
+      <pubDate> 2017-01-11T00:00:00Z</pubDate>
+      <description>&lt;p&gt;This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility &lt;code&gt;observable.box&lt;/code&gt; &lt;a href="https://mobx.js.org/refguide/boxed.html"&gt;docs&lt;/a&gt;. But I don't want to use that create all my properties. I want to use the cool &lt;code&gt;@observable&lt;/code&gt; decorator and just use my properties directly. What I need is a way to box a property.&lt;/p&gt;
 
-&lt;p&gt;For the overall idea, see &lt;a href="https://github.com/danielearwicker/meta-object"&gt;the project page&lt;/a&gt;, or just look at the takeaway:&lt;/p&gt;</description>
-      <link>http://danielearwicker.github.io/MetaObject_Property_references_for_TypeScript.html</link>
+&lt;p&gt;For the overall idea, see &lt;a href="https://github.com/danielearwicker/boxm"&gt;the project page&lt;/a&gt;, or just look at the takeaway:&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Box_em_Property_references_for_TypeScript.html</link>
     </item>
     <item>
       <title>TypeScript - What's up with this?</title>
