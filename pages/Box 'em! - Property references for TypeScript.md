@@ -1,7 +1,7 @@
 tags: typescript mobx react boxm
 date: 2017-01-11
 
-This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility `observable.box` ([docs](https://mobx.js.org/refguide/boxed.html)). But I don't want to use that create all my properties and have to put `.get()` after every read to them. I want to use the cool `@observable` decorator and just fetch my properties directly, and assign new values with `=`. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.
+This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility `observable.box` ([docs](https://mobx.js.org/refguide/boxed.html)). But I don't want to use that create all my properties and have to put `.get()` after every read access. I want to use the cool `@observable` decorator and just fetch my properties directly, and assign new values with `=`. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.
 
 For the overall idea, see [the project page](https://github.com/danielearwicker/boxm), or just look at the takeaway:
 

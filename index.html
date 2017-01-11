@@ -24,7 +24,7 @@
             <div class="content">
                 <h2>Box 'em! - Property references for TypeScript</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-boxm.html">BOXM</a>  2017-01-11</p>
-<p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility <code>observable.box</code> (<a href="https://mobx.js.org/refguide/boxed.html">docs</a>). But I don't want to use that create all my properties and have to put <code>.get()</code> after every read to them. I want to use the cool <code>@observable</code> decorator and just fetch my properties directly, and assign new values with <code>=</code>. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.</p>
+<p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility <code>observable.box</code> (<a href="https://mobx.js.org/refguide/boxed.html">docs</a>). But I don't want to use that create all my properties and have to put <code>.get()</code> after every read access. I want to use the cool <code>@observable</code> decorator and just fetch my properties directly, and assign new values with <code>=</code>. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.</p>
 
 <p>For the overall idea, see <a href="https://github.com/danielearwicker/boxm">the project page</a>, or just look at the takeaway:</p>
 <p><a href="Box_em_Property_references_for_TypeScript.html">Read on...</a></p>
