@@ -83,7 +83,7 @@ const l = v.length;
 console.log(l()); // Runtime error: Cannot read property 'x' of undefined
 ```
 
-The compiler finds no type error in that example, because `v.length` has the type `() => void`. To a C# coder it looks fine (in C# the expression `v.length` automatically does the equivalent of `v.length.bind(v)`).
+The compiler finds no type error in that example, because `v.length` has the type `() => number`. To a C# coder it looks fine (in C# the expression `v.length` automatically does the equivalent of `v.length.bind(v)`).
 
 A separate problem is that the type of `this` in a free function is `any`. This is the case even if `--noImplicitAny` is specified!
 

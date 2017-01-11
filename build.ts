@@ -50,7 +50,7 @@ function process(
 }
 
 interface StringMap {
-    [name: string]: string
+    [name: string]: string | undefined
 };
 
 function getHeaders(text: string) {
@@ -76,7 +76,7 @@ function template(name: string, params: StringMap) {
     const template = cachedTemplates[name] ||
         (cachedTemplates[name] = fs.readFileSync(path.join(templatePath, name + ".html"), "utf8"));
 
-    return process(template, "${", "}", param => params[param]);
+    return process(template, "${", "}", param => params[param] || "");
 }
 
 function makeTitle(name: string) {
@@ -155,7 +155,7 @@ const articles = fs.readdirSync(inputPath).map(name => {
         throw new Error(`Article has no date header: ${name}`);
     }
 
-    const linked = process(headers["rest"], "[[", "]]", convertLink);
+    const linked = process(headers["rest"] || "", "[[", "]]", convertLink);
 
     const getBody = (source: string) =>
         process(source, codeTicks, codeTicks, code => {
@@ -264,7 +264,7 @@ export function rss(baseUrl: string, history: Article[]) {
     let items: RssItem[] = history.map(h => ({
         title: h.title,
         pubDate: h.date + "T00:00:00Z",
-        description: h.snippet,
+        description: h.snippet || "",
         link: baseUrl + h.link
     }));
 

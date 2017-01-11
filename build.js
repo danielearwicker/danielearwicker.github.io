@@ -52,7 +52,7 @@ var cachedTemplates = {};
 function template(name, params) {
     var template = cachedTemplates[name] ||
         (cachedTemplates[name] = fs.readFileSync(path.join(templatePath, name + ".html"), "utf8"));
-    return process(template, "${", "}", function (param) { return params[param]; });
+    return process(template, "${", "}", function (param) { return params[param] || ""; });
 }
 function makeTitle(name) {
     var lastDot = name.lastIndexOf(".");
@@ -108,7 +108,7 @@ var articles = fs.readdirSync(inputPath).map(function (name) {
     if (!date) {
         throw new Error("Article has no date header: " + name);
     }
-    var linked = process(headers["rest"], "[[", "]]", convertLink);
+    var linked = process(headers["rest"] || "", "[[", "]]", convertLink);
     var getBody = function (source) {
         return process(source, codeTicks, codeTicks, function (code) {
             var newLine = code.indexOf('\n');
@@ -176,7 +176,7 @@ function rss(baseUrl, history) {
     var items = history.map(function (h) { return ({
         title: h.title,
         pubDate: h.date + "T00:00:00Z",
-        description: h.snippet,
+        description: h.snippet || "",
         link: baseUrl + h.link
     }); });
     items.sort(function (a, b) { return b.pubDate.localeCompare(a.pubDate); });

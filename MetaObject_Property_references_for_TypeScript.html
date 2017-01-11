@@ -1,0 +1,212 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | MetaObject - Property references for TypeScript</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="http://www.cnlsoftware.com">CNL Software Ltd<a/>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (3)</a> <a href="tag-immutability.html">IMMUTABILITY (2)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-javascript.html">JAVASCRIPT (2)</a> <a href="tag-mobx.html">MOBX (2)</a> <a href="tag-react.html">REACT (3)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (1)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-typescript.html">TYPESCRIPT (12)</a></div>
+            </div>
+            
+            <div class="content">
+                <h1>MetaObject - Property references for TypeScript</h1>
+<hr>
+<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a>  2017-01-07</p>
+
+<p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX.</p>
+
+<p>For the overall idea, see <a href="https://github.com/danielearwicker/meta-object">the project page</a>, or just look at the takeaway:</p><pre><code class="tsx">// MobX model:
+class Person {
+    @observable firstName: string;
+    @observable lastName: string;
+    @observable dateOfBirth: Date;
+}
+
+// Two-way binding in React component:
+const { firstName, lastName, dateOfBirth } = from(props.person);
+return (
+    &lt;div&gt;
+        &lt;label&gt;First name: &lt;TextInput value={firstName} /&gt;&lt;/label&gt;
+        &lt;label&gt;Last name: &lt;TextInput value={lastName} /&gt;&lt;/label&gt;
+        &lt;label&gt;Date of birth: &lt;DateInput value={dateOfBirth} /&gt;&lt;/label&gt;
+    &lt;/div&gt;
+);
+
+</code></pre><p>That is, incredibly easy, tidy, declarative and statically-typed two-way binding. I'm working on another project called <a href="https://github.com/danielearwicker/bidi-mobx">bidi-mobx</a> that will exploit this idea and provide examples (including validation).</p>
+
+<p>Here I want to mention how it uses a few new-ish TypeScript features, and where it calls for possible future extensions to the language.</p>
+
+<p>Way back when <a href="https://github.com/dotnet/roslyn">Roslyn</a> first went open source and I got excited about how hackable it was, I added <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>. Just like you can get a reference to a method (called a <em>delegate</em> in C# - and, wonder of wonders, it's always properly bound to the right <code>this</code>), why not a reference to a specific mutable property? It's a bundling together of two methods: a getter and a setter. The pain is having no neat syntax to construct the reference, specifying the object and the property just once each.</p>
+
+<p>And as if in a demonstration of how TypeScript is <em>way</em> better than C#, you can now achieve the same end without having to change the compiler! It's statically type checked, although there is a limitation to this (and I'm not entirely sure how it would be fixed, but I wouldn't bet against TS fixing it soon).</p>
+
+<p>It's thanks to three separate features that play together very nicely. First, <code>keyof T</code> is a union of string literal types, in which each string is the name of a property of <code>T</code>. So it's a compile-time analogue of <code>Object.keys</code>.</p>
+
+<p>Second, if <code>K</code> is a string literal type and <code>T</code> has a property of that name, the type expression <code>T[K]</code> gives us the type of that property. This is a <em>type indexer</em>. The syntax looks just like the runtime JavaScript indexing operation where you pass a string property name to get its value. One way to think of this is that an interface is a collection (a dictionary or map) of types, keyed by names, and now we have a way to fetch an item from the collection. Maybe next we'll have <a href="https://github.com/Microsoft/TypeScript/issues/12424">conditional types</a>, and then who knows <a href="http://www.boost.org/doc/libs/1_63_0/libs/mpl/doc/refmanual/map.html">where we might end up</a>. Conditions need booleans to steer them, but TypeScript already has <code>true</code> and <code>false</code> as <em>types</em>. Hold onto your hats...</p>
+
+<p>One slight wrinkle is that <code>T[K]</code> identifies a property, which might have the <code>readonly</code> modifier. Type indexing seems to ignore that modifier so that information is lost. This leads to the type hole I mentioned above. We want to target mutable properties only, but we can't tell if a property is <code>readonly</code> (or do much about it, even if we could tell - this is one place where conditional types would come in handy).</p>
+
+<p>Finally, there are now <em>mapped types</em>, which is a way of declaring a set of properties with a single declaration, e.g. there's now a standard definition in the TS core library:</p><pre><code class="ts">type Readonly&lt;T&gt; = {
+    readonly [P in keyof T]: T[P];
+}
+</code></pre><p>The magic part is the <code>[P in keyof T]</code> which roughly means "repeat this line for each property of T", so if <code>T</code> has five properties then so will <code>Readonly&lt;T&gt;</code>. This is like <code>Array#map</code>, but operating on types at compile time instead of values at runtime. It might grow into a compile-time form of <a href="https://en.wikipedia.org/wiki/List_comprehension">list comprehension</a>.</p>
+
+<p>My use of these features is structurally very similar to <code>Readonly&lt;T&gt;</code>, except I wrap each property in another type:</p><pre><code class="ts">export type MetaObject&lt;T&gt; = {
+    readonly [K in keyof T]: MetaValue&lt;T[K]&gt;;
+};
+</code></pre><p>And that type is:</p><pre><code class="ts">export interface MetaValue&lt;P&gt; { 
+    get(): P;
+    set(v: P): void;
+}
+</code></pre><p>So a <code>MetaObject&lt;T&gt;</code> has properties who have the same name as the properties of <code>T</code>, and each property type <code>P</code> is "amplified" (wrapped) to become <code>MetaValue&lt;P&gt;</code>.</p>
+
+<p>The only other thing is to look at the implementation. Actually there are two. Implementing <code>MetaValue</code> is trivial, but <code>MetaObject</code> must <em>seem</em> to have a property when you ask it for one. The fast way to do this (I've timed it) is to use <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Proxy">Proxy</a>.</p><pre><code class="ts">const handler: ProxyHandler&lt;any&gt; = {
+    get(target: any, key: PropertyKey) {
+        return makeMetaValue(target, key);
+    }
+}
+</code></pre><p>How neat is that? Unfortunately no version of IE has <code>Proxy</code>, so there's a fallback that just generates an object that has every property of the underlying object created on it.</p>
+
+            </div>
+            
+            <div class="outer">                                
+                <table class="recent" align="center"><tr>
+    <td>
+        <strong>MetaObject - Property references for TypeScript</strong>
+    </td>
+    <td class="date"> 2017-01-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_s_up_with_this_.html">TypeScript - What's up with this?</a>
+    </td>
+    <td class="date"> 2017-01-01</td>    
+</tr>
+<tr>
+    <td>
+        <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>
+    </td>
+    <td class="date"> 2016-12-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
+    </td>
+    <td class="date"> 2016-12-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Epilogue.html">Immuto - Epilogue</a>
+    </td>
+    <td class="date"> 2016-12-20</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Radical_Unification.html">Immuto - Radical Unification</a>
+    </td>
+    <td class="date"> 2016-09-22</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Working_with_React_An_Example_.html">Immuto - Working with React (An Example)</a>
+    </td>
+    <td class="date"> 2016-09-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_is_a_class_.html">TypeScript - What is a class?</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing_EPISODE_II.html">TypeScript and runtime typing - EPISODE II</a>
+    </td>
+    <td class="date"> 2016-09-10</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing.html">TypeScript and runtime typing</a>
+    </td>
+    <td class="date"> 2016-09-04</td>    
+</tr>
+<tr>
+    <td>
+        <a href="What_s_good_about_Redux.html">What's good about Redux</a>
+    </td>
+    <td class="date"> 2016-07-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">  
+                <div class="rss">Want to comment on anything? <a href="https://github.com/danielearwicker/danielearwicker.github.io/issues">Create an issue!</a></div>              
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

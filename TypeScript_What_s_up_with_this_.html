@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (3)</a> <a href="tag-immutability.html">IMMUTABILITY (2)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-javascript.html">JAVASCRIPT (2)</a> <a href="tag-mobx.html">MOBX (1)</a> <a href="tag-react.html">REACT (2)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (1)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-typescript.html">TYPESCRIPT (11)</a></div>
+                <div class="topics"><a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (3)</a> <a href="tag-immutability.html">IMMUTABILITY (2)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-javascript.html">JAVASCRIPT (2)</a> <a href="tag-mobx.html">MOBX (2)</a> <a href="tag-react.html">REACT (3)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (1)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-typescript.html">TYPESCRIPT (12)</a></div>
             </div>
             
             <div class="content">
@@ -83,7 +83,7 @@ console.log(v.length()); // Prints: 5
 const l = v.length;
 
 console.log(l()); // Runtime error: Cannot read property 'x' of undefined
-</code></pre><p>The compiler finds no type error in that example, because <code>v.length</code> has the type <code>() =&gt; void</code>. To a C# coder it looks fine (in C# the expression <code>v.length</code> automatically does the equivalent of <code>v.length.bind(v)</code>).</p>
+</code></pre><p>The compiler finds no type error in that example, because <code>v.length</code> has the type <code>() =&gt; number</code>. To a C# coder it looks fine (in C# the expression <code>v.length</code> automatically does the equivalent of <code>v.length.bind(v)</code>).</p>
 
 <p>A separate problem is that the type of <code>this</code> in a free function is <code>any</code>. This is the case even if <code>--noImplicitAny</code> is specified!</p>
 
@@ -153,6 +153,12 @@ console.log(m.length()); // Prints: NaN
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="MetaObject_Property_references_for_TypeScript.html">MetaObject - Property references for TypeScript</a>
+    </td>
+    <td class="date"> 2017-01-07</td>    
+</tr>
+<tr>
     <td>
         <strong>TypeScript - What's up with this?</strong>
     </td>

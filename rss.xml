@@ -4,7 +4,23 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2017-01-01T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2017-01-07T00:00:00Z</lastBuildDate>
+    <item>
+      <title>MetaObject - Property references for TypeScript</title>
+      <pubDate> 2017-01-07T00:00:00Z</pubDate>
+      <description>&lt;p&gt;This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX.&lt;/p&gt;
+
+&lt;p&gt;For the overall idea, see &lt;a href="https://github.com/danielearwicker/meta-object"&gt;the project page&lt;/a&gt;, or just look at the takeaway:&lt;/p&gt;
+
+&lt;p&gt;```tsx
+// MobX model:
+class Person {
+    @observable firstName: string;
+    @observable lastName: string;
+    @observable dateOfBirth: Date;
+}&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/MetaObject_Property_references_for_TypeScript.html</link>
+    </item>
     <item>
       <title>TypeScript - What's up with this?</title>
       <pubDate> 2017-01-01T00:00:00Z</pubDate>
