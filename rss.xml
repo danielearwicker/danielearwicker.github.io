@@ -10,31 +10,13 @@
       <pubDate> 2017-01-07T00:00:00Z</pubDate>
       <description>&lt;p&gt;This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX.&lt;/p&gt;
 
-&lt;p&gt;For the overall idea, see &lt;a href="https://github.com/danielearwicker/meta-object"&gt;the project page&lt;/a&gt;, or just look at the takeaway:&lt;/p&gt;
-
-&lt;p&gt;```tsx
-// MobX model:
-class Person {
-    @observable firstName: string;
-    @observable lastName: string;
-    @observable dateOfBirth: Date;
-}&lt;/p&gt;</description>
+&lt;p&gt;For the overall idea, see &lt;a href="https://github.com/danielearwicker/meta-object"&gt;the project page&lt;/a&gt;, or just look at the takeaway:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/MetaObject_Property_references_for_TypeScript.html</link>
     </item>
     <item>
       <title>TypeScript - What's up with this?</title>
       <pubDate> 2017-01-01T00:00:00Z</pubDate>
-      <description>&lt;p&gt;JavaScript's &lt;code&gt;this&lt;/code&gt; keyword is horrible. The value it assumes inside a function depends on precisely how the function is called:&lt;/p&gt;
-
-&lt;p&gt;```js
-// node has 'global', browsers don't
-if (typeof global === "undefined") {
-    window.global = window;
-}&lt;/p&gt;
-
-&lt;p&gt;function f() { 
-    console.log(this === o, this === global, this === undefined);
-}&lt;/p&gt;</description>
+      <description>&lt;p&gt;JavaScript's &lt;code&gt;this&lt;/code&gt; keyword is horrible. The value it assumes inside a function depends on precisely how the function is called:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_What_s_up_with_this_.html</link>
     </item>
     <item>
@@ -86,8 +68,7 @@ Structured Programmers, and the structure of the program become more and more ab
       <pubDate> 2016-09-22T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto&lt;/a&gt; continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.&lt;/p&gt;
 
-&lt;p&gt;The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:&lt;/p&gt;&lt;pre&gt;&lt;code class="ts"&gt;declare function getBook(shelf: Shelf, id: number): Book;
-&lt;/code&gt;&lt;/pre&gt;</description>
+&lt;p&gt;The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Immuto_Radical_Unification.html</link>
     </item>
     <item>
@@ -113,14 +94,7 @@ Structured Programmers, and the structure of the program become more and more ab
     <item>
       <title>TypeScript - What is a class?</title>
       <pubDate> 2016-09-11T00:00:00Z</pubDate>
-      <description>&lt;p&gt;In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:&lt;/p&gt;&lt;pre&gt;&lt;code class="ts"&gt;class C {
-    foo() {}
-}
-
-const c1: typeof C = C;
-const c2: C = new C();
-const c3: C = C;
-&lt;/code&gt;&lt;/pre&gt;</description>
+      <description>&lt;p&gt;In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_What_is_a_class_.html</link>
     </item>
     <item>
@@ -193,12 +167,7 @@ to create a new single function that, when invoked, causes the constituent funct
       <pubDate> 2016-03-08T00:00:00Z</pubDate>
       <description>&lt;p&gt;As great as &lt;a href="https://facebook.github.io/immutable-js/"&gt;Immutable.js&lt;/a&gt; is, especially with a TypeScript declaration included in the package, the &lt;code&gt;Record&lt;/code&gt; class leaves me a little disappointed.&lt;/p&gt;
 
-&lt;p&gt;In an ordinary class with public properties we're used to being able to say:&lt;/p&gt;
-
-&lt;p&gt;```typescript
-const a = new Animal();
-a.hasTail = true;
-a.legs = 2;&lt;/p&gt;</description>
+&lt;p&gt;In an ordinary class with public properties we're used to being able to say:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Introducing_doop.html</link>
     </item>
     <item>
@@ -236,10 +205,7 @@ much better served in this regard: delegates are a way to treat a method as a va
 &lt;p&gt;But equally important in modern C# programs are sequences of values, so a similar shorthand for &lt;code&gt;IEnumerable&lt;/code&gt; would be ideal. 
 The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
 this was the choice made by the intriguing &lt;a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/"&gt;research language Cω&lt;/a&gt; 
-that influenced LINQ, so let's copy that:&lt;/p&gt;
-
-&lt;p&gt;```csharp
-int* numbers = new[] { 1, 6, 55, 4, 11 };&lt;/p&gt;</description>
+that influenced LINQ, so let's copy that:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html</link>
     </item>
     <item>

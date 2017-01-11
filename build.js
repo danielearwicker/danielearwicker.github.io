@@ -80,7 +80,7 @@ function getSnippet(text) {
     var end = 0, blankCount = 0;
     for (; end < lines.length; end++) {
         var line = lines[end].trim();
-        if (line.indexOf("<pre><code") !== -1) {
+        if (line.indexOf("```") === 0) {
             break;
         }
         if (!line) {

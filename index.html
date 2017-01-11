@@ -27,30 +27,12 @@
 <p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX.</p>
 
 <p>For the overall idea, see <a href="https://github.com/danielearwicker/meta-object">the project page</a>, or just look at the takeaway:</p>
-
-<p>```tsx
-// MobX model:
-class Person {
-    @observable firstName: string;
-    @observable lastName: string;
-    @observable dateOfBirth: Date;
-}</p>
 <p><a href="MetaObject_Property_references_for_TypeScript.html">Read on...</a></p>
 <hr>
 
 <h2>TypeScript - What's up with this?</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2017-01-01</p>
 <p>JavaScript's <code>this</code> keyword is horrible. The value it assumes inside a function depends on precisely how the function is called:</p>
-
-<p>```js
-// node has 'global', browsers don't
-if (typeof global === "undefined") {
-    window.global = window;
-}</p>
-
-<p>function f() { 
-    console.log(this === o, this === global, this === undefined);
-}</p>
 <p><a href="TypeScript_What_s_up_with_this_.html">Read on...</a></p>
 <hr>
 
@@ -102,8 +84,7 @@ Structured Programmers, and the structure of the program become more and more ab
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-22</p>
 <p><a href="https://github.com/danielearwicker/immuto">Immuto</a> continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.</p>
 
-<p>The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:</p><pre><code class="ts">declare function getBook(shelf: Shelf, id: number): Book;
-</code></pre>
+<p>The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:</p>
 <p><a href="Immuto_Radical_Unification.html">Read on...</a></p>
 <hr>
 
@@ -129,14 +110,7 @@ Structured Programmers, and the structure of the program become more and more ab
 
 <h2>TypeScript - What is a class?</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-11</p>
-<p>In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:</p><pre><code class="ts">class C {
-    foo() {}
-}
-
-const c1: typeof C = C;
-const c2: C = new C();
-const c3: C = C;
-</code></pre>
+<p>In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:</p>
 <p><a href="TypeScript_What_is_a_class_.html">Read on...</a></p>
 <hr>
 
@@ -210,11 +184,6 @@ to create a new single function that, when invoked, causes the constituent funct
 <p>As great as <a href="https://facebook.github.io/immutable-js/">Immutable.js</a> is, especially with a TypeScript declaration included in the package, the <code>Record</code> class leaves me a little disappointed.</p>
 
 <p>In an ordinary class with public properties we're used to being able to say:</p>
-
-<p>```typescript
-const a = new Animal();
-a.hasTail = true;
-a.legs = 2;</p>
 <p><a href="Introducing_doop.html">Read on...</a></p>
 <hr>
 
@@ -253,9 +222,6 @@ much better served in this regard: delegates are a way to treat a method as a va
 The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
 this was the choice made by the intriguing <a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/">research language Cω</a> 
 that influenced LINQ, so let's copy that:</p>
-
-<p>```csharp
-int* numbers = new[] { 1, 6, 55, 4, 11 };</p>
 <p><a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Read on...</a></p>
 <hr>
 

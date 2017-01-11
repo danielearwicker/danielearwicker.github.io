@@ -106,10 +106,10 @@ function convertLink(link: string) {
 
 function getSnippet(text: string) {
     var lines = text.split("\n");
-    var end = 0, blankCount = 0;
+    var end = 0, blankCount = 0;    
     for (; end < lines.length; end++) {
         var line = lines[end].trim();
-        if (line.indexOf("<pre><code") !== -1) {
+        if (line.indexOf("```") === 0) {
             break;
         }
         if (!line) {
