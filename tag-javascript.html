@@ -18,11 +18,21 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (3)</a> <a href="tag-immutability.html">IMMUTABILITY (2)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-javascript.html">JAVASCRIPT (2)</a> <a href="tag-mobx.html">MOBX (2)</a> <a href="tag-react.html">REACT (3)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (1)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-typescript.html">TYPESCRIPT (12)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-mobx.html">MOBX (2)</a> <a href="tag-react.html">REACT (3)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-typescript.html">TYPESCRIPT (12)</a></div>
             </div>
             
             <div class="content">
-                <h2>What's good about Redux</h2>
+                <h2>Redux in Pieces</h2>
+<p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-redux.html">REDUX</a>  2017-01-28</p>
+<p>Last July I noted down my thoughts on <a href="What_s_good_about_Redux.html">Redux</a> with some hints of the concerns that eventually led to <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto</a>.</p>
+
+<p>I've since rediscovered my love of <code>observable</code> and <code>computed</code> via <a href="MobX_Like_React_but_for_Data.html">MobX</a>, which is like the good parts of <a href="http://knockoutjs.com">Knockout.js</a> made even better by a very careful, thoughtful implementation.</p>
+
+<p>Even so, this is <em>not</em> the same thing as abandoning immutability and purity. There's nothing stopping you using those techniques within a system of observables. Indeed <a href="https://github.com/danielearwicker/bidi-mobx">bidi-mobx</a> abstracts away all mutation and allows entire UIs to be declared from pure expressions. The data transformation is carried out by objects called adaptors that contain pairs of <em>pure</em> functions between <code>View</code> and <code>Model</code> representations. Only the user gets to do mutation!</p>
+<p><a href="Redux_in_Pieces.html">Read on...</a></p>
+<hr>
+
+<h2>What's good about Redux</h2>
 <p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-react.html">REACT</a>  2016-07-24</p>
 <p><a href="http://redux.js.org/">Redux</a> is based on series of really simple <em>what-if</em> questions:</p>
 
@@ -56,6 +66,12 @@ is already good enough for every way I currently make use of rich text in browse
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Redux_in_Pieces.html">Redux in Pieces</a>
+    </td>
+    <td class="date"> 2017-01-28</td>    
+</tr>
+<tr>
     <td>
         <a href="Box_em_Property_references_for_TypeScript.html">Box 'em! - Property references for TypeScript</a>
     </td>

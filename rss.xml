@@ -4,7 +4,17 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2017-01-11T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2017-01-28T00:00:00Z</lastBuildDate>
+    <item>
+      <title>Redux in Pieces</title>
+      <pubDate> 2017-01-28T00:00:00Z</pubDate>
+      <description>&lt;p&gt;Last July I noted down my thoughts on &lt;a href="What_s_good_about_Redux.html"&gt;Redux&lt;/a&gt; with some hints of the concerns that eventually led to &lt;a href="Immuto_Strongly_Typed_Redux_Composition.html"&gt;Immuto&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;I've since rediscovered my love of &lt;code&gt;observable&lt;/code&gt; and &lt;code&gt;computed&lt;/code&gt; via &lt;a href="MobX_Like_React_but_for_Data.html"&gt;MobX&lt;/a&gt;, which is like the good parts of &lt;a href="http://knockoutjs.com"&gt;Knockout.js&lt;/a&gt; made even better by a very careful, thoughtful implementation.&lt;/p&gt;
+
+&lt;p&gt;Even so, this is &lt;em&gt;not&lt;/em&gt; the same thing as abandoning immutability and purity. There's nothing stopping you using those techniques within a system of observables. Indeed &lt;a href="https://github.com/danielearwicker/bidi-mobx"&gt;bidi-mobx&lt;/a&gt; abstracts away all mutation and allows entire UIs to be declared from pure expressions. The data transformation is carried out by objects called adaptors that contain pairs of &lt;em&gt;pure&lt;/em&gt; functions between &lt;code&gt;View&lt;/code&gt; and &lt;code&gt;Model&lt;/code&gt; representations. Only the user gets to do mutation!&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Redux_in_Pieces.html</link>
+    </item>
     <item>
       <title>Box 'em! - Property references for TypeScript</title>
       <pubDate> 2017-01-11T00:00:00Z</pubDate>
