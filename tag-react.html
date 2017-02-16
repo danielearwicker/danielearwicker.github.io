@@ -18,11 +18,25 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-mobx.html">MOBX (2)</a> <a href="tag-react.html">REACT (3)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-typescript.html">TYPESCRIPT (12)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (3)</a> <a href="tag-react.html">REACT (4)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-typescript.html">TYPESCRIPT (12)</a></div>
             </div>
             
             <div class="content">
-                <h2>Box 'em! - Property references for TypeScript</h2>
+                <h2>json-mobx - Like React, but for Data (Part 2)</h2>
+<p class="meta"><a href="tag-MobX.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-json-mobx.html">JSON-MOBX</a>  2017-02-15</p>
+<p>This is a follow-on to <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>, in which I noted the parallels between MobX and React.</p>
+
+<ul>
+<li>A <code>computed</code> "renders" a "view" of some data, and automatically updates when the source data changes. Like a React component, except generalised to cover any data, not just Virtual DOM.</li>
+
+<li>An <code>observable</code> is like the <code>setState</code> facility in stateful React components, except that its automatic ability to notify <code>computed</code> (and <code>autorun</code>) observers works by spooky "action at a distance" and so doesn't have to take place inside one component.</li>
+</ul>
+
+<p>But this still leaves one major feature of React unaddressed, and that is <em>reconciliation</em>. What is this about, and how can it be useful in a more general way in MobX?</p>
+<p><a href="json_mobx_Like_React_but_for_Data_Part_2_.html">Read on...</a></p>
+<hr>
+
+<h2>Box 'em! - Property references for TypeScript</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-boxm.html">BOXM</a>  2017-01-11</p>
 <p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility <code>observable.box</code> (<a href="https://mobx.js.org/refguide/boxed.html">docs</a>). But I don't want to use that create all my properties and have to put <code>.get()</code> after every read access. I want to use the cool <code>@observable</code> decorator and just fetch my properties directly, and assign new values with <code>=</code>. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.</p>
 
@@ -60,6 +74,12 @@
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="json_mobx_Like_React_but_for_Data_Part_2_.html">json-mobx - Like React, but for Data (Part 2)</a>
+    </td>
+    <td class="date"> 2017-02-15</td>    
+</tr>
+<tr>
     <td>
         <a href="Redux_in_Pieces.html">Redux in Pieces</a>
     </td>
@@ -109,13 +129,13 @@
 </tr>
 <tr>
     <td>
-        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+        <a href="TypeScript_What_is_a_class_.html">TypeScript - What is a class?</a>
     </td>
     <td class="date"> 2016-09-11</td>    
 </tr>
 <tr>
     <td>
-        <a href="TypeScript_What_is_a_class_.html">TypeScript - What is a class?</a>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
     </td>
     <td class="date"> 2016-09-11</td>    
 </tr>

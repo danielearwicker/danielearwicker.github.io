@@ -4,7 +4,21 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2017-01-28T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2017-02-15T00:00:00Z</lastBuildDate>
+    <item>
+      <title>json-mobx - Like React, but for Data (Part 2)</title>
+      <pubDate> 2017-02-15T00:00:00Z</pubDate>
+      <description>&lt;p&gt;This is a follow-on to &lt;a href="MobX_Like_React_but_for_Data.html"&gt;MobX - Like React, but for Data&lt;/a&gt;, in which I noted the parallels between MobX and React.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;A &lt;code&gt;computed&lt;/code&gt; "renders" a "view" of some data, and automatically updates when the source data changes. Like a React component, except generalised to cover any data, not just Virtual DOM.&lt;/li&gt;
+
+&lt;li&gt;An &lt;code&gt;observable&lt;/code&gt; is like the &lt;code&gt;setState&lt;/code&gt; facility in stateful React components, except that its automatic ability to notify &lt;code&gt;computed&lt;/code&gt; (and &lt;code&gt;autorun&lt;/code&gt;) observers works by spooky "action at a distance" and so doesn't have to take place inside one component.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;But this still leaves one major feature of React unaddressed, and that is &lt;em&gt;reconciliation&lt;/em&gt;. What is this about, and how can it be useful in a more general way in MobX?&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/json_mobx_Like_React_but_for_Data_Part_2_.html</link>
+    </item>
     <item>
       <title>Redux in Pieces</title>
       <pubDate> 2017-01-28T00:00:00Z</pubDate>
@@ -92,6 +106,12 @@ Structured Programmers, and the structure of the program become more and more ab
       <link>http://danielearwicker.github.io/Immuto_Working_with_React_An_Example_.html</link>
     </item>
     <item>
+      <title>TypeScript - What is a class?</title>
+      <pubDate> 2016-09-11T00:00:00Z</pubDate>
+      <description>&lt;p&gt;In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/TypeScript_What_is_a_class_.html</link>
+    </item>
+    <item>
       <title>Immuto - Strongly Typed Redux Composition</title>
       <pubDate> 2016-09-11T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;a href="What_s_good_about_Redux.html"&gt;What's good about Redux&lt;/a&gt;, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. &lt;a href="http://redux.js.org/docs/basics/Actions.html"&gt;Read the docs, they're easy&lt;/a&gt;.&lt;/p&gt;
@@ -100,12 +120,6 @@ Structured Programmers, and the structure of the program become more and more ab
 
 &lt;p&gt;One composition feature is &lt;code&gt;combineReducers&lt;/code&gt;, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Immuto_Strongly_Typed_Redux_Composition.html</link>
-    </item>
-    <item>
-      <title>TypeScript - What is a class?</title>
-      <pubDate> 2016-09-11T00:00:00Z</pubDate>
-      <description>&lt;p&gt;In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:&lt;/p&gt;</description>
-      <link>http://danielearwicker.github.io/TypeScript_What_is_a_class_.html</link>
     </item>
     <item>
       <title>TypeScript and runtime typing - EPISODE II</title>
