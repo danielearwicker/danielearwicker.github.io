@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@types/node": "^7.0.29",
     "showdown": "^1.3.0",
     "xml2js": "^0.4.16"
   },

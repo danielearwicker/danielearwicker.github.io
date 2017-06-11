@@ -192,7 +192,7 @@ function articleList(list: Article[], current?: Article) {
 
 for (const name of fs.readdirSync(outputPath)) {
     if (path.extname(name) === ".html") {
-        fs.unlink(path.join(outputPath, name));
+        fs.unlinkSync(path.join(outputPath, name));
     }
 }
 

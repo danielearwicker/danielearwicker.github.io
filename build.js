@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var showdown = require("showdown");
 var xml2js = require("xml2js");
 var fs = require("fs");
@@ -135,7 +136,7 @@ function articleList(list, current) {
 for (var _i = 0, _a = fs.readdirSync(outputPath); _i < _a.length; _i++) {
     var name_1 = _a[_i];
     if (path.extname(name_1) === ".html") {
-        fs.unlink(path.join(outputPath, name_1));
+        fs.unlinkSync(path.join(outputPath, name_1));
     }
 }
 var articlesByTag = {};
