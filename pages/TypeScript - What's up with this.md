@@ -1,5 +1,6 @@
 tags: typescript
 date: 2017-01-01
+title: TypeScript - What's up with this?
 
 JavaScript's `this` keyword is horrible. The value it assumes inside a function depends on precisely how the function is called:
 

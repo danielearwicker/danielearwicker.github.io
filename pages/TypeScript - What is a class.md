@@ -1,5 +1,6 @@
 tags: typescript
 date: 2016-09-11
+title: TypeScript - What is a class?
 
 In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:
 
