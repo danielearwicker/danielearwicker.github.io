@@ -66,7 +66,9 @@ function makeTitle(name) {
     return name;
 }
 function makeHtmlName(title) {
-    return title.replace(/[^a-z0-9_]+/gi, "_") + ".html";
+    return title.replace(/[^a-z0-9_]+/gi, "_")
+        .replace(/^_+/, "")
+        .replace(/_+$/, "") + ".html";
 }
 function convertLink(link) {
     var bar = link.indexOf("|");

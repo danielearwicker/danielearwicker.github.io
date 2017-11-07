@@ -15,7 +15,7 @@
 &lt;/ul&gt;
 
 &lt;h1 id="background"&gt;Background&lt;/h1&gt;</description>
-      <link>http://danielearwicker.github.io/_From_Ember_to_React_Part_1_Why_Not_Ember_.html</link>
+      <link>http://danielearwicker.github.io/From_Ember_to_React_Part_1_Why_Not_Ember.html</link>
     </item>
     <item>
       <title>json-mobx - Like React, but for Data (Part 2)</title>
@@ -29,7 +29,7 @@
 &lt;/ul&gt;
 
 &lt;p&gt;But this still leaves one major feature of React unaddressed, and that is &lt;em&gt;reconciliation&lt;/em&gt;. What is this about, and how can it be useful in a more general way in MobX?&lt;/p&gt;</description>
-      <link>http://danielearwicker.github.io/json_mobx_Like_React_but_for_Data_Part_2_.html</link>
+      <link>http://danielearwicker.github.io/json_mobx_Like_React_but_for_Data_Part_2.html</link>
     </item>
     <item>
       <title>Redux in Pieces</title>
@@ -53,7 +53,7 @@
       <title> TypeScript - What's up with this?</title>
       <pubDate> 2017-01-01T00:00:00Z</pubDate>
       <description>&lt;p&gt;JavaScript's &lt;code&gt;this&lt;/code&gt; keyword is horrible. The value it assumes inside a function depends on precisely how the function is called:&lt;/p&gt;</description>
-      <link>http://danielearwicker.github.io/_TypeScript_What_s_up_with_this_.html</link>
+      <link>http://danielearwicker.github.io/TypeScript_What_s_up_with_this.html</link>
     </item>
     <item>
       <title>MobX - Like React, but for Data</title>
@@ -115,7 +115,7 @@ Structured Programmers, and the structure of the program become more and more ab
 &lt;p&gt;In &lt;a href="Immuto_Strongly_Typed_Redux_Composition.html"&gt;Immuto - Strongly Typed Redux Composition&lt;/a&gt; I introduced the &lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto library&lt;/a&gt; by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!&lt;/p&gt;
 
 &lt;p&gt;What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:&lt;/p&gt;</description>
-      <link>http://danielearwicker.github.io/Immuto_Working_with_React_An_Example_.html</link>
+      <link>http://danielearwicker.github.io/Immuto_Working_with_React_An_Example.html</link>
     </item>
     <item>
       <title>Immuto - Strongly Typed Redux Composition</title>
@@ -131,7 +131,7 @@ Structured Programmers, and the structure of the program become more and more ab
       <title> TypeScript - What is a class?</title>
       <pubDate> 2016-09-11T00:00:00Z</pubDate>
       <description>&lt;p&gt;In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:&lt;/p&gt;</description>
-      <link>http://danielearwicker.github.io/_TypeScript_What_is_a_class_.html</link>
+      <link>http://danielearwicker.github.io/TypeScript_What_is_a_class.html</link>
     </item>
     <item>
       <title>TypeScript and runtime typing - EPISODE II</title>

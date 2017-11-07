@@ -91,7 +91,9 @@ function makeTitle(name: string) {
 }
 
 function makeHtmlName(title: string) {
-    return title.replace(/[^a-z0-9_]+/gi, "_") + ".html";
+    return title.replace(/[^a-z0-9_]+/gi, "_")
+                .replace(/^_+/, "")
+                .replace(/_+$/, "") + ".html";
 }
 
 function convertLink(link: string) {
