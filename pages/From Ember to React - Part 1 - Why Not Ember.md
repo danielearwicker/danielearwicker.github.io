@@ -102,8 +102,10 @@ He goes on to suggest that right now the best way to take advantage of TypeScrip
 ... except I go a little further and say that, considering all the other parts of Ember that have better alternatives now, maybe don't use Ember at all.
 
 Just as IE 8 is the very best browser in the world at running apps that only work in IE 8, so Ember is the framework for you if you already have a gazllion lines of Ember code that you're maintaining. Long may it continue to support its users.
- 
-For the rest of us, there's:
+
+It could well be that over the next few years, Ember evolves into something radically different and more modern, and the most heavily invested Ember users will be able to gradually migrate to the new approaches.
+
+For the rest of us, there's already:
 
 * [React](https://reactjs.org/) for state-of-the-art UI templating
 * [TypeScript](https://www.typescriptlang.org/) for static typing and transpiling
