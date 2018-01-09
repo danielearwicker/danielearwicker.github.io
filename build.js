@@ -125,7 +125,7 @@ var articles = fs.readdirSync(inputPath).map(function (name) {
         }, function (plain) { return new showdown.Converter().makeHtml(plain); });
     };
     var body = getBody(linked);
-    var formattedTags = formatTags(tags.trim().split(" "));
+    var formattedTags = formatTags(splitTags(tags));
     var article = { title: title, tags: tags, date: date, body: body, formattedTags: formattedTags, link: makeHtmlName(title) };
     article.content = template("article", article);
     article.snippet = getBody(getSnippet(linked));
@@ -141,10 +141,13 @@ for (var _i = 0, _a = fs.readdirSync(outputPath); _i < _a.length; _i++) {
         fs.unlinkSync(path.join(outputPath, name_1));
     }
 }
+function splitTags(tags) {
+    return tags.trim().split(" ").map(function (t) { return t.toLowerCase(); });
+}
 var articlesByTag = {};
 for (var _b = 0, articles_1 = articles; _b < articles_1.length; _b++) {
     var article = articles_1[_b];
-    for (var _c = 0, _d = article.tags.trim().split(" ").map(function (t) { return t.toLowerCase(); }); _c < _d.length; _c++) {
+    for (var _c = 0, _d = splitTags(article.tags); _c < _d.length; _c++) {
         var tag = _d[_c];
         var articlesForTag = articlesByTag[tag] || (articlesByTag[tag] = []);
         articlesForTag.push(article);

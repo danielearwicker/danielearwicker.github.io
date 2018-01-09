@@ -176,7 +176,7 @@ const articles = fs.readdirSync(inputPath).map(name => {
 
     const body = getBody(linked);
 
-    var formattedTags = formatTags(tags.trim().split(" "));
+    var formattedTags = formatTags(splitTags(tags));
 
     const article: Article = { title, tags, date, body, formattedTags, link: makeHtmlName(title) };
 
@@ -198,10 +198,14 @@ for (const name of fs.readdirSync(outputPath)) {
     }
 }
 
+function splitTags(tags: string) {
+    return tags.trim().split(" ").map(t => t.toLowerCase());
+}
+
 const articlesByTag: { [name: string]: Article[] } = {};
 
 for (const article of articles) {
-    for (const tag of article.tags.trim().split(" ").map(t => t.toLowerCase())) {
+    for (const tag of splitTags(article.tags)) {
         const articlesForTag = articlesByTag[tag] || (articlesByTag[tag] = []);
         articlesForTag.push(article);
     }
