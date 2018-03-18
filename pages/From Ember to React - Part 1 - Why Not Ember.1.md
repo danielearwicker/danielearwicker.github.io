@@ -5,6 +5,7 @@ title: From Ember to React, Part 1: Why Not Ember?
 _Abstract_: We just replaced our entire Ember codebase with a new one written in React, TypeScript and MobX. It was a pretty engrossing couple of weeks. THIS IS OUR STORY.
 
 * *From Ember to React, Part 1: Why Not Ember?*
+* [[From Ember to React, Part 2: Baby, Bathwater, Routing etc.|From Ember to React - Part 2 - Baby, Bathwater, Routing etc]]
 
 # Background
 

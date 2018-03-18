@@ -18,7 +18,7 @@ public interface IProperty<T>
 This is closely analogous to an old-fashioned pointer in C and C++, [as I mused aloud all those years ago](http://smellegantcode.wordpress.com/2008/05/06/pointers-to-value-types-in-c/). 
 Let's turn that whole idea into a strangely alluring language feature, which I'll call "property references", and then occasionally forget that terminology and call them pointers instead.
 
-Firstly, syntax. We could use actual pointer syntax, but [I already used some of that in yesterday's feature](http://smellegantcode.wordpress.com/2014/04/26/adventures-in-roslyn-using-pointer-syntax-as-a-shorthand-for-ienumerable/). 
+Firstly, syntax. We could use actual pointer syntax, but [[I already used some of that in yesterday's feature|Using pointer syntax as a shorthand for IEnumerable]]. 
 Dagnabbit! Fortunately [C++/CX](http://en.wikipedia.org/wiki/C%2B%2B/CX) has already paved the way: it has the concept of a reference to a fancy object that must be explicitly dereferenced. The syntax is like this:
 
 ```csharp
