@@ -83,14 +83,18 @@ function getSnippet(text) {
     var end = 0, blankCount = 0;
     for (; end < lines.length; end++) {
         var line = lines[end].trim();
+        console.log(line, blankCount);
         if (line.indexOf("```") === 0) {
             break;
         }
         if (!line) {
             blankCount++;
         }
-        if (blankCount === 4) {
+        if (blankCount >= 4) {
             break;
+        }
+        if (line.match(/^_Abstract_:/)) {
+            blankCount = 4;
         }
     }
     return lines.slice(0, end).join("\n");

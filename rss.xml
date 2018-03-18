@@ -8,29 +8,13 @@
     <item>
       <title> From Ember to React, Part 2: Baby, Bathwater, Routing, etc.</title>
       <pubDate> 2018-03-18T00:00:00Z</pubDate>
-      <description>&lt;p&gt;&lt;em&gt;Abstract&lt;/em&gt;: Last time, which was too long ago, I explained why Ember is terrible and must be burnt to the ground. This time I'll begin to explain why it's not actually all terrible and we should run back into the burning building to rescue the good parts. This will lead us to answer the question: can React Router be used with MobX?&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href="From_Ember_to_React_Part_1_Why_Not_Ember.html"&gt;From Ember to React, Part 1: Why Not Ember?&lt;/a&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;em&gt;From Ember to React, Part 2: Baby, Bathwater, Routing, etc.&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id="magic"&gt;Magic&lt;/h1&gt;</description>
+      <description>&lt;p&gt;&lt;em&gt;Abstract&lt;/em&gt;: Last time, which was too long ago, I explained why Ember is terrible and must be burnt to the ground. This time I'll begin to explain why it's not actually all terrible and we should run back into the burning building to rescue the good parts. This will lead us to answer the question: can React Router be used with MobX?&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/From_Ember_to_React_Part_2_Baby_Bathwater_Routing_etc.html</link>
     </item>
     <item>
       <title> From Ember to React, Part 1: Why Not Ember?</title>
       <pubDate> 2017-11-07T00:00:00Z</pubDate>
-      <description>&lt;p&gt;&lt;em&gt;Abstract&lt;/em&gt;: We just replaced our entire Ember codebase with a new one written in React, TypeScript and MobX. It was a pretty engrossing couple of weeks. THIS IS OUR STORY.&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;From Ember to React, Part 1: Why Not Ember?&lt;/em&gt;&lt;/li&gt;
-
-&lt;li&gt;&lt;a href="From_Ember_to_React_Part_2_Baby_Bathwater_Routing_etc.html"&gt;From Ember to React, Part 2: Baby, Bathwater, Routing etc.&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h1 id="background"&gt;Background&lt;/h1&gt;</description>
+      <description>&lt;p&gt;&lt;em&gt;Abstract&lt;/em&gt;: We just replaced our entire Ember codebase with a new one written in React, TypeScript and MobX. It was a pretty engrossing couple of weeks. THIS IS OUR STORY.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/From_Ember_to_React_Part_1_Why_Not_Ember.html</link>
     </item>
     <item>

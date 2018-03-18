@@ -82,7 +82,7 @@ function template(name: string, params: StringMap) {
 function makeTitle(name: string) {
     const lastDot = name.lastIndexOf(".");
     if (lastDot !== -1) {
-        var ext = name.substr(lastDot + 1).toLowerCase();
+        const ext = name.substr(lastDot + 1).toLowerCase();
         if (ext === "md") {
             return name.substr(0, lastDot);
         }
@@ -107,18 +107,23 @@ function convertLink(link: string) {
 }
 
 function getSnippet(text: string) {
-    var lines = text.split("\n");
-    var end = 0, blankCount = 0;    
-    for (; end < lines.length; end++) {
-        var line = lines[end].trim();
+    const lines = text.split("\n");
+    let end = 0, blankCount = 0;    
+    for (; end < lines.length; end++) {        
+        const line = lines[end].trim();
+        console.log(line, blankCount);
+
         if (line.indexOf("```") === 0) {
             break;
         }
         if (!line) {
             blankCount++;
         }
-        if (blankCount === 4) {
+        if (blankCount >= 4) {
             break;
+        }
+        if (line.match(/^_Abstract_:/)) {
+            blankCount = 4;
         }
     }
     return lines.slice(0, end).join("\n");
@@ -162,13 +167,13 @@ const articles = fs.readdirSync(inputPath).map(name => {
     const getBody = (source: string) =>
         process(source, codeTicks, codeTicks, code => {
 
-            var newLine = code.indexOf('\n');
+            const newLine = code.indexOf('\n');
             if (newLine === -1) {
                 return code;
             }
 
-            var lang = code.substr(0, newLine).replace(/\s/g, "");
-            var rest = code.substr(newLine + 1);
+            const lang = code.substr(0, newLine).replace(/\s/g, "");
+            const rest = code.substr(newLine + 1);
             return "<pre><code class=\"" + lang + "\">" +
                 rest.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</code></pre>";
 
@@ -176,7 +181,7 @@ const articles = fs.readdirSync(inputPath).map(name => {
 
     const body = getBody(linked);
 
-    var formattedTags = formatTags(splitTags(tags));
+    const formattedTags = formatTags(splitTags(tags));
 
     const article: Article = { title, tags, date, body, formattedTags, link: makeHtmlName(title) };
 
