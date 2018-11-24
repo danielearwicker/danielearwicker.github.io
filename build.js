@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var showdown = require("showdown");
 var xml2js = require("xml2js");
 var fs = require("fs");
@@ -139,27 +139,21 @@ articles.sort(function (a, b) { return b.date.localeCompare(a.date); });
 function articleList(list, current) {
     return list.map(function (article) { return template(article === current ? "selected" : "recent", article); }).join("");
 }
-for (var _i = 0, _a = fs.readdirSync(outputPath); _i < _a.length; _i++) {
-    var name_1 = _a[_i];
-    if (path.extname(name_1) === ".html") {
-        fs.unlinkSync(path.join(outputPath, name_1));
-    }
-}
 function splitTags(tags) {
     return tags.trim().split(" ").map(function (t) { return t.toLowerCase(); });
 }
 var articlesByTag = {};
-for (var _b = 0, articles_1 = articles; _b < articles_1.length; _b++) {
-    var article = articles_1[_b];
-    for (var _c = 0, _d = splitTags(article.tags); _c < _d.length; _c++) {
-        var tag = _d[_c];
+for (var _i = 0, articles_1 = articles; _i < articles_1.length; _i++) {
+    var article = articles_1[_i];
+    for (var _a = 0, _b = splitTags(article.tags); _a < _b.length; _a++) {
+        var tag = _b[_a];
         var articlesForTag = articlesByTag[tag] || (articlesByTag[tag] = []);
         articlesForTag.push(article);
     }
 }
 var topics = formatCountedTags(Object.keys(articlesByTag).sort());
-for (var _e = 0, articles_2 = articles; _e < articles_2.length; _e++) {
-    var article = articles_2[_e];
+for (var _c = 0, articles_2 = articles; _c < articles_2.length; _c++) {
+    var article = articles_2[_c];
     fs.writeFileSync(path.join(outputPath, makeHtmlName(article.title)), template("shell", {
         recent: articleList(articles, article),
         content: article.content,
@@ -167,8 +161,8 @@ for (var _e = 0, articles_2 = articles; _e < articles_2.length; _e++) {
         topics: topics
     }));
 }
-for (var _f = 0, _g = Object.keys(articlesByTag); _f < _g.length; _f++) {
-    var tag = _g[_f];
+for (var _d = 0, _e = Object.keys(articlesByTag); _d < _e.length; _d++) {
+    var tag = _e[_d];
     fs.writeFileSync(path.join(outputPath, "tag-" + tag + ".html"), template("shell", {
         recent: articleList(articles),
         content: articlesByTag[tag].map(function (article) { return template("snippet", article); }).join("\n"),

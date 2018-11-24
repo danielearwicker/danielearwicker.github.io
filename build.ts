@@ -197,12 +197,6 @@ function articleList(list: Article[], current?: Article) {
     return list.map(article => template(article === current ? "selected" : "recent", article)).join("");
 }
 
-for (const name of fs.readdirSync(outputPath)) {
-    if (path.extname(name) === ".html") {
-        fs.unlinkSync(path.join(outputPath, name));
-    }
-}
-
 function splitTags(tags: string) {
     return tags.trim().split(" ").map(t => t.toLowerCase());
 }
