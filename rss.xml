@@ -4,7 +4,13 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2018-03-18T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2018-11-24T00:00:00Z</lastBuildDate>
+    <item>
+      <title> How Does Auth work?</title>
+      <pubDate> 2018-11-24T00:00:00Z</pubDate>
+      <description>&lt;p&gt;&lt;em&gt;Abstract&lt;/em&gt;: Authentication is figuring out who someone is, and authorization is concerned with what they are allowed to do (or any other useful information about them). The basic approach is straightforward, but it becomes more useful and interesting when you consider many separate services that all need to collectively accept requests from the same users.&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/How_Does_Auth_work.html</link>
+    </item>
     <item>
       <title> From Ember to React, Part 2: Baby, Bathwater, Routing, etc.</title>
       <pubDate> 2018-03-18T00:00:00Z</pubDate>
