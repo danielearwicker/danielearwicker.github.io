@@ -1,4 +1,4 @@
-tags: roslyn
+tags: roslyn c#
 date: 2014-04-27
 
 It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!

@@ -1,4 +1,4 @@
-tags: FRP functional reactive Eventless 
+tags: FRP functional reactive Eventless c#
 date: 2016-12-24
 
 About four years ago, being so taken with data modeling approach used in 

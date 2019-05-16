@@ -4,7 +4,17 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2018-11-24T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2019-05-16T00:00:00Z</lastBuildDate>
+    <item>
+      <title>Factory Injection in C#</title>
+      <pubDate> 2019-05-16T00:00:00Z</pubDate>
+      <description>&lt;p&gt;The modern C# ecosystem (based on dotnet core, due to become .NET 5) enjoys a standard dependency injection system that is, despite its minimalism, is pretty much all you need.&lt;/p&gt;
+
+&lt;p&gt;In some ways the ideal dependency injection system is nothing at all: isolate your components by writing an interface/class pair, and make each class accept interfaces to give it access to whatever services it needs. Very often the sole reason for the existence of the interface to go with each class is so that it can be mocked out in unit tests for classes that depend on it. (It's worth noting that in languages based on dynamically typed runtimes there is typically no need to do this - it's especially irksome to see this pattern being imported unnecessarily into TypeScript, where every class is &lt;em&gt;already&lt;/em&gt; an interface.)&lt;/p&gt;
+
+&lt;p&gt;Anyway, if all you have is "constructor injection", and you set up a network of objects by constructing them, then there is no magic, no runtime resolution, any type errors are detected at compile time, and so you can't forget to register something, because there's no registering.&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Factory_Injection_in_C.html</link>
+    </item>
     <item>
       <title> How Does Auth work?</title>
       <pubDate> 2018-11-24T00:00:00Z</pubDate>

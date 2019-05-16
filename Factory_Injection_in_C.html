@@ -1,0 +1,295 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | Factory Injection in C#</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="https://www.fiscaltechnologies.com/">FISCAL Technologies Ltd</a>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c#.html">C# (5)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+            </div>
+            
+            <div class="content">
+                <h1>Factory Injection in C#</h1>
+<hr>
+<p class="meta"><a href="tag-c#.html">C#</a> <a href="tag-injection.html">INJECTION</a> <a href="tag-factory.html">FACTORY</a>  2019-05-16</p>
+
+<p>The modern C# ecosystem (based on dotnet core, due to become .NET 5) enjoys a standard dependency injection system that is, despite its minimalism, is pretty much all you need.</p>
+
+<p>In some ways the ideal dependency injection system is nothing at all: isolate your components by writing an interface/class pair, and make each class accept interfaces to give it access to whatever services it needs. Very often the sole reason for the existence of the interface to go with each class is so that it can be mocked out in unit tests for classes that depend on it. (It's worth noting that in languages based on dynamically typed runtimes there is typically no need to do this - it's especially irksome to see this pattern being imported unnecessarily into TypeScript, where every class is <em>already</em> an interface.)</p>
+
+<p>Anyway, if all you have is "constructor injection", and you set up a network of objects by constructing them, then there is no magic, no runtime resolution, any type errors are detected at compile time, and so you can't forget to register something, because there's no registering.</p>
+
+<p>But this is impractical in a large application; far more convenient to register each interface/class pair once in a <code>ServiceCollection</code>. The logic to build any given network of objects is automagically cooked up at runtime. It's a deal with the devil; at the whole-application scale there is no longer any type checking. It's a soup of components from which order emerges <em>if possible</em>.</p>
+
+<p>The dotnet core implementation of <code>ServiceCollection</code> also has the magic of allowing you to easily inject <code>IEnumerable&lt;IPen&gt;</code> to get an instance of every class registered as supporting <code>IPen</code>, enabling <a href="https://en.wikipedia.org/wiki/Strategy_pattern">the Strategy pattern</a>, which is hugely important.</p>
+
+<p>Another requirement that often crops up is to be able to inject into component <code>IArtist</code> the ability to construct instances of a component <code>IPen</code> willy-nilly, rather than just receiving a single instance in <code>IArtist</code>'s constructor. The obvious approach:</p><pre><code class="cs">public interface IPenFactory
+{
+    IPen Create(string colour);
+}
+
+public interface PenFactory : IPenFactory
+{
+    public IPen Create(string colour) =&gt; new Pen(colour);
+}
+</code></pre><p>Register that interface/class pair and you now have something you can inject to gain the ability to create as many pens as you want:</p><pre><code class="cs">public class Artist
+{
+    private readonly IPenFactory _pens;
+
+    public Artist(IPenFactory pens) { _pens = pens; }
+
+    public void Draw()
+    {
+        var pen = _pens.Create("red");   
+    }
+}
+</code></pre><p>The <code>Create</code> method takes a parameter, the string <code>colour</code>, so that the pen is bound to that colour at the moment of its creation (and presumably thereafter, assuming we're being good and immutable).</p>
+
+<p>It gets a bit tedious having to churn out another interface/class pair every time you encounter this pattern. Fortunately we can eliminate the boilerplate. Recall Earwicker's 158th Law:</p>
+
+<blockquote>
+  <p>An interface with one (non-generic) method should be replaced by <code>Func</code>, even (or especially) if it confuses everyone.</p>
+</blockquote>
+
+<p>And gloriously you can register a <code>Func</code> as the "interface" part of a pair:</p><pre><code class="cs">services.AddSingleton&lt;Func&lt;string, IPen&gt;&gt;(colour =&gt; new Pen(colour));
+</code></pre><p>Such that, with no special classes:</p><pre><code class="cs">public class Artist
+{
+    private readonly Func&lt;string, IPen&gt; _createPen;
+
+    public Artist(Func&lt;string, IPen&gt; createPen) 
+    {
+         _createPen = createPen;
+    }
+
+    public void Draw()
+    {
+        var pen = _createPen("purple");
+    }
+}
+</code></pre><p>In real applications the equivalent of <code>Pen</code> is a service class that depends on other injectable services, as well as probably needing parameters (such as <code>colour</code>) from the client. Say there's a singleton <code>IInkSupply</code> service that pens can dip into. This can be registered in the usual way with <code>AddSingleton</code>, and then we can give <code>Pen</code> two parameters:</p><pre><code class="cs">public class Pen
+{
+    public Pen(IInkSupply ink, string colour) { ... }
+}
+</code></pre><p>How should we register <code>Pen</code>? We want to get the ink from the service provider (that is, magically plucked from the ether), and the colour from a formal parameter:</p><pre><code class="cs">services.AddSingleton&lt;Func&lt;string, IPen&gt;&gt;(
+    services =&gt; colour =&gt; new Pen(services.GetRequiredService&lt;IInkSupply&gt;(), colour));
+</code></pre><p>This is using a different overload of <code>AddSingleton</code> from last time. Our outermost function receives a <code>IServiceProvider</code> (<code>services</code>) and it has to return <em>another</em> function that actually implements <code>Func&lt;string, IPen&gt;</code>.</p>
+
+<p>If you have a few services to throw into <code>Pen</code> besides the formal parameter(s), all the calls to <code>services.GetRequiredService&lt;IBlah&gt;()</code> become a burden. Besides, it's not very injectiony to have to edit this gnarly registration every time you add a service dependency to <code>Pen</code>'s constructor.</p>
+
+<p>But there's another magic facility to solve this:</p><pre><code class="cs">services.AddSingleton&lt;Func&lt;string, IPen&gt;&gt;(
+    services =&gt; colour =&gt; ActivatorUtilities.CreateInstance&lt;Pen&gt;(services, colour));
+</code></pre><p>Note that <code>CreateInstance</code> has to be given a constructable type (not an interface). It will construct it by matching parameters to arguments based on their types, and filling in the rest with registered services. Again, a deal with the devil in that we've lost a bit of static type checking.</p>
+
+<p>So you can now sling new services into <code>Pen</code>'s constructor and not have touch the registration. It's a bit ugly looking as registrations go. But we can hide this by creating a few reusable extension methods of our own:</p><pre><code class="cs">public static class FactoryExtensions
+{
+    public static IServiceCollection AddFactory&lt;TInterface, TImplementation&gt;(this IServiceCollection services)
+        where TImplementation : class, TInterface
+        where TInterface : class =&gt; services.AddSingleton&lt;Func&lt;TInterface&gt;&gt;(sp =&gt; ()
+                                        =&gt; ActivatorUtilities.CreateInstance&lt;TImplementation&gt;(sp));
+
+    public static IServiceCollection AddFactory&lt;TInterface, TImplementation, TArg1&gt;(this IServiceCollection services)
+        where TImplementation : class, TInterface
+        where TInterface : class =&gt; services.AddSingleton&lt;Func&lt;TArg1, TInterface&gt;&gt;(sp =&gt; arg1
+                                        =&gt; ActivatorUtilities.CreateInstance&lt;TImplementation&gt;(sp, arg1));
+    
+    public static IServiceCollection AddFactory&lt;TInterface, TImplementation, TArg1, TArg2&gt;(this IServiceCollection services)
+        where TImplementation : class, TInterface
+        where TInterface : class =&gt; services.AddSingleton&lt;Func&lt;TArg1, TArg2, TInterface&gt;&gt;(sp =&gt; (arg1, arg2)
+                                        =&gt; ActivatorUtilities.CreateInstance&lt;TImplementation&gt;(sp, arg1, arg2));
+
+    public static IServiceCollection AddFactory&lt;TInterface, TImplementation, TArg1, TArg2, TArg3&gt;(this IServiceCollection services)
+        where TImplementation : class, TInterface
+        where TInterface : class =&gt; services.AddSingleton&lt;Func&lt;TArg1, TArg2, TArg3, TInterface&gt;&gt;(sp =&gt; (arg1, arg2, arg3)
+                                        =&gt; ActivatorUtilities.CreateInstance&lt;TImplementation&gt;(sp, arg1, arg2, arg3));
+}
+</code></pre><p>So those variants support between 0 and 3 parameters. If you need more than that then you should probably define a wrapper type containing all the parameters as properties and pass that as the only parameter (this is often a good idea anyway, but is essential when the only criterion for matching arguments to parameters is assignment compatibility - what if you need to pass two different strings?)</p>
+
+<p>By the way, if you haven't tried injecting <code>Func</code> before, you may be worried about whether your mocking framework will still work with this approach. I can vouch for Moq, which deals with it beautifully:</p><pre><code class="cs">var createPen = new Mock&lt;Func&lt;string, IPen&gt;&gt;();
+var greenPen = new Mock&lt;IPen&gt;();
+
+createPen.Setup(c =&gt; c("green")).Returns(greenPen.Object);
+
+new Artist(CreatePen).Draw();
+
+createPen.Verify(c =&gt; c("puce"), Times.Never);
+</code></pre>
+
+            </div>
+            
+            <div class="outer">                                
+                <table class="recent" align="center"><tr>
+    <td>
+        <strong>Factory Injection in C#</strong>
+    </td>
+    <td class="date"> 2019-05-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="How_Does_Auth_work.html"> How Does Auth work?</a>
+    </td>
+    <td class="date"> 2018-11-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_2_Baby_Bathwater_Routing_etc.html"> From Ember to React, Part 2: Baby, Bathwater, Routing, etc.</a>
+    </td>
+    <td class="date"> 2018-03-18</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_1_Why_Not_Ember.html"> From Ember to React, Part 1: Why Not Ember?</a>
+    </td>
+    <td class="date"> 2017-11-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="json_mobx_Like_React_but_for_Data_Part_2.html">json-mobx - Like React, but for Data (Part 2)</a>
+    </td>
+    <td class="date"> 2017-02-15</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Redux_in_Pieces.html">Redux in Pieces</a>
+    </td>
+    <td class="date"> 2017-01-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Box_em_Property_references_for_TypeScript.html">Box 'em! - Property references for TypeScript</a>
+    </td>
+    <td class="date"> 2017-01-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_s_up_with_this.html"> TypeScript - What's up with this?</a>
+    </td>
+    <td class="date"> 2017-01-01</td>    
+</tr>
+<tr>
+    <td>
+        <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>
+    </td>
+    <td class="date"> 2016-12-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
+    </td>
+    <td class="date"> 2016-12-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Epilogue.html">Immuto - Epilogue</a>
+    </td>
+    <td class="date"> 2016-12-20</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Radical_Unification.html">Immuto - Radical Unification</a>
+    </td>
+    <td class="date"> 2016-09-22</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Working_with_React_An_Example.html">Immuto - Working with React (An Example)</a>
+    </td>
+    <td class="date"> 2016-09-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_is_a_class.html"> TypeScript - What is a class?</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing_EPISODE_II.html">TypeScript and runtime typing - EPISODE II</a>
+    </td>
+    <td class="date"> 2016-09-10</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing.html">TypeScript and runtime typing</a>
+    </td>
+    <td class="date"> 2016-09-04</td>    
+</tr>
+<tr>
+    <td>
+        <a href="What_s_good_about_Redux.html">What's good about Redux</a>
+    </td>
+    <td class="date"> 2016-07-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">  
+                <div class="rss">Want to comment on anything? <a href="https://github.com/danielearwicker/danielearwicker.github.io/issues">Create an issue!</a></div>              
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>
