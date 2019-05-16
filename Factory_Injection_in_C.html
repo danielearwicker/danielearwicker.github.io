@@ -36,7 +36,7 @@
 
 <p>The dotnet core implementation of <code>ServiceCollection</code> also has the magic of allowing you to easily inject <code>IEnumerable&lt;IPen&gt;</code> to get an instance of every class registered as supporting <code>IPen</code>, enabling <a href="https://en.wikipedia.org/wiki/Strategy_pattern">the Strategy pattern</a>, which is hugely important.</p>
 
-<p>Another requirement that often crops up is to be able to inject into component <code>IArtist</code> the ability to construct instances of a component <code>IPen</code> willy-nilly, rather than just receiving a single instance in <code>IArtist</code>'s constructor. The obvious approach:</p><pre><code class="cs">public interface IPenFactory
+<p>Another requirement that often crops up is to be able to inject into component <code>Artist</code> the ability to construct instances of a component <code>IPen</code> willy-nilly, rather than just receiving a single instance in <code>Artist</code>'s constructor. The obvious approach:</p><pre><code class="cs">public interface IPenFactory
 {
     IPen Create(string colour);
 }

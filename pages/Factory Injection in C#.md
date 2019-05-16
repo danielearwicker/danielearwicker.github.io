@@ -11,7 +11,7 @@ But this is impractical in a large application; far more convenient to register 
 
 The dotnet core implementation of `ServiceCollection` also has the magic of allowing you to easily inject `IEnumerable<IPen>` to get an instance of every class registered as supporting `IPen`, enabling [the Strategy pattern](https://en.wikipedia.org/wiki/Strategy_pattern), which is hugely important.
 
-Another requirement that often crops up is to be able to inject into component `IArtist` the ability to construct instances of a component `IPen` willy-nilly, rather than just receiving a single instance in `IArtist`'s constructor. The obvious approach:
+Another requirement that often crops up is to be able to inject into component `Artist` the ability to construct instances of a component `IPen` willy-nilly, rather than just receiving a single instance in `Artist`'s constructor. The obvious approach:
 
 ```cs
 public interface IPenFactory
