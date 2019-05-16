@@ -128,7 +128,13 @@ public static class FactoryExtensions
 }
 ```
 
-So those variants support between 0 and 3 parameters. If you need more than that then you should probably define a wrapper type containing all the parameters as properties and pass that as the only parameter (this is often a good idea anyway, but is essential when the only criterion for matching arguments to parameters is assignment compatibility - what if you need to pass two different strings?)
+So those variants support between 0 and 3 parameters:
+
+```cs
+services.AddFactory<IPen, Pen, string>();
+```
+
+If you need more than that then you should probably define a wrapper type containing all the parameters as properties and pass that as the only parameter (this is often a good idea anyway, but is essential when the only criterion for matching arguments to parameters is assignment compatibility - what if you need to pass two different strings?)
 
 By the way, if you haven't tried injecting `Func` before, you may be worried about whether your mocking framework will still work with this approach. I can vouch for Moq, which deals with it beautifully:
 
