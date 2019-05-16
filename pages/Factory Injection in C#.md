@@ -128,7 +128,7 @@ public static class FactoryExtensions
 }
 ```
 
-So those variants support between 0 and 3 parameters:
+So those variants support between 0 and 3 type parameters in addition to the first two (interface and class). So registering a `Func<string, IPen>` is as simple as:
 
 ```cs
 services.AddFactory<IPen, Pen, string>();
