@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | Eventless - XAML Flavoured</title>
+        <title>Daniel Earwicker | hangfire</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,25 +22,16 @@
             </div>
             
             <div class="content">
-                <h1>Eventless - XAML Flavoured</h1>
+                <h2>Hangfire - A Tale of Several Queues</h2>
+<p class="meta"><a href="tag-c#.html">C#</a> <a href="tag-hangfire.html">HANGFIRE</a>  2019-05-24</p>
+<p>If you've used <a href="https://www.hangfire.io/">Hangfire</a> you know it's a really quick and easy way to give your app a queue of durable background jobs, with automatic retrying and a very nifty dashboard to let you see what's happening right now. Jobs can trigger further jobs and so a complex series of processing stages can be decoupled and spill out into a queue of little units of work.</p>
+
+<p>You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:</p>
+
+<pre><code>Enqueued -&gt; Processing -&gt; Finished
+</code></pre>
+<p><a href="Hangfire_A_Tale_of_Several_Queues.html">Read on...</a></p>
 <hr>
-<p class="meta"><a href="tag-frp.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-eventless.html">EVENTLESS</a> <a href="tag-c#.html">C#</a>  2016-12-24</p>
-
-<p>About four years ago, being so taken with data modeling approach used in 
-<a href="http://knockoutjs.com">Knockout.js</a>, I wanted to 
-<a href="https://smellegantcode.wordpress.com/2013/02/25/eventless-programming-part-1-why-the-heck/">recreate it for C#</a>.
-At the time I wasn't actively using C# so I never got to really use it and left it alone.</p>
-
-<p>But in the last year and a half I've written a few view models for a WPF application. The first time
-I did it I couldn't believe how primitive and laborious it was in comparison. So I started idly 
-messing with Eventless in my spare time - mostly deleting stuff - to make it XAML-friendly.</p>
-
-<p>Just like Knockout, and now <a href="https://github.com/mobxjs/mobx">MobX</a>, it makes the process delightfully simple. You just declare stuff and it works!</p>
-
-<p><a href="https://github.com/danielearwicker/eventless">Fork away!</a></p>
-
-<p>Or just install it via <a href="https://www.nuget.org/packages/Eventless/">nuget</a>. Also there is <a href="http://earwicker.com/eventless/html/ca2f21b1-fdbc-4b93-8fc1-051fdf574854.htm">complete API reference 
-documentation</a>.</p>
 
             </div>
             
@@ -107,7 +98,7 @@ documentation</a>.</p>
 </tr>
 <tr>
     <td>
-        <strong>Eventless - XAML Flavoured</strong>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
     </td>
     <td class="date"> 2016-12-24</td>    
 </tr>

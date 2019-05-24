@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | c#</title>
+        <title>Daniel Earwicker | Hangfire - A Tale of Several Queues</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,82 +22,97 @@
             </div>
             
             <div class="content">
-                <h2>Hangfire - A Tale of Several Queues</h2>
+                <h1>Hangfire - A Tale of Several Queues</h1>
+<hr>
 <p class="meta"><a href="tag-c#.html">C#</a> <a href="tag-hangfire.html">HANGFIRE</a>  2019-05-24</p>
+
 <p>If you've used <a href="https://www.hangfire.io/">Hangfire</a> you know it's a really quick and easy way to give your app a queue of durable background jobs, with automatic retrying and a very nifty dashboard to let you see what's happening right now. Jobs can trigger further jobs and so a complex series of processing stages can be decoupled and spill out into a queue of little units of work.</p>
 
 <p>You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:</p>
 
 <pre><code>Enqueued -&gt; Processing -&gt; Finished
 </code></pre>
-<p><a href="Hangfire_A_Tale_of_Several_Queues.html">Read on...</a></p>
-<hr>
 
-<h2>Factory Injection in C#</h2>
-<p class="meta"><a href="tag-c#.html">C#</a> <a href="tag-injection.html">INJECTION</a> <a href="tag-factory.html">FACTORY</a>  2019-05-16</p>
-<p>The modern C# ecosystem (based on dotnet core, due to become .NET 5) enjoys a standard dependency injection system that is, despite its minimalism, is pretty much all you need.</p>
+<p>Or maybe:</p>
 
-<p>In some ways the ideal dependency injection system is nothing at all: isolate your components by writing an interface/class pair, and make each class accept interfaces to give it access to whatever services it needs. Very often the sole reason for the existence of the interface to go with each class is so that it can be mocked out in unit tests for classes that depend on it. (It's worth noting that in languages based on dynamically typed runtimes there is typically no need to do this - it's especially irksome to see this pattern being imported unnecessarily into TypeScript, where every class is <em>already</em> an interface.)</p>
+<pre><code>Enqueued -&gt; Processing -&gt; Failed -&gt; Enqueued -&gt; Processing -&gt; Finished
+</code></pre>
 
-<p>Anyway, if all you have is "constructor injection", and you set up a network of objects by constructing them, then there is no magic, no runtime resolution, any type errors are detected at compile time, and so you can't forget to register something, because there's no registering.</p>
-<p><a href="Factory_Injection_in_C.html">Read on...</a></p>
-<hr>
+<p>It's all good. Once enqueued, either the job finishes or you'll be able to see it in the dashboard and read all the lovely exceptions.</p>
 
-<h2>Eventless - XAML Flavoured</h2>
-<p class="meta"><a href="tag-frp.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-eventless.html">EVENTLESS</a> <a href="tag-c#.html">C#</a>  2016-12-24</p>
-<p>About four years ago, being so taken with data modeling approach used in 
-<a href="http://knockoutjs.com">Knockout.js</a>, I wanted to 
-<a href="https://smellegantcode.wordpress.com/2013/02/25/eventless-programming-part-1-why-the-heck/">recreate it for C#</a>.
-At the time I wasn't actively using C# so I never got to really use it and left it alone.</p>
+<p>I recently hit the problem of having multiple tenants (totally separate customers in this case) executing jobs in the same Hangfire instance. This works fine until a low priority tenant floods the queue with jobs and stops higher priority work from getting done.</p>
 
-<p>But in the last year and a half I've written a few view models for a WPF application. The first time
-I did it I couldn't believe how primitive and laborious it was in comparison. So I started idly 
-messing with Eventless in my spare time - mostly deleting stuff - to make it XAML-friendly.</p>
+<h2 id="undertheseaanalogy">Under-the-Sea Analogy</h2>
 
-<p>Just like Knockout, and now <a href="https://github.com/mobxjs/mobx">MobX</a>, it makes the process delightfully simple. You just declare stuff and it works!</p>
-<p><a href="Eventless_XAML_Flavoured.html">Read on...</a></p>
-<hr>
+<p>You run a service that washes sea creatures. A whale stopped by because he wants the krill cleaned out of his mouth and also his tail could use a service. It's not that urgent though and you aren't charging him as he's a friend. You get started on that, but then a shark comes along (he happens to be one of your best customers) and he needs his teeth cleaned for a photo session starting in ten minutes. Oh no!</p>
 
-<h2>A new kind of managed lvalue pointer</h2>
-<p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c#.html">C#</a>  2014-04-27</p>
-<p>It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!</p>
+<p>What you need are two different queues, like a fast lane and slow lane. I could have just said it's like a grocery shop with a "5 items or fewer" sign at the checkout, but I've already written all that stuff about the sea creatures and I'm not deleting it now.</p>
 
-<p>Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
-much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an <code>Invoke</code> method.</p>
+<h2 id="hangfirequeuesandtheirlimitations">Hangfire queues and their limitations</h2>
 
-<p>So all we need is an interface with a <code>Value</code> property. Objects supporting that interface can represent a single property that can be passed around like any other value:</p>
-<p><a href="A_new_kind_of_managed_lvalue_pointer.html">Read on...</a></p>
-<hr>
+<p>So how can Hangfire help us here? It has the concept of queues. When you start a "server" (nothing to do with a physical box or even a process: you can start multiple of them inside one process) you specify what queue(s) it will read from and how many dedicated worker threads it has. So you could start separate servers for <code>fast</code> and <code>slow</code>, each dedicated to their one queue.</p>
 
-<h2>Using pointer syntax as a shorthand for IEnumerable</h2>
-<p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c#.html">C#</a>  2014-04-26</p>
-<p>Another quickie extension to C#. In the current language, a type declaration <code>T!</code> is shorthand for <code>Nullable</code>.</p>
+<p>But there's a problem. by design, Hangfire doesn't assign jobs to queues. Rather, when a job is enqueued, a queue name such as <code>fast</code> can (optionally) be specified. The choice of queue is not stamped on the job, but stored as a property inside the state object representing the <code>Enqueued</code> state. This means that when the job transitions to <code>Processing</code> it will be picked up by the <code>fast</code> server, but now nothing is storing the queue name. Why is that a problem?</p>
 
-<p>But equally important in modern C# programs are sequences of values, so a similar shorthand for <code>IEnumerable</code> would be ideal. 
-The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
-this was the choice made by the intriguing <a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/">research language Cω</a> 
-that influenced LINQ, so let's copy that:</p>
-<p><a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Read on...</a></p>
-<hr>
+<p>Well, jobs fail sometimes, and they need to be retried. In fact this is part of what makes aystem like Hangfire so valuable; occasional transient problems (a database glitch) don't stop your work from getting done. But obviously when that happens to our jobs, we want them to be enqueued for their second attempt on the same queue as last time.</p>
 
-<h2>Adding crazily powerful operator overloading to C# 6</h2>
-<p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c#.html">C#</a>  2014-04-23</p>
-<p><strong>I'm going to show you how to enable a new kind of operator overloading by adding exactly four (4) lines of code to a single file in the C# 6 compiler 
-preview. Yes, I was surprised too!</strong></p>
+<h2 id="extensionpoints">Extension points</h2>
 
-<p>After seeing the video of Anders Hejlsberg showing how easy it is to hack the new open source C# compiler, I had to give it a try.</p>
+<p>Hangfire supports several extension points, and the relevant ones here are:</p>
 
-<p>My aim was (I assumed) a lot more ambitious and crazy than his demo. I thought it would take ages to figure out. But it was still tempting to aim high and 
-actually implement a substantial new feature, because there are a few I've been wondering about over the years.</p>
-<p><a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Read on...</a></p>
-<hr>
+<ul>
+<li>You can add your own custom properties to jobs. So it is possible to stamp the queue name on the job in a way that persists throughout its life.</li>
+
+<li>You can install a filter call a <code>IClientFilter</code> that lets you hook into the point where a job is created at the client, and get the queue name from its initial state and copy it into a custom property. This is the part that stashes the queue name.</li>
+
+<li>There's another kind of filter called <code>IElectStateFilter</code> that lets you hook into the event of a job changing state. If it's changing to the <code>Enqueued</code> state, you can copy the queue name from the custom property you stashed in the previous step and fix the state to have the queue name in it, thus forcing it into the right queue.</li>
+</ul>
+
+<p>By combining these we can basically brute-force jobs into running on the queue we've stamped them with.</p>
+
+<p>So the <code>IClientFilter</code> might look like this:</p><pre><code class="cs">public class QueueNameRecorder : IClientFilter
+{
+    public void OnCreating(CreatingContext filterContext)
+    {
+        var enqueuedState = filterContext.InitialState as EnqueuedState;
+
+        if (string.IsNullOrWhiteSpace(enqueuedState?.Queue))
+        {
+            filterContext.SetJobParameter("stashedQueueName", enqueuedState.Queue);
+        }
+    }
+
+    public void OnCreated(CreatedContext filterContext) { }
+}
+</code></pre><p>And in the start-up of your clients:</p><pre><code class="cs">GlobalJobFilters.Filters.Add(new QueueNameRecorder());
+</code></pre><p>This means that if we enqueue a job on the <code>fast</code> queue:</p><pre><code class="cs">_backgroundJobs.Create&lt;Toothbrush&gt;(j =&gt; j.CleanTeeth(), new EnqueuedState("fast"));
+</code></pre><p>the above <code>OnCreating</code> handler will kick in and store the value <code>fast</code> in a custom property <code>stashedQueueName</code>, permanently associating the job with that queue.</p>
+
+<p>Meanwhile in the worker processes, you need the <code>IElectStateFilter</code>:</p><pre><code class="cs">public class QueueNameFixer : IElectStateFilter
+{
+    public void OnStateElection(ElectStateContext context)
+    {
+        var queueName = context.GetJobParameter&lt;string&gt;("stashedQueueName");
+
+        if (context.CandidateState.Name == "Enqueued" &&
+            !string.IsNullOrWhiteSpace(queueName))
+        {
+            context.CandidateState = new EnqueuedState(queueName);
+        }
+    }
+}
+</code></pre><p>... registered in <code>GlobalJobFilters</code> exactly the same way as before, but in worker processes. And <code>OnStateElection</code> will fire whenever any job is changing to any new state. Here we're only interested in jobs that are becoming <code>Enqueued</code> and that have a <code>stashedQueueName</code>.</p>
+
+<p>What you then see in your Hangfire dashboard is a bit odd - the job will first be enqueued on the <code>DEFAULT</code> queue and then immediately enqueued a second time on the correct queue.</p>
+
+<p>Now you're all set to clean a fish, or whatever it was I said before!</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <a href="Hangfire_A_Tale_of_Several_Queues.html">Hangfire - A Tale of Several Queues</a>
+        <strong>Hangfire - A Tale of Several Queues</strong>
     </td>
     <td class="date"> 2019-05-24</td>    
 </tr>

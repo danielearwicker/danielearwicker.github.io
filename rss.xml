@@ -4,7 +4,18 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2019-05-16T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2019-05-24T00:00:00Z</lastBuildDate>
+    <item>
+      <title>Hangfire - A Tale of Several Queues</title>
+      <pubDate> 2019-05-24T00:00:00Z</pubDate>
+      <description>&lt;p&gt;If you've used &lt;a href="https://www.hangfire.io/"&gt;Hangfire&lt;/a&gt; you know it's a really quick and easy way to give your app a queue of durable background jobs, with automatic retrying and a very nifty dashboard to let you see what's happening right now. Jobs can trigger further jobs and so a complex series of processing stages can be decoupled and spill out into a queue of little units of work.&lt;/p&gt;
+
+&lt;p&gt;You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Enqueued -&amp;gt; Processing -&amp;gt; Finished
+&lt;/code&gt;&lt;/pre&gt;</description>
+      <link>http://danielearwicker.github.io/Hangfire_A_Tale_of_Several_Queues.html</link>
+    </item>
     <item>
       <title>Factory Injection in C#</title>
       <pubDate> 2019-05-16T00:00:00Z</pubDate>
