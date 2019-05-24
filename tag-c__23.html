@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | Eventless - XAML Flavoured</title>
+        <title>Daniel Earwicker | c#</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,10 +22,29 @@
             </div>
             
             <div class="content">
-                <h1>Eventless - XAML Flavoured</h1>
-<hr>
-<p class="meta"><a href="tag-frp.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-eventless.html">EVENTLESS</a> <a href="tag-c__23.html">C#</a>  2016-12-24</p>
+                <h2>Hangfire - A Tale of Several Queues</h2>
+<p class="meta"><a href="tag-c__23.html">C#</a> <a href="tag-hangfire.html">HANGFIRE</a>  2019-05-24</p>
+<p>If you've used <a href="https://www.hangfire.io/">Hangfire</a> you know it's a really quick and easy way to give your app a queue of durable background jobs, with automatic retrying and a very nifty dashboard to let you see what's happening right now. Jobs can trigger further jobs and so a complex series of processing stages can be decoupled and spill out into a queue of little units of work.</p>
 
+<p>You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:</p>
+
+<pre><code>[Enqueued] -&gt; [Processing] -&gt; [Finished]
+</code></pre>
+<p><a href="Hangfire_A_Tale_of_Several_Queues.html">Read on...</a></p>
+<hr>
+
+<h2>Factory Injection in C#</h2>
+<p class="meta"><a href="tag-c__23.html">C#</a> <a href="tag-injection.html">INJECTION</a> <a href="tag-factory.html">FACTORY</a>  2019-05-16</p>
+<p>The modern C# ecosystem (based on dotnet core, due to become .NET 5) enjoys a standard dependency injection system that is, despite its minimalism, is pretty much all you need.</p>
+
+<p>In some ways the ideal dependency injection system is nothing at all: isolate your components by writing an interface/class pair, and make each class accept interfaces to give it access to whatever services it needs. Very often the sole reason for the existence of the interface to go with each class is so that it can be mocked out in unit tests for classes that depend on it. (It's worth noting that in languages based on dynamically typed runtimes there is typically no need to do this - it's especially irksome to see this pattern being imported unnecessarily into TypeScript, where every class is <em>already</em> an interface.)</p>
+
+<p>Anyway, if all you have is "constructor injection", and you set up a network of objects by constructing them, then there is no magic, no runtime resolution, any type errors are detected at compile time, and so you can't forget to register something, because there's no registering.</p>
+<p><a href="Factory_Injection_in_C.html">Read on...</a></p>
+<hr>
+
+<h2>Eventless - XAML Flavoured</h2>
+<p class="meta"><a href="tag-frp.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-eventless.html">EVENTLESS</a> <a href="tag-c__23.html">C#</a>  2016-12-24</p>
 <p>About four years ago, being so taken with data modeling approach used in 
 <a href="http://knockoutjs.com">Knockout.js</a>, I wanted to 
 <a href="https://smellegantcode.wordpress.com/2013/02/25/eventless-programming-part-1-why-the-heck/">recreate it for C#</a>.
@@ -36,11 +55,42 @@ I did it I couldn't believe how primitive and laborious it was in comparison. So
 messing with Eventless in my spare time - mostly deleting stuff - to make it XAML-friendly.</p>
 
 <p>Just like Knockout, and now <a href="https://github.com/mobxjs/mobx">MobX</a>, it makes the process delightfully simple. You just declare stuff and it works!</p>
+<p><a href="Eventless_XAML_Flavoured.html">Read on...</a></p>
+<hr>
 
-<p><a href="https://github.com/danielearwicker/eventless">Fork away!</a></p>
+<h2>A new kind of managed lvalue pointer</h2>
+<p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c__23.html">C#</a>  2014-04-27</p>
+<p>It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!</p>
 
-<p>Or just install it via <a href="https://www.nuget.org/packages/Eventless/">nuget</a>. Also there is <a href="http://earwicker.com/eventless/html/ca2f21b1-fdbc-4b93-8fc1-051fdf574854.htm">complete API reference 
-documentation</a>.</p>
+<p>Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
+much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an <code>Invoke</code> method.</p>
+
+<p>So all we need is an interface with a <code>Value</code> property. Objects supporting that interface can represent a single property that can be passed around like any other value:</p>
+<p><a href="A_new_kind_of_managed_lvalue_pointer.html">Read on...</a></p>
+<hr>
+
+<h2>Using pointer syntax as a shorthand for IEnumerable</h2>
+<p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c__23.html">C#</a>  2014-04-26</p>
+<p>Another quickie extension to C#. In the current language, a type declaration <code>T!</code> is shorthand for <code>Nullable</code>.</p>
+
+<p>But equally important in modern C# programs are sequences of values, so a similar shorthand for <code>IEnumerable</code> would be ideal. 
+The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
+this was the choice made by the intriguing <a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/">research language Cω</a> 
+that influenced LINQ, so let's copy that:</p>
+<p><a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Read on...</a></p>
+<hr>
+
+<h2>Adding crazily powerful operator overloading to C# 6</h2>
+<p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c__23.html">C#</a>  2014-04-23</p>
+<p><strong>I'm going to show you how to enable a new kind of operator overloading by adding exactly four (4) lines of code to a single file in the C# 6 compiler 
+preview. Yes, I was surprised too!</strong></p>
+
+<p>After seeing the video of Anders Hejlsberg showing how easy it is to hack the new open source C# compiler, I had to give it a try.</p>
+
+<p>My aim was (I assumed) a lot more ambitious and crazy than his demo. I thought it would take ages to figure out. But it was still tempting to aim high and 
+actually implement a substantial new feature, because there are a few I've been wondering about over the years.</p>
+<p><a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Read on...</a></p>
+<hr>
 
             </div>
             
@@ -107,7 +157,7 @@ documentation</a>.</p>
 </tr>
 <tr>
     <td>
-        <strong>Eventless - XAML Flavoured</strong>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
     </td>
     <td class="date"> 2016-12-24</td>    
 </tr>

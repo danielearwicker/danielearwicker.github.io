@@ -150,7 +150,7 @@ function formatCountedTags(tags: string[]) {
 }
 
 function escapeTag(tag: string) {
-    return encodeURIComponent(tag);
+    return encodeURIComponent(tag).replace(/%/g, "__");
 }
 
 const articles = fs.readdirSync(inputPath).map(name => {

@@ -107,7 +107,7 @@ function formatCountedTags(tags) {
     return formatTags(tags, function (t) { return " (" + articlesByTag[t].length + ")"; });
 }
 function escapeTag(tag) {
-    return encodeURIComponent(tag);
+    return encodeURIComponent(tag).replace(/%/g, "__");
 }
 var articles = fs.readdirSync(inputPath).map(function (name) {
     var text = fs.readFileSync(path.join(inputPath, name), "utf8");
