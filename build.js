@@ -83,7 +83,6 @@ function getSnippet(text) {
     var end = 0, blankCount = 0;
     for (; end < lines.length; end++) {
         var line = lines[end].trim();
-        console.log(line, blankCount);
         if (line.indexOf("```") === 0) {
             break;
         }
@@ -100,11 +99,15 @@ function getSnippet(text) {
     return lines.slice(0, end).join("\n");
 }
 var codeTicks = "```";
-function formatTags(tags) {
-    return tags.map(function (t) { return "<a href=\"tag-" + t + ".html\">" + t.toUpperCase() + "</a>"; }).join(" ");
+function formatTags(tags, suffix) {
+    if (suffix === void 0) { suffix = function () { return ""; }; }
+    return tags.map(function (t) { return "<a href=\"tag-" + escapeTag(t) + ".html\">" + t.toUpperCase() + suffix(t) + "</a>"; }).join(" ");
 }
 function formatCountedTags(tags) {
-    return tags.map(function (t) { return "<a href=\"tag-" + t + ".html\">" + t.toUpperCase() + " (" + articlesByTag[t].length + ")</a>"; }).join(" ");
+    return formatTags(tags, function (t) { return " (" + articlesByTag[t].length + ")"; });
+}
+function escapeTag(tag) {
+    return encodeURIComponent(tag);
 }
 var articles = fs.readdirSync(inputPath).map(function (name) {
     var text = fs.readFileSync(path.join(inputPath, name), "utf8");
@@ -163,7 +166,7 @@ for (var _c = 0, articles_2 = articles; _c < articles_2.length; _c++) {
 }
 for (var _d = 0, _e = Object.keys(articlesByTag); _d < _e.length; _d++) {
     var tag = _e[_d];
-    fs.writeFileSync(path.join(outputPath, "tag-" + tag + ".html"), template("shell", {
+    fs.writeFileSync(path.join(outputPath, "tag-" + escapeTag(tag) + ".html"), template("shell", {
         recent: articleList(articles),
         content: articlesByTag[tag].map(function (article) { return template("snippet", article); }).join("\n"),
         title: tag,

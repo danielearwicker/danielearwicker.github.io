@@ -111,7 +111,6 @@ function getSnippet(text: string) {
     let end = 0, blankCount = 0;    
     for (; end < lines.length; end++) {        
         const line = lines[end].trim();
-        console.log(line, blankCount);
 
         if (line.indexOf("```") === 0) {
             break;
@@ -142,12 +141,16 @@ interface Article extends StringMap {
 
 const codeTicks = "```";
 
-function formatTags(tags: string[]) {
-    return tags.map(t => `<a href="tag-${t}.html">${t.toUpperCase()}</a>`).join(" ");
+function formatTags(tags: string[], suffix: (tag: string) => string = () => "") {
+    return tags.map(t => `<a href="tag-${escapeTag(t)}.html">${t.toUpperCase()}${suffix(t)}</a>`).join(" ");
 }
 
 function formatCountedTags(tags: string[]) {
-    return tags.map(t => `<a href="tag-${t}.html">${t.toUpperCase()} (${articlesByTag[t].length})</a>`).join(" ");
+    return formatTags(tags, t => ` (${articlesByTag[t].length})`);
+}
+
+function escapeTag(tag: string) {
+    return encodeURIComponent(tag);
 }
 
 const articles = fs.readdirSync(inputPath).map(name => {
@@ -225,7 +228,7 @@ for (const article of articles) {
 
 for (const tag of Object.keys(articlesByTag)) {
     fs.writeFileSync(
-        path.join(outputPath, `tag-${tag}.html`),
+        path.join(outputPath, `tag-${escapeTag(tag)}.html`),
         template("shell", {
             recent: articleList(articles),
             content: articlesByTag[tag].map(article => template("snippet", article)).join("\n"),
