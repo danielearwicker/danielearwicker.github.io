@@ -12,7 +12,7 @@
 
 &lt;p&gt;You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;Enqueued -&amp;gt; Processing -&amp;gt; Finished
+&lt;pre&gt;&lt;code&gt;[Enqueued] -&amp;gt; [Processing] -&amp;gt; [Finished]
 &lt;/code&gt;&lt;/pre&gt;</description>
       <link>http://danielearwicker.github.io/Hangfire_A_Tale_of_Several_Queues.html</link>
     </item>

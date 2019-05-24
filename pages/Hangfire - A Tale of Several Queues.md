@@ -5,11 +5,11 @@ If you've used [Hangfire](https://www.hangfire.io/) you know it's a really quick
 
 You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:
 
-    Enqueued -> Processing -> Finished
+    [Enqueued] -> [Processing] -> [Finished]
 
 Or maybe:
 
-    Enqueued -> Processing -> Failed -> Enqueued -> Processing -> Finished
+    [Enqueued] -> [Processing] -> [Failed] -> [Enqueued] -> [Processing] -> [Finished]
 
 It's all good. Once enqueued, either the job finishes or you'll be able to see it in the dashboard and read all the lovely exceptions.
 
@@ -27,7 +27,7 @@ So how can Hangfire help us here? It has the concept of queues. When you start a
 
 But there's a problem. by design, Hangfire doesn't assign jobs to queues. Rather, when a job is enqueued, a queue name such as `fast` can (optionally) be specified. The choice of queue is not stamped on the job, but stored as a property inside the state object representing the `Enqueued` state. This means that when the job transitions to `Processing` it will be picked up by the `fast` server, but now nothing is storing the queue name. Why is that a problem?
 
-Well, jobs fail sometimes, and they need to be retried. In fact this is part of what makes aystem like Hangfire so valuable; occasional transient problems (a database glitch) don't stop your work from getting done. But obviously when that happens to our jobs, we want them to be enqueued for their second attempt on the same queue as last time.
+Well, jobs fail sometimes, and they need to be retried. In fact this is part of what makes a system like Hangfire so valuable; occasional transient problems (a database glitch) don't stop your work from getting done. But obviously when that happens to our jobs, we want them to be enqueued for their second attempt on the same queue as last time.
 
 ## Extension points
 

@@ -28,7 +28,7 @@
 
 <p>You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:</p>
 
-<pre><code>Enqueued -&gt; Processing -&gt; Finished
+<pre><code>[Enqueued] -&gt; [Processing] -&gt; [Finished]
 </code></pre>
 <p><a href="Hangfire_A_Tale_of_Several_Queues.html">Read on...</a></p>
 <hr>

@@ -30,12 +30,12 @@
 
 <p>You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:</p>
 
-<pre><code>Enqueued -&gt; Processing -&gt; Finished
+<pre><code>[Enqueued] -&gt; [Processing] -&gt; [Finished]
 </code></pre>
 
 <p>Or maybe:</p>
 
-<pre><code>Enqueued -&gt; Processing -&gt; Failed -&gt; Enqueued -&gt; Processing -&gt; Finished
+<pre><code>[Enqueued] -&gt; [Processing] -&gt; [Failed] -&gt; [Enqueued] -&gt; [Processing] -&gt; [Finished]
 </code></pre>
 
 <p>It's all good. Once enqueued, either the job finishes or you'll be able to see it in the dashboard and read all the lovely exceptions.</p>
@@ -54,7 +54,7 @@
 
 <p>But there's a problem. by design, Hangfire doesn't assign jobs to queues. Rather, when a job is enqueued, a queue name such as <code>fast</code> can (optionally) be specified. The choice of queue is not stamped on the job, but stored as a property inside the state object representing the <code>Enqueued</code> state. This means that when the job transitions to <code>Processing</code> it will be picked up by the <code>fast</code> server, but now nothing is storing the queue name. Why is that a problem?</p>
 
-<p>Well, jobs fail sometimes, and they need to be retried. In fact this is part of what makes aystem like Hangfire so valuable; occasional transient problems (a database glitch) don't stop your work from getting done. But obviously when that happens to our jobs, we want them to be enqueued for their second attempt on the same queue as last time.</p>
+<p>Well, jobs fail sometimes, and they need to be retried. In fact this is part of what makes a system like Hangfire so valuable; occasional transient problems (a database glitch) don't stop your work from getting done. But obviously when that happens to our jobs, we want them to be enqueued for their second attempt on the same queue as last time.</p>
 
 <h2 id="extensionpoints">Extension points</h2>
 
