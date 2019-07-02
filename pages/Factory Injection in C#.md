@@ -1,5 +1,7 @@
 tags: c# injection factory
-date: 2019-05-16
+date: 2019-07-02
+
+**Update** - *There was a nasty bug in the original version of this post! Where I previously registered the factories with `AddSingleton`, I now use `AddTransient`, and I call out the reason for this below.*
 
 The modern C# ecosystem (based on dotnet core, due to become .NET 5) enjoys a standard dependency injection system that is, despite its minimalism, is pretty much all you need.
 
@@ -101,6 +103,16 @@ services.AddSingleton<Func<string, IPen>>(
 
 Note that `CreateInstance` has to be given a constructable type (not an interface). It will construct it by matching parameters to arguments based on their types, and filling in the rest with registered services. Again, a deal with the devil in that we've lost a bit of static type checking.
 
+But there's a nasty trapdoor lurking here that I didn't spot in my original version of this post. We're registering an injectable `Func` that we can then call with any parameters we like, as many times as we like, to get as many separate instances as we like. So it's tempting to conclude that therefore we aren't in danger of inadvertently capturing and permanently holding onto data. We're building object instances on-the-fly, right?
+
+Well, not entirely. By registering the factory with `AddSingleton`, we cause DI to pass us the root service provider as the `services` argument. That's the service provider that caches things *forever*. It doesn't do this for transients, because they're never cached. It does cache singletons, but that's fine, because they have to be globally cached (so there's only one instance). So if `Pen` injects transients or singletons (or other factories, which so far are singletons), we're good.
+
+But there's another form of registration: *scoped*. This is typically used for objects that carry information about a specific user session inside a server, and which should therefore be singleton-per-user, as it were. If `Pen` were to inject a scoped service, a problem arises.
+
+What happens next depends on how your root service provider is configured. If it is configured to validate scopes, then you'll get `InvalidOperationException`, with the message `Cannot resolve scoped service 'Blah...' from root provider.` This is good - your DI environment is protecting you from a potentially terrible bug, where the first user's data is captured in a scoped service and is then provided to all subsequent users, thus leaking information between users. If you don't have that check enabled, that information leak could occur silently.
+
+The solution is to register functions with `AddTransient`. This causes DI to pass us a transient provider, which doesn't cache anything scoped.
+
 So you can now sling new services into `Pen`'s constructor and not have touch the registration. It's a bit ugly looking as registrations go. But we can hide this by creating a few reusable extension methods of our own:
 
 ```cs
@@ -108,22 +120,22 @@ public static class FactoryExtensions
 {
     public static IServiceCollection AddFactory<TInterface, TImplementation>(this IServiceCollection services)
         where TImplementation : class, TInterface
-        where TInterface : class => services.AddSingleton<Func<TInterface>>(sp => ()
+        where TInterface : class => services.AddTransient<Func<TInterface>>(sp => ()
                                         => ActivatorUtilities.CreateInstance<TImplementation>(sp));
 
     public static IServiceCollection AddFactory<TInterface, TImplementation, TArg1>(this IServiceCollection services)
         where TImplementation : class, TInterface
-        where TInterface : class => services.AddSingleton<Func<TArg1, TInterface>>(sp => arg1
+        where TInterface : class => services.AddTransient<Func<TArg1, TInterface>>(sp => arg1
                                         => ActivatorUtilities.CreateInstance<TImplementation>(sp, arg1));
     
     public static IServiceCollection AddFactory<TInterface, TImplementation, TArg1, TArg2>(this IServiceCollection services)
         where TImplementation : class, TInterface
-        where TInterface : class => services.AddSingleton<Func<TArg1, TArg2, TInterface>>(sp => (arg1, arg2)
+        where TInterface : class => services.AddTransient<Func<TArg1, TArg2, TInterface>>(sp => (arg1, arg2)
                                         => ActivatorUtilities.CreateInstance<TImplementation>(sp, arg1, arg2));
 
     public static IServiceCollection AddFactory<TInterface, TImplementation, TArg1, TArg2, TArg3>(this IServiceCollection services)
         where TImplementation : class, TInterface
-        where TInterface : class => services.AddSingleton<Func<TArg1, TArg2, TArg3, TInterface>>(sp => (arg1, arg2, arg3)
+        where TInterface : class => services.AddTransient<Func<TArg1, TArg2, TArg3, TInterface>>(sp => (arg1, arg2, arg3)
                                         => ActivatorUtilities.CreateInstance<TImplementation>(sp, arg1, arg2, arg3));
 }
 ```

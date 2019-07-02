@@ -24,7 +24,9 @@
             <div class="content">
                 <h1>Factory Injection in C#</h1>
 <hr>
-<p class="meta"><a href="tag-c__23.html">C#</a> <a href="tag-injection.html">INJECTION</a> <a href="tag-factory.html">FACTORY</a>  2019-05-16</p>
+<p class="meta"><a href="tag-c__23.html">C#</a> <a href="tag-injection.html">INJECTION</a> <a href="tag-factory.html">FACTORY</a>  2019-07-02</p>
+
+<p><strong>Update</strong> - <em>There was a nasty bug in the original version of this post! Where I previously registered the factories with <code>AddSingleton</code>, I now use <code>AddTransient</code>, and I call out the reason for this below.</em></p>
 
 <p>The modern C# ecosystem (based on dotnet core, due to become .NET 5) enjoys a standard dependency injection system that is, despite its minimalism, is pretty much all you need.</p>
 
@@ -93,26 +95,36 @@ public interface PenFactory : IPenFactory
     services =&gt; colour =&gt; ActivatorUtilities.CreateInstance&lt;Pen&gt;(services, colour));
 </code></pre><p>Note that <code>CreateInstance</code> has to be given a constructable type (not an interface). It will construct it by matching parameters to arguments based on their types, and filling in the rest with registered services. Again, a deal with the devil in that we've lost a bit of static type checking.</p>
 
+<p>But there's a nasty trapdoor lurking here that I didn't spot in my original version of this post. We're registering an injectable <code>Func</code> that we can then call with any parameters we like, as many times as we like, to get as many separate instances as we like. So it's tempting to conclude that therefore we aren't in danger of inadvertently capturing and permanently holding onto data. We're building object instances on-the-fly, right?</p>
+
+<p>Well, not entirely. By registering the factory with <code>AddSingleton</code>, we cause DI to pass us the root service provider as the <code>services</code> argument. That's the service provider that caches things <em>forever</em>. It doesn't do this for transients, because they're never cached. It does cache singletons, but that's fine, because they have to be globally cached (so there's only one instance). So if <code>Pen</code> injects transients or singletons (or other factories, which so far are singletons), we're good.</p>
+
+<p>But there's another form of registration: <em>scoped</em>. This is typically used for objects that carry information about a specific user session inside a server, and which should therefore be singleton-per-user, as it were. If <code>Pen</code> were to inject a scoped service, a problem arises.</p>
+
+<p>What happens next depends on how your root service provider is configured. If it is configured to validate scopes, then you'll get <code>InvalidOperationException</code>, with the message <code>Cannot resolve scoped service 'Blah...' from root provider.</code> This is good - your DI environment is protecting you from a potentially terrible bug, where the first user's data is captured in a scoped service and is then provided to all subsequent users, thus leaking information between users. If you don't have that check enabled, that information leak could occur silently.</p>
+
+<p>The solution is to register functions with <code>AddTransient</code>. This causes DI to pass us a transient provider, which doesn't cache anything scoped.</p>
+
 <p>So you can now sling new services into <code>Pen</code>'s constructor and not have touch the registration. It's a bit ugly looking as registrations go. But we can hide this by creating a few reusable extension methods of our own:</p><pre><code class="cs">public static class FactoryExtensions
 {
     public static IServiceCollection AddFactory&lt;TInterface, TImplementation&gt;(this IServiceCollection services)
         where TImplementation : class, TInterface
-        where TInterface : class =&gt; services.AddSingleton&lt;Func&lt;TInterface&gt;&gt;(sp =&gt; ()
+        where TInterface : class =&gt; services.AddTransient&lt;Func&lt;TInterface&gt;&gt;(sp =&gt; ()
                                         =&gt; ActivatorUtilities.CreateInstance&lt;TImplementation&gt;(sp));
 
     public static IServiceCollection AddFactory&lt;TInterface, TImplementation, TArg1&gt;(this IServiceCollection services)
         where TImplementation : class, TInterface
-        where TInterface : class =&gt; services.AddSingleton&lt;Func&lt;TArg1, TInterface&gt;&gt;(sp =&gt; arg1
+        where TInterface : class =&gt; services.AddTransient&lt;Func&lt;TArg1, TInterface&gt;&gt;(sp =&gt; arg1
                                         =&gt; ActivatorUtilities.CreateInstance&lt;TImplementation&gt;(sp, arg1));
     
     public static IServiceCollection AddFactory&lt;TInterface, TImplementation, TArg1, TArg2&gt;(this IServiceCollection services)
         where TImplementation : class, TInterface
-        where TInterface : class =&gt; services.AddSingleton&lt;Func&lt;TArg1, TArg2, TInterface&gt;&gt;(sp =&gt; (arg1, arg2)
+        where TInterface : class =&gt; services.AddTransient&lt;Func&lt;TArg1, TArg2, TInterface&gt;&gt;(sp =&gt; (arg1, arg2)
                                         =&gt; ActivatorUtilities.CreateInstance&lt;TImplementation&gt;(sp, arg1, arg2));
 
     public static IServiceCollection AddFactory&lt;TInterface, TImplementation, TArg1, TArg2, TArg3&gt;(this IServiceCollection services)
         where TImplementation : class, TInterface
-        where TInterface : class =&gt; services.AddSingleton&lt;Func&lt;TArg1, TArg2, TArg3, TInterface&gt;&gt;(sp =&gt; (arg1, arg2, arg3)
+        where TInterface : class =&gt; services.AddTransient&lt;Func&lt;TArg1, TArg2, TArg3, TInterface&gt;&gt;(sp =&gt; (arg1, arg2, arg3)
                                         =&gt; ActivatorUtilities.CreateInstance&lt;TImplementation&gt;(sp, arg1, arg2, arg3));
 }
 </code></pre><p>So those variants support between 0 and 3 type parameters in addition to the first two (interface and class). So registering a <code>Func&lt;string, IPen&gt;</code> is as simple as:</p><pre><code class="cs">services.AddFactory&lt;IPen, Pen, string&gt;();
@@ -133,15 +145,15 @@ createPen.Verify(c =&gt; c("puce"), Times.Never);
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <a href="Hangfire_A_Tale_of_Several_Queues.html">Hangfire - A Tale of Several Queues</a>
+        <strong>Factory Injection in C#</strong>
     </td>
-    <td class="date"> 2019-05-24</td>    
+    <td class="date"> 2019-07-02</td>    
 </tr>
 <tr>
     <td>
-        <strong>Factory Injection in C#</strong>
+        <a href="Hangfire_A_Tale_of_Several_Queues.html">Hangfire - A Tale of Several Queues</a>
     </td>
-    <td class="date"> 2019-05-16</td>    
+    <td class="date"> 2019-05-24</td>    
 </tr>
 <tr>
     <td>

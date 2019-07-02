@@ -23,12 +23,12 @@
             
             <div class="content">
                 <h2>Factory Injection in C#</h2>
-<p class="meta"><a href="tag-c__23.html">C#</a> <a href="tag-injection.html">INJECTION</a> <a href="tag-factory.html">FACTORY</a>  2019-05-16</p>
+<p class="meta"><a href="tag-c__23.html">C#</a> <a href="tag-injection.html">INJECTION</a> <a href="tag-factory.html">FACTORY</a>  2019-07-02</p>
+<p><strong>Update</strong> - <em>There was a nasty bug in the original version of this post! Where I previously registered the factories with <code>AddSingleton</code>, I now use <code>AddTransient</code>, and I call out the reason for this below.</em></p>
+
 <p>The modern C# ecosystem (based on dotnet core, due to become .NET 5) enjoys a standard dependency injection system that is, despite its minimalism, is pretty much all you need.</p>
 
 <p>In some ways the ideal dependency injection system is nothing at all: isolate your components by writing an interface/class pair, and make each class accept interfaces to give it access to whatever services it needs. Very often the sole reason for the existence of the interface to go with each class is so that it can be mocked out in unit tests for classes that depend on it. (It's worth noting that in languages based on dynamically typed runtimes there is typically no need to do this - it's especially irksome to see this pattern being imported unnecessarily into TypeScript, where every class is <em>already</em> an interface.)</p>
-
-<p>Anyway, if all you have is "constructor injection", and you set up a network of objects by constructing them, then there is no magic, no runtime resolution, any type errors are detected at compile time, and so you can't forget to register something, because there's no registering.</p>
 <p><a href="Factory_Injection_in_C.html">Read on...</a></p>
 <hr>
 
@@ -37,15 +37,15 @@
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <a href="Hangfire_A_Tale_of_Several_Queues.html">Hangfire - A Tale of Several Queues</a>
+        <a href="Factory_Injection_in_C.html">Factory Injection in C#</a>
     </td>
-    <td class="date"> 2019-05-24</td>    
+    <td class="date"> 2019-07-02</td>    
 </tr>
 <tr>
     <td>
-        <a href="Factory_Injection_in_C.html">Factory Injection in C#</a>
+        <a href="Hangfire_A_Tale_of_Several_Queues.html">Hangfire - A Tale of Several Queues</a>
     </td>
-    <td class="date"> 2019-05-16</td>    
+    <td class="date"> 2019-05-24</td>    
 </tr>
 <tr>
     <td>
