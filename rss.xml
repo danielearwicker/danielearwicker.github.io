@@ -4,7 +4,17 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2019-07-02T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2019-08-26T00:00:00Z</lastBuildDate>
+    <item>
+      <title> Two Cheers for SQL</title>
+      <pubDate> 2019-08-26T00:00:00Z</pubDate>
+      <description>&lt;p&gt;What is there to say about this old stain on the technology landscape? Settle in...&lt;/p&gt;
+
+&lt;p&gt;SQL is not "cool". It probably never has been. On the one hand there are the technologies we hate, and on the other the technologies no one uses.&lt;/p&gt;
+
+&lt;p&gt;Having spent a few years going back and forth on the merits of SQL, I'm in a weird place. I now think it is both underrated &lt;em&gt;and&lt;/em&gt; overrated, and not merely because other people are too extreme in their opinions. I genuinely think SQL is both a fine idea and a terrible idea at the same time. There is a way of using it that makes sense, and many other ways that don't.&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Two_Cheers_for_SQL.html</link>
+    </item>
     <item>
       <title>Factory Injection in C#</title>
       <pubDate> 2019-07-02T00:00:00Z</pubDate>
@@ -145,12 +155,6 @@ Structured Programmers, and the structure of the program become more and more ab
       <link>http://danielearwicker.github.io/Immuto_Working_with_React_An_Example.html</link>
     </item>
     <item>
-      <title> TypeScript - What is a class?</title>
-      <pubDate> 2016-09-11T00:00:00Z</pubDate>
-      <description>&lt;p&gt;In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:&lt;/p&gt;</description>
-      <link>http://danielearwicker.github.io/TypeScript_What_is_a_class.html</link>
-    </item>
-    <item>
       <title>Immuto - Strongly Typed Redux Composition</title>
       <pubDate> 2016-09-11T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;a href="What_s_good_about_Redux.html"&gt;What's good about Redux&lt;/a&gt;, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. &lt;a href="http://redux.js.org/docs/basics/Actions.html"&gt;Read the docs, they're easy&lt;/a&gt;.&lt;/p&gt;
@@ -159,6 +163,12 @@ Structured Programmers, and the structure of the program become more and more ab
 
 &lt;p&gt;One composition feature is &lt;code&gt;combineReducers&lt;/code&gt;, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Immuto_Strongly_Typed_Redux_Composition.html</link>
+    </item>
+    <item>
+      <title> TypeScript - What is a class?</title>
+      <pubDate> 2016-09-11T00:00:00Z</pubDate>
+      <description>&lt;p&gt;In TypeScript, a class is really two types and a function. One type is the type of the function itself, and the other type is the type of the object returned when you call the function. Try this:&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/TypeScript_What_is_a_class.html</link>
     </item>
     <item>
       <title>TypeScript and runtime typing - EPISODE II</title>

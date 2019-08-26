@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | Immuto - Radical Unification</title>
+        <title>Daniel Earwicker | sql</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,43 +22,15 @@
             </div>
             
             <div class="content">
-                <h1>Immuto - Radical Unification</h1>
+                <h2> Two Cheers for SQL</h2>
+<p class="meta"><a href="tag-sql.html">SQL</a>  2019-08-26</p>
+<p>What is there to say about this old stain on the technology landscape? Settle in...</p>
+
+<p>SQL is not "cool". It probably never has been. On the one hand there are the technologies we hate, and on the other the technologies no one uses.</p>
+
+<p>Having spent a few years going back and forth on the merits of SQL, I'm in a weird place. I now think it is both underrated <em>and</em> overrated, and not merely because other people are too extreme in their opinions. I genuinely think SQL is both a fine idea and a terrible idea at the same time. There is a way of using it that makes sense, and many other ways that don't.</p>
+<p><a href="Two_Cheers_for_SQL.html">Read on...</a></p>
 <hr>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-22</p>
-
-<p><a href="https://github.com/danielearwicker/immuto">Immuto</a> continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.</p>
-
-<p>The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:</p><pre><code class="ts">declare function getBook(shelf: Shelf, id: number): Book;
-</code></pre><p>And here's one that gets a shelf from a shop:</p><pre><code class="ts">declare function getShelf(shop: Shop, id: number): Shelf;
-</code></pre><p>If we have a <code>shelfId</code> and a <code>bookId</code>, to go straight from shop to book:</p><pre><code class="ts">const book = getBook(getShelf(shop, shelfId), bookId);
-</code></pre><p>Ugh. The nesting makes it confusing. This is why people like methods on objects:</p><pre><code class="ts">const book = shop.getShelf(shelfId).getBook(bookId);
-</code></pre><p>That's the clarity of left-to-right composition. In Immuto we have clean pure-data interfaces, and we declare actions on them and form them into reducers. One kind of action is called a <code>reference</code> and it builds a function that works a bit like <code>getBook</code> and <code>getShelf</code>, except it deals with cursors to data. So it suffered from the same nested composition ugliness.</p>
-
-<p>What we need, taking a leaf out of functional programming, is a piping operator. I've added a method called <code>$</code> to the <code>Cursor</code> interface, which means "look up", and corresponds to the familiar <code>.</code> operator in many object orientated languages.</p>
-
-<p>So if my <code>Shop</code> has a collection <code>shelves</code> (of type <code>Shelves</code>) in which each item is a <code>Shelf</code>, and a <code>Shelf</code> has a collection <code>books</code> (of type <code>Books</code>) in which each item is a <code>Book</code>, I can get a cursor to a book like this:</p><pre><code class="ts">const book = shop.$(Shop.shelves)
-                 .$(Shelves.at(shelfId))
-                 .$(Shelf.books)
-                 .$(Books.at(bookId))
-</code></pre><p>It makes complicated manoeuvres pretty readable and logical. Each step is like:</p><pre><code class="ts">whatIGot.$(whatIWant)
-</code></pre><p>So it's easy to understand by analogy with the ordinary <code>.</code> operator, although a bit more syntactically noisy. It would be nice if I could implement the <code>[]</code> operator, and so get:</p><pre><code class="ts">const book = shop[Shop.shelves]
-                 [Shelves.at(shelfId)]
-                 [Shelf.books]
-                 [Books.at(bookId)]
-</code></pre><p>But indexers are very special in JavaScript and you can't just implement them like any function.</p>
-
-<p>One other change I made yesterday which I've hinted at above is that I've ripped out the special treatment of collections. It was an unnecessary concept that needed special explanation, it was a bit too magical which made the explanation difficult, and it baked in too much functionality that you might not want. Not all collections need to support random access deletion, for example. Also there are fundamental difference between kinds of collections: if you delete item 4 from an array, you renumber items 5, 6, 7... whereas that doesn't happen with a map. Do I hide that difference or let it leak out? These are all decisions I shouldn't be taking.</p>
-
-<p>So now collections are just a data type with a reducer and some actions, same as anything else:</p><pre><code class="ts">export type Books = { [id: number]: Book };
-
-export namespace Books {
-    export const empty: Books = {};
-    export const at = objectByNumber(Book);
-    export const reduce = reducer(empty).action(at);
-}
-</code></pre><p>I give the collection type a name, then I write a namespace for it, exposing only the actions I want. The <code>objectByNumber</code> function provides a way to get a cursor to a <code>Book</code> out of a collection of <code>Books</code>, i.e. it returns a traversal function suitable for passing to the new <code>.$()</code> piping operator.</p>
-
-<p>There are now quite a few examples of this in <a href="https://github.com/danielearwicker/immuto-react">immuto-react</a> and <a href="https://github.com/danielearwicker/immuto-example">immuto-example</a>.</p>
 
             </div>
             
@@ -143,7 +115,7 @@ export namespace Books {
 </tr>
 <tr>
     <td>
-        <strong>Immuto - Radical Unification</strong>
+        <a href="Immuto_Radical_Unification.html">Immuto - Radical Unification</a>
     </td>
     <td class="date"> 2016-09-22</td>    
 </tr>
