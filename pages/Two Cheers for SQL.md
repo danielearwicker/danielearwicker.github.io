@@ -8,7 +8,7 @@ SQL is not "cool". It probably never has been. On the one hand there are the tec
 
 Having spent a few years going back and forth on the merits of SQL, I'm in a weird place. I now think it is both underrated *and* overrated, and not merely because other people are too extreme in their opinions. I genuinely think SQL is both a fine idea and a terrible idea at the same time. There is a way of using it that makes sense, and many other ways that don't.
 
-## Is `select` is a satire on orthogonality?
+## Is `select` a satire on orthogonality?
 
 The heart of SQL is `select`. What's wrong with it?
 
