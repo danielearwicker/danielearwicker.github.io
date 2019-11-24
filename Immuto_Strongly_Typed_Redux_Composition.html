@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -27,19 +27,12 @@
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-11</p>
 
 <p><a href="What_s_good_about_Redux.html">What's good about Redux</a>, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. <a href="http://redux.js.org/docs/basics/Actions.html">Read the docs, they're easy</a>.</p>
-
 <p>There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.</p>
-
 <p>One composition feature is <code>combineReducers</code>, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.</p>
-
 <h3 id="reducers">Reducers</h3>
-
 <p>A reducer is a function of the form <code>(state, action) =&gt; state</code>. It makes a new state from an old one by interpreting an action, which is an instruction on how the state should be altered.</p>
-
 <p>For simple examples it's no bother writing the reducer function by hand. Actions are discriminated by their <code>type: string</code> property, which must be unique across all actions that can be handled by a given reducer. So in the tutorial we see the expected switch statement. And TypeScript 2.0 handles this very nicely; if you declare all your actions as interfaces, they become <a href="https://github.com/Microsoft/TypeScript/wiki/What's-new-in-TypeScript#tagged-union-types">tagged union types</a> and <code>switch</code> becomes an adequate form of pattern matching.</p>
-
 <p>But there's still quite a bit of boilerplate required. I think of reducers as being composed of individual reducers per action type. It should be possible to define an action as the combination of a name string and a function <code>(state, payload) =&gt; state</code> in which payload is the data carried by the action. It should not be necessary to separately declare the action as an interface, and the act of composing several such action definitions should automatically produce a single reducer <code>(state, action1 | action2) =&gt; state</code>, because it can take any of the specified action types and dispatch it accordingly.</p>
-
 <p>To give us an example to drive the discussion, here's our first bit of state - completely immutable, of course, partly using <a href="https://facebook.github.io/immutable-js/docs/#/List">List from immutable.js</a>:</p><pre><code class="ts">interface Book {
     readonly title: string;
     readonly price: number;
@@ -52,9 +45,7 @@ const empty: Book = {
     authors: List&lt;string&gt;()
 };
 </code></pre><h2 id="declaringactions">Declaring actions</h2>
-
 <p>If you follow the Redux tutorial you'll see action creators being declared. These are functions, one per action type, each responsible for creating an instance of an action. These are usually gathered together in a file. Then in another file the reducer function is handwritten, typically as a switch statement, to handle each action type.</p>
-
 <p>But really the action type and its interpretation go together. Suppose we could declare them like this:</p><pre><code class="ts">export const setTitle = action("SET_TITLE",
     (book: Book, title: string) =&gt; amend(book, { title }));
 </code></pre><p>The <code>amend</code> function is a slightly honed version of <code>Object.assign</code>, to stand in for the cool <code>{ ...book, title }</code> syntax we're all looking forward to. A couple more actions:</p><pre><code class="ts">export const setPrice = action("SET_PRICE",
@@ -69,7 +60,6 @@ export const addAuthor = action("ADD_AUTHOR",
     .action(setPrice)
     .action(addAuthor);
 </code></pre><p>Here, <code>reducer</code> is some helper that takes a "blank object" (serving as our preferred starting state for this type), and has an <code>action</code> method that we can use to make an actual reducer function, capable of handling a single action. That reducer is already a function, but it also has its own <code>action</code> method (functions can have methods, of course), allowing us to compose with another action, and so on. The end result is stored in <code>reduce</code> and is the whole reducer function, <em>strongly typed so it will only accept those three actions</em>.</p>
-
 <p>In TypeScript we can reuse a typename as a variable name, as they cannot clash. Indeed <a href="TypeScript_What_is_a_class.html">this is exactly how classes work</a>. So I will gather all the above pieces in a namespace called <code>Book</code>, to go with the type <code>Book</code>. In abbreviated form:</p><pre><code class="ts">interface Book {
     ...
 }
@@ -89,7 +79,6 @@ namespace Book {
 }
 </code></pre><p>So I can now do things to books like this:</p><pre><code class="ts">const book1984 = Book.reduce(Book.empty, Book.setTitle("1984"));
 </code></pre><p>That is, <code>Book.setTitle</code> is an action creator in the usual sense, as well as having been woven into <code>Book.reduce</code>. The latter is made possible by it having a couple of properties, <code>type</code> of type <code>"SET_TITLE"</code> and <code>reduce</code> containing the function <code>(Book, string) =&gt; Book</code>.</p>
-
 <p>We're adopting the "payload" pattern, where an action only has <code>type</code> and <code>payload</code> properties, so:</p><pre><code class="ts">export interface Action&lt;T extends string, P&gt; {
     readonly type: T;
     readonly payload: P;
@@ -112,17 +101,12 @@ bookStore.dispatch(Car.changeGear(2));
     // ...
 }
 </code></pre><p>That is, <code>A</code> is the union type of all the supported actions, so <code>A1</code> is whichever one we pass and hence what will be returned. By the way, the purpose of the return value of <code>dispatch</code>, and even its type, is not actually completely specified - <a href="https://github.com/reactjs/redux/issues/61">some discussion here</a>. Redux middleware is treacherous territory. Here I'm just documenting the built-in behaviour.</p>
-
 <p>Another handy member in our reducers is <code>actionType: A</code>, which is a property that has the type of the union of all the support actions. Why is this useful? Because we've never actually declared that type manually ourselves; it was built for us. We might want to use it to declare parameters or variables. Note that the value of this property is completely worthless (<code>undefined</code>) It only makes sense to use it after <code>typeof</code>, the compile-time operator, in a type position, e.g.</p><pre><code class="ts">let a: typeof Book.reduce.actionType;
 </code></pre><p>A while ago I <a href="https://github.com/Microsoft/TypeScript/issues/9889">logged an issue</a> requesting the ability to put <code>type</code> declarations in interfaces, for this very purpose. If we could include a nested type <code>Action</code> in the interface of a reducer, the above would become:</p><pre><code class="ts">let a: Book.reduce.Action;
 </code></pre><h2 id="compositionthroughnestedactions">Composition through nested actions</h2>
-
 <p>A complex immutable data structure is built up by nesting to whatever depth we require. Indeed, if we were modelling a person's ancestry or the folder structure of a file system then the depth would be determined at runtime. There need not be any app-wide pattern for how to navigate the tree - each node is its own little domain that subdivides itself between further child nodes however it likes.</p>
-
 <p>A given node of our structure may interpret an action itself, or it may need to delegate it to a child node. Therefore the child node should have its own reducer. By analogy with OO, the parent object's class has a method whose implementation calls onto a method in some other class of which the parent owns an instance.</p>
-
 <p>In our example, a shelf contains many books. How do we send actions to a book with a shelf? We send an action to the shelf such that it figures out which book to send it on to. This is possible because the payload of an action <em>can contain another action</em>.</p>
-
 <p>Here I'm going to send the shelf an action of type <code>BOOKS</code>, which the shelf knows it must delegate to one of its collection of books:</p><pre><code class="">{
     type: "BOOKS",
     payload: {
@@ -134,27 +118,18 @@ bookStore.dispatch(Car.changeGear(2));
     }
 }
 </code></pre><p>The outer action's payload has a <code>key</code>, which identifies which book in the collection to delegate to, and an <code>update</code> action, which must be an action supported by our <code>Book</code> reducer (as indeed <code>"SET_PRICE"</code> is - see above!). The <code>Shelf</code> reducer asks the <code>Book</code> reducer to create a modified book with the price change applied to it, and then in turn it creates a new shelf with the new version of book 3 in its collection, so the change ripples up the tree producing a whole new version (but naturally sharing all the unchanged nodes from the previous version).</p>
-
 <p>So we can see how actions may be nested in a way that exactly maps to the nested structure to which they will apply. It's a very natural way to reflect composition of data structures in the composition of operations on those data structures.</p>
-
 <p>And if we stick to this approach then we will always be able to exactly describe the types involved. This is very different from the composition approach of Redux's built-in <code>combineReducers</code>. By design, that implies a front end interface that works by "action soup".</p>
-
 <p>Let's call this an <em>action path</em>. It's purely an action from Redux's perspective, nothing magic about it. It just happens to follow a well-defined structural pattern.</p>
-
 <p>Another nice thing is the polymorphism at work here. The type <code>typeof Book.reduce.actionType</code> is a base type for all actions that can be applied to a book. So the type of the payload of the <code>BOOKS</code> action (not that we ever have to manually declare it anywhere) is just:</p><pre><code class="ts">{
     key: number;
     update: typeof Book.reduce.actionType;
 }
 </code></pre><p>The <code>Shelf</code> reducer don't-give-a-F which particular action we want to perform on the book. It just provides a single, reusable conduit for such actions. We can declare further actions in <code>Book</code> and never need to update the code for <code>Shelf</code> at all.</p>
-
 <h2 id="cursorsthereduxway">Cursors, the Redux way</h2>
-
 <p><a href="What_s_good_about_Redux.html">As I noted before</a> cursors in the strict sense have been banned from Redux. But it's important to understand what they are and exactly what is non-Redux-y about them. That way, we can invent the Redux-compliant version by absolutely sticking to the rules of Redux and merely implementing a sufficiently cursor-like pattern to get the best of both worlds.</p>
-
 <p>A cursor is a way of referring to a node nested deep within some immutable data structure, so that when you eventually decide how you want to modify that node, the business of "rippling up the tree" is automatically taken care of. You pass the cursor a new version of the object to go at that location, and the whole application's state tree transitions to a new state, and buried within it, at the corresponding location, is your new version of the node you actually wanted to alter. It's the immutable equivalent of an OO reference: you can pass it around and anyone who has it can both read and (effectively) "write" to that location, without needing to have intimate knowledge of the wider data structure it is embedded in.</p>
-
 <p>So we definitely need something like that. But Redux says that updates must happen by dispatching an action to the store. Okay, so what if instead of a cursor taking a new version of a node it took an action to be dispatched to that node? The cursor is responsible for stitching that action inside another action, and that action inside yet another action, and so on until we have a composed action compatible with our whole store that makes the required update. Funny how we were only just talking about these action paths!</p>
-
 <p>So, the Redux-approach version of a cursor can be thought of as a helpful way of composing action paths. If we have some completely independently-developed code module within a larger app, it can be given a cursor that allows it to obtain its current state, and also eventually update it by sending itself an action. It doesn't need to know what path that action will be wrapped in, and it doesn't need to know what data structure it lives inside. It might look like this:</p><pre><code class="ts">interface Cursor&lt;S, A&gt; {
 
     /**
@@ -179,27 +154,18 @@ bookStore.dispatch(Car.changeGear(2));
     readonly exists: boolean;
 }
 </code></pre><p>It's a bit like a mini-store, and we could presumably have made the interface to a cursor a true subset of the <code>Store</code> interface, which has <code>getState</code> and <code>dispatch</code>. But I want to make a clear distinction: Redux's <code>Store#getState</code> is not a pure function, because it returns whatever the state is (or was) at the instant you called it; its value changes over time. This is a necessity because the store's very purpose is to be the one mutable object in the app, and to be a sub-hub that raises a notification whenever it mutates. Like a dumpster/skip/trash-can/rubbish-bin, it has to be messy in order to serve its purpose of containing the mess. But that doesn't mean we need to let that impurity leak out into the rest of the app! Let us, with <a href="http://www.oxforddictionaries.com/definition/english/put-one's-finger-in-the-dyke">one finger firmly in the dyke</a>, hold to the principle that a cursor is immutable. So rather than a <code>getState</code> method, it has a simple, <code>readonly state</code> property, which never changes for the lifetime of the cursor.</p>
-
 <p>Also, as it has one clear primary function, a cursor <em>is</em> a function - rather than it being an object with a <code>dispatch</code> method, you simply call it as a function passing it an action. It cuts a lot of noise out of code. Though I still tend to think of this as "dispatching" to the cursor.</p>
-
 <p>When you dispatch an action to the cursor, it returns a new <code>Cursor</code> (another difference from <code>Store#dispatch</code>), which gives you access to the updated state addressed by that cursor, should you need it. In a React app, you'll probably get re-rendered so might never use this capability. If you use Redux middleware, and it changes the fundamental nature of how the store works, you might get the same cursor back because although the built-in Redux store is strictly synchronous (brace yourself), middleware can change this.</p>
-
 <h2 id="middlewareconsideredharmful">Middleware considered harmful?</h2>
-
 <p>There are various ideas for how you might use the <em>middleware</em> feature in Redux. They seem like an unfortunate misstep to me. The beauty of Redux is that its central idea is so simple and general, it doesn't need to be changed. You can just build stuff on top of it, using it as a solid platform. But if you start changing the platform, you destroy the foundational assumptions that your work is based on. The basic principle that the store update is synchronous, not to mention the simplicity of the types involved, is really important.</p>
-
 <p>The problem here is not with the ideas enabled by middleware (e.g. convenient orchestration of asynchronous operations). The problem is the idea that they should be grafted into the store itself, changing its basic nature. Instead, let's practice separation of concerns, and keep the store as a synchronously updatable container for a single immutable data structure. If we want other facilities that work differently alongside the store, we should implement such facilities separately, and have them dispatch actions to the store from the outside. No magic involved. A store is just a store.</p>
-
 <h2 id="collections">Collections</h2>
-
 <p>Now let's think about the challenges involved in implementing cursors on a multi-nested, dynamically growing data structure. As an example we'll take another step back: we already have <code>Book</code>, and a <code>Shelf</code> that has a collection of books. Let's have a <code>Shop</code> (UK English terminology to avoid clashing with <code>Store</code>) that has a collection of shelves. There is obvious similarity between levels, and most apps will involve this kind of pattern. We need to be able to address things inside containers, at multiple levels.</p>
-
 <p>Let's declare the <code>Shelf</code> datatype:</p><pre><code class="ts">interface Shelf {
     readonly description: string;
     readonly books: Map&lt;number, Book&gt;;
 }
 </code></pre><p>I'm using <a href="https://facebook.github.io/immutable-js/docs/#/Map">Map from immutable.js</a>, and so each book has an ID number of some kind.</p>
-
 <p>Suppose we have available to us another helper function, <code>collection</code>, which defines how a collection of objects should work:</p><pre><code class="ts">const books = collection({
     type: "BOOKS",
     reducer: Book.reduce,
@@ -209,7 +175,6 @@ bookStore.dispatch(Car.changeGear(2));
 });
 </code></pre><p>It returns a function <code>books</code> that can be used to make cursors to books within the collection:</p><pre><code class="ts">const book123 = books(someShelf, 123);
 </code></pre><p>The first argument, <code>someShelf</code>, is itself a cursor to a <code>Shelf</code> (see how this gets nesty?) The collection definition has to specify (via its <code>get</code> and <code>set</code> functions) how to read and update the book collection inside a <code>Shelf</code>. It also is told what <code>reducer</code> to use on the collection items when they need to be updated via an action.</p>
-
 <p>The <code>operations</code> object, which I've left dangling until now, is separated out so that it can be defined once for some generic collection type (such as <code>Map&lt;K, I&gt;</code>) and reused forever after. It has to conform to the following interface, and basically just provides the operations we require over a collection type, <code>C</code>, using key <code>K</code> and item <code>I</code>:</p><pre><code class="ts">interface CollectionOperations&lt;C, K, I&gt; {
     get: (state: C, key: K) =&gt; { exists: boolean, value?: I };
     set: (state: C, key: K, item: I) =&gt; C;
@@ -258,7 +223,6 @@ const horcruxBook = Shelf.books(restrictedShelf, 666);
 
 horcruxBook(Book.addAuthor("Voldemort"));
 </code></pre><p>See how I'm dispatching to the book cursor? I don't need to dispatch to the shelf, and yet effectively that's what I'm doing. The book cursor wraps my <code>"ADD_AUTHOR"</code> action in a <code>"BOOKS"</code> action and dispatches it to the shelf cursor.</p>
-
 <p>To tie this up to a Redux store we need a way to get a cursor from the store. That's what <code>snapshot</code> is for:</p><pre><code class="ts">// Make a store containing an empty Shop
 const store = Shop.reduce.store();
 
@@ -277,18 +241,21 @@ book(Book.setTitle("1985"));
 // Check the store has been updated
 expect(store.getState().shelves.get("fiction").books.get(109423).title).toEqual("1985");
 </code></pre><p>This demonstrates another nice feature of these lazy cursors; if you ask for object that isn't in the collection, they act like it is and return you the appropriate empty object. So you can build structures with next to no effort. How do they know what the empty object should be? Well, we've told them! When we declare a <code>collection</code> we give it the reducer for its items, e.g. <code>Book.reduce</code>, which has an <code>empty</code> property specifying what an empty <code>Book</code> should be.</p>
-
 <h2 id="wanttotryitforyourself">Want to try it for yourself?</h2>
-
 <p>I've put these various utilities together in a library called <a href="https://github.com/danielearwicker/immuto">Immuto</a>:</p><pre><code class="bash">npm install immuto
 </code></pre><p>Naturally it has built-in type definitions, no need to install any separately. If you look at the rough tests in <a href="https://github.com/danielearwicker/immuto/blob/master/spec">immuto/spec</a> you'll see they're based on the same book/shelf/shop example I used here.</p>
-
 <p>Happy type-safe composable Reduxing!</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

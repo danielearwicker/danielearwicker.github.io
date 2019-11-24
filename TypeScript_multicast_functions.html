@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -28,21 +28,16 @@
 
 <p>Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs
 from JavaScript.</p>
-
 <ol>
 <li><p>a method's <code>this</code> reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens
 to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the
 function internally refers to <code>this</code>.</p></li>
-
 <li><p>a function value (known as a "delegate") has operators <code>+</code>, <code>-</code>, <code>+=</code>, <code>-=</code> that allow it to be combined with other compatible functions
 to create a new single function that, when invoked, causes the constituent functions to be invoked.</p></li>
 </ol>
-
 <p>The second one is what I'm interested in today, mainly because it's a nice example of something that we can strongly type check in
 TypeScript. Internally (at the "plumbing" level) we have to bypass type checks, but externally we can guarantee everything will work.</p>
-
 <p><a href="https://github.com/danielearwicker/multicast">Browse the source code</a></p>
-
 <p>A <code>multicast&lt;TFunc&gt;</code> is a function whose type is the intersection of <code>TFunc</code> and some methods called <code>add</code> and <code>remove</code>. To declare it,
 we have to say:</p><pre><code class="typescript">interface Subscribable&lt;TFunc extends Function&gt; {
     add(handler: TFunc): Multicast&lt;TFunc&gt;;
@@ -57,7 +52,6 @@ type Multicast&lt;TFunc extends Function&gt; = Subscribable&lt;TFunc&gt; & TFunc
 </code></pre><p>TypeScript currently won't let an interface extend one of its type parameters. But the first snippet achieves the same thing by
 roundabout means, so it seems to be just a curious historical limitation and maybe it will be lifted in a future version of the
 compiler (it's evolving so fast).</p>
-
 <p>In short, the <code>&amp;</code> operator ("intersection of types") allows two types to be merged: it outputs a type that has the capabilities
 of both input types. This is a vague way of saying it, and it makes "intersection" seem like the wrong name: an intersection is
 the (usually smaller) subset of items common to two (usually larger) sets. It's the little bit that overlaps. And yet here we're
@@ -65,9 +59,7 @@ making a type that is "bigger" than the two inputs. To be more precise we need t
 described in <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>: a type can be thought of as the set
 of values that are of that type. Thinking of it that way, only a subset of the values of type <code>A</code> will also be values of type
 <code>B</code>. So we are indeed talking about an intersection: of two sets of <em>values</em>.</p>
-
 <p>The end product is a function that, as well as being directly callable, also has a couple of methods, <code>add</code> and <code>remove</code>, tacked onto it. Note that they each return a <code>Multicast</code> of exactly the same type; this is because (like C# delegates) I've made them immutable: you can't change what's on the list of an existing <code>Multicast</code>, but you can get a new <code>Multicast</code> with whatever alteration you require.</p>
-
 <p>The implementation works by defining an object that implements <code>Subscribable</code>, and then "merging" it onto a forwarding function.</p><pre><code class="typescript">export default function multicast&lt;TFunc extends Function&gt;(...handlers: TFunc[]): Multicast&lt;TFunc&gt; {
 
     handlers = handlers;
@@ -93,20 +85,16 @@ of values that are of that type. Thinking of it that way, only a subset of the v
 First for handlers (you can pass any number of compatible functions as arguments to <code>multicast</code> to get them all joined together),
 and this lets us do immutable array manipulation (<code>concat</code>, <code>filter</code>) to create further calls to <code>multicast</code> when implementing
 <code>add</code> and <code>remove</code>.</p>
-
 <p>Second, the ugly part: <code>invoke</code>. This is the basis of the function object we will return. It is basically completely
 untypechecked (note the <code>as any</code>!) But at the same time, it implements <code>TFunc</code> by calling on to handlers that implement <code>TFunc</code>,
 so it is type safe.</p>
-
 <p>Note how discards all but the last return value. It would be nice if we could specify a custom reducer function:</p><pre><code class="typescript">(a: TReturn, b: TReturn) =&gt; TReturn
 </code></pre><p>That would allow the user to request that return values should be summed, etc.</p>
-
 <p>But TypeScript doesn't give us a way to find out the return type of a function type. It would be really powerful if we could
 discover "traits" about a type (a C++ idea) like that. Another example would be getting a tuple type of the parameters to a
 function type. And what if we could construct a new function type out of such pieces? Then we could do things like wrapping
 the return type in a promise. This would be useful for solving problems like making a promise-enabled version of any node.js
 style callback API. But I digress.</p>
-
 <p>One final piece of the implementation is the <code>merge</code> call right at the end. This is the classic:</p><pre><code class="typescript">export default function merge&lt;T1, T2&gt;(onto: T1, from: T2): T1 & T2 {
     if (typeof from !== "object" || from instanceof Array) {
         throw new Error("merge: 'from' must be an ordinary object");
@@ -128,6 +116,12 @@ both <code>A</code> and <code>B</code> are functions.</p>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -27,48 +27,32 @@
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-16</p>
 
 <p><em>UPDATE - I'm in the move-fast-and-break-things phase so a couple of details in here are already out of date. In particular, properties are now unified with cursors. See the various repos for details.</em></p>
-
 <p>In <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a> I introduced the <a href="https://github.com/danielearwicker/immuto">Immuto library</a> by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!</p>
-
 <p>What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:</p>
-
 <ul>
 <li><code>npm install immuto-react</code></li>
 </ul>
-
 <p>However, the majority of this document is just plain <code>immuto</code> used in conjunction with <code>react</code>. We won't need <code>immuto-react</code> until the very last step.</p>
-
 <p>Also there is nothing DOM-specific at all. This should all work with React Native, or in server-side rendering, or what-have-you.</p>
-
 <h2 id="exampleapp">Example app</h2>
-
 <p>There's a running example here:</p>
-
 <ul>
 <li><a href="https://danielearwicker.github.io/resources/immuto">Live demo</a></li>
 </ul>
-
 <p>The source is here:</p>
-
 <ul>
 <li><a href="https://github.com/danielearwicker/immuto-example">immuto-example</a></li>
 </ul>
-
 <p>Clone it and get it running like this:</p><pre><code class="bash">git clone https://github.com/danielearwicker/immuto-example
 cd immuto-example
 npm install
 webpack
 http-server
 </code></pre><p>You'll need to global install the last two tools from <code>npm</code> also if you don't have them already. When it's up and running you can hit <code>localhost:8080</code>.</p>
-
 <p>In the TypeScript editor of your choice (I've been using <code>alm</code> recently, because AWESOME) one neat thing to look at is <code>exampleData.ts</code> <a href="https://github.com/danielearwicker/immuto-example/blob/master/exampleData.ts">(link)</a>. It first glance it looks like a pretty boring copy/paste of a JSON log of actions. Which is what it is. Maybe I just like boring stuff?</p>
-
 <p>But what's really cool is that if you edit the <code>type</code> property of any action, including the nested ones, or change a payload from a string to a number, TypeScript starts moaning. It's type-checking the shizzle out of it. Every action in the log is of type <code>typeof Shop.reduce.actionType</code>. This means that if I restructure the app, changing even the slightest detail of the actions supported by my reducers, TypeScript pipes up and says "You need to update your example data!"</p>
-
 <p>It's a neat demonstration of how the deep the type checking goes in Immuto. It doesn't just rely on you going through a special API. Even if you hand-build your actions, they can (if you wish) be fully validated at compile time. I know I shouldn't be surprised by this, having designed it to work this way from the ground up, but I genuinely did change the type string of one of my actions and TypeScript <em>did at once</em> tell me to fix the example data, making me say "Well, I'll be a monkey's uncle" or similar earthy reflexive sobriquet.</p>
-
 <h2 id="twowaybindinginconceivable">Two-Way Binding? Inconceivable!</h2>
-
 <p>I've continued with the book/shelf/shop theme. Let's start with the simplest piece, the <code>Book</code> (slightly simplified):</p><pre><code class="ts">interface Book {
     readonly title: string;
     readonly price: number;
@@ -94,7 +78,6 @@ http-server
     &lt;/div&gt;
 );
 </code></pre><p>This looks a lot like "two-way binding", and so it is, but it's all layered over pure Redux actions that are submitted to a single store. And yet nothing in that definition has been bound to a specific store at this stage. It's a perfectly reusable component.</p>
-
 <p><code>TextInput</code> and <code>DecimalInput</code> are components that wrap the <code>&lt;input&gt;</code> element. They both take a prop called <code>property</code>, which can be anything conforming to this extremely simple interface:</p><pre><code class="ts">interface Property&lt;P&gt; {
     readonly state: P;
     (newValue: P): void;
@@ -104,55 +87,35 @@ http-server
                   onChange={e =&gt; property(e.currentTarget.value)} /&gt;;
 }
 </code></pre><p>As you can see, it wouldn't be that much bother to use <code>&lt;input&gt;</code> directly. But text input fields are pretty commonplace and so why not shrink them down to something neat and remove as much noise as possible from your myriad views in JSX? I plan to add a generalised form of <code>TextInput</code>, <code>CheckBox</code> and so on to <code>immuto-react</code>.</p>
-
 <h2 id="allaboutproperties">All About Properties</h2>
-
 <p>So what is <code>property</code> and how does it work? If you look at how <code>Book.title</code> is used in <code>BookEditor</code>, you'll see that we call it (so it's a function), passing it a <code>Book</code> cursor, and we must get back a <code>Property&lt;string&gt;</code> because we pass that sucker directly into <code>TextInput</code>'s <code>property</code> prop.</p>
-
 <p>If you made it through the last episode, you'll have seen the most general way of declaring an action:</p><pre><code class="ts">export const setTitle = action("SET_TITLE",
     (book: Book, title: string) =&gt; amend(book, { title }));
 </code></pre><p>It defines a Redux action creator: a function <code>setTitle</code> that can be called with a string argument <code>"Something"</code> and returns a strongly typed action: <code>{ type: "SET_TITLE", payload: "Something" }</code>.</p>
-
 <p>Actions are the only way anything changes in Redux, period. They should be as high-level as possible, and descriptive of the change being made. If we have data that has some invariant that must apply to it, for example:</p>
-
 <ul>
 <li>if string <code>permission</code> is empty then number <code>quota</code> must be greater than 0.</li>
 </ul>
-
 <p>then we shouldn't expose a way to independently set those values. We should instead expose high-level actions that change both values together, in ways that preserve the invariant, so that it is simply not possible to break it.</p>
-
 <p>But this typically still leaves a lot of situations where we have a primitive value, such as a string, that is independently chosen by the user. It's the "bread and butter" of a lot of data models: bunches of named properties that can be independently modified.</p>
-
 <p><a href="A_new_kind_of_managed_lvalue_pointer.html">As I've noted before in another context</a>, a "property", an addressable value that can be read and written, is a powerful idea that should be <a href="https://en.wikipedia.org/wiki/Reification">reified</a>, turned into an object that can be stored in a variable, passed as a parameter, etc. The <code>Property</code> interface is that concept in Immuto.</p>
-
 <p>An Immuto cursor implements a variant that idea in which we express "writing" by accepting an action to perform on the value. But for some simple values there is only one action: to set it to a new value carried in the payload. In such cases, requiring you to create and pass that action explicitly is pure ceremony with no purpose.</p>
-
 <p>So in these simple and ubiquitous cases, where it makes sense, instead of <code>action</code> we can use <code>property</code>:</p><pre><code class="ts">export const title = property("TITLE",
     (book: Book) =&gt; book.title,
     (book, title) =&gt; amend(book, { title }));
 </code></pre><p>This assigns to <code>title</code> an object that is both:</p>
-
 <ul>
 <li>an action definition, so it can be added to <code>Book</code>'s reducer, and</li>
-
 <li>a function to which we can pass a <code>Book</code> cursor, and get back a property instance that is bound to the title of the book we passed.</li>
 </ul>
-
 <p>So when we call that function passing a new title <code>"1984"</code> for the book, it builds an action <code>{ type: "TITLE", payload: "1984" }</code> and dispatches it to the <code>Book</code> cursor, which will take it from there, producing an action path and ultimately dispatching it to the big store in the sky.</p>
-
 <p>(Note that I've used the name <code>TITLE</code> rather than <code>SET_TITLE</code>; of course, action names are entirely up to you. I think if there is nothing else you can do to something apart from <code>SET</code> it, then there's no need to qualify it.)</p>
-
 <p>In the call to <code>property</code>, the second argument is the same reducer definition we originally passed to <code>action</code> in the earlier <code>setTitle</code> example. The first argument is the new part: a "getter" for the same property.</p>
-
 <p>But what a shame to have to effectively say the same thing twice. In a simple example like this, we just want to specify a property name. <a href="https://github.com/Microsoft/TypeScript/issues/10826">In a future version of TypeScript</a> (see <code>keysof</code> operator) we may be able to do something super-succinct. But for now it seems we're stuck with ugly repetition. Ugly, ugly repetition. Or are we? Or <em>are</em> we?</p>
-
 <p>There is one <a href="http://perfectionkills.com/those-tricky-functions/">clever trick</a> we can play, so we only have to pass the getter:</p><pre><code class="ts">export const title = property("TITLE", (book: Book) =&gt; book.title);
 </code></pre><p>If called in this way, the source of the getter function is parsed, and if it matches a simple enough pattern, then the corresponding reducer can be automatically generated! If the getter is too complex then this parsing fails at runtime, which sounds bad. But it's not too bad, because it's going to fail at load time, and fail noisily (throwing an <code>Error</code>). This is the kind of runtime error that is only a gnat's whisker away from static checking. But this feature does involve sniffing something that is not yet completely standard across browsers, so it's somewhat experimental. Please help me fix my Regex.</p>
-
 <p>So, properties give us a binding capability for simple independent values, and that enables two-way binding layered over type-checked pure Redux actions. Happy Birthday!</p>
-
 <h2 id="renderingacollectionofbooks">Rendering a collection of books</h2>
-
 <p>Let's now move out to the next layer, a shelf containing multiple books:</p><pre><code class="ts">export interface Shop {
     readonly name: string;
     readonly shelves: { [name: number]: Shelf };
@@ -185,50 +148,39 @@ export namespace Shop {
     &lt;/div&gt;
 );
 </code></pre><p>In fact there's nothing here I haven't <a href="Immuto_Strongly_Typed_Redux_Composition.html">previously discussed</a>. <code>Shelf.books</code> is the collection definition, and it's a way to get a <code>Book</code> cursor if you have a <code>Shelf</code> cursor and the key of the book you're interested in.</p>
-
 <p>So these are the basics of how you build components that bind to Immuto models. Note that you are of course free to have other props besides a cursor on a component, and you could even pass multiple cursors in different props.</p>
-
 <h2 id="bindingtothestore">Binding to the store</h2>
-
 <p>The final mystery is how to start the whole thing off at the root. We need a way to tie our tree of components to the store. In this example the root of our model is a <code>Shop</code>. And at last we're going to use something from <code>immuto-react</code>!</p>
-
 <p>Assuming we have a <code>ShopEditor</code> along the expected lines, requiring a prop of type <code>Cursor&lt;Shop&gt;</code>, what we need is an <code>App</code> component that requires no props and can be rendered as-is.</p><pre><code class="tsx">const store = Shop.reduce.store();
 
 const App = bindToStore(store, s =&gt; &lt;ShopEditor shop={s} /&gt;);
 
 ReactDOM.render(&lt;App /&gt;, document.querySelector("#root")!);
 </code></pre><p>Here, <code>bindToStore</code> is a function imported from <code>immuto-react</code>. You pass it a store to bind to, and also a function which will be called back with a cursor of the same type as the store, which you can then pass into your unbound component.</p>
-
 <p>And that's all there is to it, on a logical level. All data is passed down in pure props. Everything in the entire app is immutable except for one variable, hidden inside the implementation of the Redux store. Components are stateless functions.</p>
-
 <h2 id="optimizationbyminimalrendering">Optimization by minimal rendering</h2>
-
 <p>There is one other matter that might be of concern in large apps. If we proceed as described here, we'll end up re-rendering the entire page every time anything changes, because that's the default behaviour in React; whenever props are passed in to a component, even the same ones, the component's is re-rendered. React has to do this because it doesn't mandate that props are immutable.</p>
-
 <p>To avoid this, <code>immuto-react</code> has another function called <code>optimize</code>. This wraps a stateless component and returns a new component which is more reluctant to render itself. The rules it uses are quite straightforward.</p>
-
 <p>Each time it has the opportunity to re-render, it compares the values of its props to see if they've changed. To ensure this happens properly, it compares them with <code>==</code>, not with <code>===</code>. This causes the JS engine to call the <code>valueOf</code> method on each prop; it's a built-in feature of JavaScript. All objects have a <code>valueOf</code> method, although most just inherit the default which returns <code>this</code>. But it can be overridden to return the value that an object represents.</p>
-
 <p>And guess what? Immuto's cursors and properties override <code>valueOf</code> to return their <code>state</code>. This means that if you use <code>optimize</code>, where you have props that are cursors, they will correctly only cause a re-render if the value they refer to has changed, not just because a new cursor has been generated that wraps the same value.</p>
-
 <p>Sadly we're not quite done. A very common pattern in <code>React</code> is to pass functions as props, to be used as callbacks typically when the user clicks something. These will likely be lambdas that get allocated every time, and yet in many uses they have no effect on rendering. They will completely ruin your attempts to optimize. So to handle this, <code>optimize</code> also has to allow you to pass an array of string names for the props you want it to ignore. This is the one concession to dynamic typing so far! If you add/remove properties, you will not get any compiler errors if you forget to update your <code>ignore</code> array. On the other hand, if you do specify a name that is not actually from your props interface, this will not cause a repaint bug. But if you misspell a prop that should be ignored then you'll get unnecessary repaints.</p>
-
 <p>That <code>keysof</code> operator we may see <a href="https://github.com/Microsoft/TypeScript/issues/10826">in a future version of TypeScript</a> would work well here; if that is added, we'll be able to ensure that everything on the <code>ignore</code> array is a true prop name.</p>
-
 <h2 id="nextsteps">Next steps</h2>
-
 <p>One topic I'd like to cover is polymorphic components. For example, suppose a shelf could contain a mixture of items (books, food), but all having a price. In mutable OO there would be a <code>Product</code> base class with a <code>price</code> property and the other two would derive from it. But here we have UI in stateless React, we have immutable data which needs to be easily persisted, and we have reducers taking actions. This seems like an interesting thing to figure out a nice solution to.</p>
-
 <p>I've had a request already to look into how async should work (given that I've pooh-poohed Redux middleware), and that's definitely worth getting into.</p>
-
 <p>It would probably be good to do a full comparison with regular Redux, re-implementing the Redux tutorial.</p>
-
 <p>Feel free to <a href="https://github.com/danielearwicker/immuto/issues">suggest more</a>.</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

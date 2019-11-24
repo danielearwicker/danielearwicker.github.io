@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -52,13 +52,9 @@ true false false
 true false false
 false false true
 </code></pre><p>Clearly the designers of strict mode felt there was a problem with <code>this</code> referring to the global object sometimes, and I'd have to agree with them. At least when it's <code>undefined</code> you have a chance of spotting a problem!</p>
-
 <p>The pain here is that a function is written to assume something about <code>this</code>. To put it in TypeScript terms, the type signature of a method (i.e. a function designed to be called on an object) is fundamentally different from a free function. </p>
-
 <p>TypeScript initially punted on this problem entirely. The type of <code>f</code> in the above example is <code>() =&gt; void</code>. But if <code>f</code>'s body assumes <code>this</code> is some object, then <code>o.f</code> as a whole might be <code>() =&gt; void</code> whereas <code>f</code> on its own is definitely not. A free-standing <code>f</code>, while implemented by the JS runtime as a <code>"function"</code> object, is not yet a function. It needs to be bound to an object. This can be done by calling <code>bind</code> on it, or by assigning it as the property of a suitable object.</p>
-
 <p>Even more confusingly, the statement <code>const f2 = o.f;</code> copies the value of an expression of type <code>() =&gt; void</code> into a variable that, by itself, is not <code>() =&gt; void</code>! This is just how JavaScript works.</p>
-
 <p>There is a way of writing JavaScript (and TypeScript) that eliminates this problem: don't use <code>this</code>. Create objects as literals, without prototypes:</p><pre><code class="ts">function vector(x: number, y: number) {
     return {
         get x() { return x; },
@@ -67,7 +63,6 @@ false false true
     };
 }
 </code></pre><p>For objects with large numbers of properties, created in large numbers, this theoretically is wasteful. It might also defeat optimisations in JS runtimes. In any case, classes are one of the "cool" (?) features in modern JS and TypeScript, so unfortunately they are probably widely used, and because they define methods on the prototype they depend on <code>this</code>.</p>
-
 <p>This means that a simple demo of classes in TypeScript has a trap door waiting in it:</p><pre><code class="ts">class Vector {
     constructor(public x: number, public y: number) {}
 
@@ -84,9 +79,7 @@ const l = v.length;
 
 console.log(l()); // Runtime error: Cannot read property 'x' of undefined
 </code></pre><p>The compiler finds no type error in that example, because <code>v.length</code> has the type <code>() =&gt; number</code>. To a C# coder it looks fine (in C# the expression <code>v.length</code> automatically does the equivalent of <code>v.length.bind(v)</code>).</p>
-
 <p>A separate problem is that the type of <code>this</code> in a free function is <code>any</code>. This is the case even if <code>--noImplicitAny</code> is specified!</p>
-
 <p>But TypeScript continues to advance rapidly. We now have <code>--noImplicitThis</code> to add to the growing list of "super strict mode" compiler switches, under which the use of <code>this</code> in a free function will cause a type error.</p><pre><code class="json">{
     "noImplicitAny": true,
     "noImplicitThis": true,
@@ -115,44 +108,40 @@ const o = { f }; // of type I
     }
 }
 </code></pre><p>It now gives a compile-time error when we try to call through a free copy of <code>v.length</code>.</p>
-
 <p>But this seems a bit strange. As <code>length</code> is a method of <code>Vector</code>, why not assume that it requires <code>this</code> to be the enclosing class type? Why require it to be explicitly stated?</p>
-
 <p><a href="https://github.com/Microsoft/TypeScript/pull/6739">The original plan</a> was to add a flag <code>--strictThis</code> that would have made that exact assumption. It would also have applied a neat rule-of-thumb to interface declarations:</p><pre><code class="ts">interface I {
   f: (n: number) =&gt; number; // this: void
   m(n: number): number; // this: this
 }
 </code></pre><p>In other words, if the functions available in the interface are fully bound and don't require <code>this</code>, declare them as a property of a function type, rather than a method.</p>
-
 <p>But that change would have implied potentially rewriting a lot of the type definition files on <a href="https://github.com/DefinitelyTyped/DefinitelyTyped">DefinitelyTyped</a>, so they would be helpful to anyone using the <code>--strictThis</code> flag (i.e. to reduce their tendency to break in existing code).</p>
-
 <p>And would this actually block all type holes? Suppose anything with a <code>length</code> method is described as <code>Measurable</code>:</p><pre><code class="ts">interface Measurable {
     length(this: this): number;
 }
 </code></pre><p>I've explicitly typed <code>this</code> to simulate what <code>--strictThis</code> would have assumed. Would our <code>Vector</code> class be compatible with <code>Measurable</code>? Yes (this is true in TS 2.1 anyway, and how else would such an interface be useful?)</p>
-
 <p>But that means we have a type hole:</p><pre><code class="ts">const v: Measurable = new Vector(3, 4);
 const m = { length: v.length };
 console.log(m.length()); // Prints: NaN
 </code></pre><p><code>v</code> is a <code>Vector</code>, which means it is also a <code>Measurable</code>, so we declare that to be its type. But if we treat it as a <code>Measurable</code> then we're saying that its <code>length</code> method could be called on <em>any</em> <code>Measurable</code>.</p>
-
 <p>For <code>Vector</code>'s version of <code>length</code> to work, <code>this</code> must be something that has <code>x</code> and <code>y</code> properties. It can't be just anything that has a <code>length</code> method. When I create <code>m</code> I satisfy the interface <code>Measurable</code>, but that's not enough to satisfy <code>Vector#length</code>.</p>
-
 <p>Fundamentally, the implementer of an interface has different requirements to the caller. The caller wants the length, the implementer wants the information from which the length can be calculated. We can't fix it with:</p><pre><code class="ts">interface Measurable {
     length(this: Vector): number;
 }
 </code></pre><p>because now it can't be usefully implemented by anything else. Okay, so maybe an interface method shouldn't have type <code>this: this</code>, but instead should have a special type that makes it illegal to do anything with it except call it. It would not be possible to read its value.</p>
-
 <p>But for now these are open questions. TypeScript's usefulness isn't harmed by any of this. Absolute soundness, as if it was a Platonic ideal of which languages choose to implement some portion, like setting a dial somewhere between 0% (JavaScript) and 100% (Java), is a myth.</p>
-
 <p>In reality type systems are tastefully chosen collections of composable features for describing and checking facts about code. New features may be invented at any time, based on widespread usage patterns. So a type system is never "complete", though there may be a kind of truce where users learn to stick to patterns that the type system can describe. TypeScript is unlikely to have that luxury because it aims to describe patterns being actively invented by JavaScript users.</p>
-
 <p>As TypeScript grows in power, gaining such features, it becomes more capable of describing and checking a wider variety of patterns, but also harder to learn. It's a trade off, like everything else.</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

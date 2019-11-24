@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -27,7 +27,6 @@
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a>  2016-03-08</p>
 
 <p>As great as <a href="https://facebook.github.io/immutable-js/">Immutable.js</a> is, especially with a TypeScript declaration included in the package, the <code>Record</code> class leaves me a little disappointed.</p>
-
 <p>In an ordinary class with public properties we're used to being able to say:</p><pre><code class="typescript">const a = new Animal();
 a.hasTail = true;
 a.legs = 2;
@@ -35,17 +34,11 @@ a.legs = 2;
 const tailPrefix = a.hasTail ? "a" : "no";
 const desciption = `Has ${a.legs} legs and ${tail} tail.`
 </code></pre><p>That is, each property is a single named feature that can be used to set and get its value. But immutability makes things a little more complicated, because rather than changing a property of an object, we instead create a whole new object that has the same values on all its properties except for the one we want to change. It's just a convenient version of "clone and update". This is how it has to be with immutable data. You can't change an object, but you can easily make a new object that is modified to your requirements.</p>
-
 <p>Why is this hard to achieve in a statically typed way? <a href="https://github.com/facebook/immutable-js/issues/341">This thread</a> gives a nice quick background. In a nutshell, you use TypeScript because you want to statically declare the structure of your data. Immutable.js provides a class called <code>Record</code> that lets you define class-like data types, but at runtime rather than compile time. You can overlay TypeScript interface declarations onto them at compile time, but it's a bit messy. Inheritance is troublesome, and there's a stubborn <code>set</code> method that takes the property name as a <code>string</code>, so there's nothing stopping you at compile-time from specifying the wrong property name or the wrong type of value.</p>
-
 <p>The most complex suggestion in that thread is to use code generation to automatically generate a complete statically typed immutable class, from a simpler declaration in a TS-like syntax. This is certainly an option, but seems like a defeat for something so fundamental to programming as declaring the data structures we're going to use in memory.</p>
-
 <p>Really this kind of class declaration should be second nature. If we're going to adopt immutable data as an approach, we're going to be flinging these things around like there's no tomorrow.</p>
-
 <p>So I wanted to see if something simpler could be done using the built-in metaprogramming capabilities in TypeScript, namely <a href="https://github.com/Microsoft/TypeScript-Handbook/blob/master/pages/Decorators.md">decorators</a>. And it can! And it's not as ugly as it might be! And there's a nice hack hiding under it!</p>
-
 <h2 id="howitlooks">How it looks</h2>
-
 <p>This is how to declare an immutable class with some properties and one method that reads the properties.</p><pre><code class="typescript">import { doop } from "../doop";
 
 @doop
@@ -70,15 +63,11 @@ class Animal {
     }
 }
 </code></pre><p>The library <a href="https://github.com/danielearwicker/doop">doop</a> exposes a single named feature, <code>doop</code>, and you can see it being used in three ways in the above snippet:</p>
-
 <ul>
 <li>As a class decorator, right above the <code>Animal</code> class: this allows it to "finish off" the class definition when the code is loaded into the JS engine.</li>
-
 <li>As a property decorator, above each property: this inserts a function that implements both get and set functionality.</li>
-
 <li>As a helper function, called inside each property getter</li>
 </ul>
-
 <p>Although not visible in that snippet, there's also a generic interface, <code>Doop</code>, returned by the helper function, and hence supported by each property:</p><pre><code class="typescript">interface Doop&lt;V, O&gt; {
     (): V;
     (newValue: V): O;
@@ -86,13 +75,9 @@ class Animal {
 </code></pre><p>That's a function object with two overloads. So to get the value of a property (as you can see happening in the <code>describe</code> method) you call it like a function with no arguments:</p><pre><code class="typescript">if (a.hasTail()) { ...
 </code></pre><p>It's a little annoying that you can't just say:</p><pre><code class="typescript">if (a.hasTail) { ...
 </code></pre><p>But that would rule out being able to "set" (make a modified clone) through the same named feature on the object. If the type of <code>hasTail</code> were <code>boolean</code>, we'd be stuck.</p>
-
 <p>There's a particular pattern you follow to create a property in an immutable class. You have to define it as a getter function (using the <code>get</code> prefix), and return the result of calling <code>doop</code> as a helper function, which is where you get to specify the type of the property. Note: you only need to define a getter; doop provides getting and pseudo-setting (i.e. cloning) via the same property, with static type checking.</p>
-
-<p>See how the constructor is able to call its properties to supply them with initial values. This looks a lot like mutation, doesn't it? Well, it is. <a href="http://clojure.org/reference/transients">But it's okay because we're in the constructor</a>. <code>doop</code> won't let this happen on properties of a class that has finished being constructed and therefore is in danger of being seen to change (NB. you can leak a reference to your unfinished object out of your constructor by passing <code>this</code> as an argument to some outside function... so don't do that).</p>
-
+<p>See how the constructor is able to call its properties to supply them with initial values. This looks a lot like mutation, doesn't it? Well, it is. <a href="http://clojure.org/reference/transients">But it's okay because we're in the constructor</a>. <code>doop</code> won't let this happen on properties of a class that has finished being constructed and therefore is in danger of being seen to change (NB. you can leak a reference to your unfinished object out of your constructor by passing <code>this</code> as an argument to some outside function… so don't do that).</p>
 <p>And in the <code>describe</code> method (which is just here as an example, not part of any mandatory pattern) you can see how we retrieve the values by calling properties as if they were methods, this time passing no parameters.</p>
-
 <p>But what's not demonstrated in this example is "setting" a value in an already-constructed object. It looks like this:</p><pre><code class="typescript">const a = new Animal();
 expect(a.legs()).toEqual(2); // jasmine spec-style assertion
 
@@ -103,65 +88,55 @@ expect(b.legs()).toEqual(4);
 // original object is unaffected
 expect(a.legs()).toEqual(2);
 </code></pre><p>Inheritance is supported; a derived class can add more properties, and in its constructor (after calling <code>super()</code> it can mutate the base class's properties. The runtime performance of a derived class should be identical to that of an equivalent class that declares all the properties itself.</p>
-
 <p>One thing to be wary of is adding ordinary instance properties to a <code>doop</code> class. It would be difficult to effectively block this happening, and in any case there may occasionally be a good reason to do it, as long as you understand one basic limitation of it: ordinary instance properties belong to an instance. When you call a property to set its value, you are returned a new instance, and there is no magic that automatically copies or initialises any instance fields. Only the other doop properties will have the same values as in the original instance. Any plain instance fields in the new instance will have the value <code>undefined</code>.</p>
-
 <p>For simplicity's sake, just make sure in a <code>doop</code> class that all data is stored in <code>doop</code> properties.</p>
-
 <h2 id="implementation">Implementation</h2>
-
 <p>The implementation of the cloning is basically <a href="https://github.com/facebook/immutable-js/issues/286">the one described here</a> so it's super-fast.</p>
-
 <p>I mentioned there's a hack involved, and it's this: I needed a way to generate, from a single declaration in the library user's code, something that can perform two completely different operations: a simple get and a pseudo-set that returns a new instance. That means I need each property to be an object with two functions. But if I do that literally, then a get would look like this:</p><pre><code class="typescript">// A bit ugly
 const v = a.legs.get();
 const a2 = a.legs.set(4);
 </code></pre><p>I don't like the verbosity, for starters. But there's a worse problem caused by <code>legs</code> being an extra object in the middle. Think about how <code>this</code> works in JS. Inside the <code>get</code> function <code>this</code> would point to <code>legs</code>, which is just some helper object stored in a property defined on the prototype used by all instances of the <code>Animal</code> class. It's not associated with an instance. It doesn't know what instance we're trying to get a value from. I could fix this by creating a duplicate <code>legs</code> object as an instance property on every <code>Animal</code> instance, and then giving it a back-reference to the owning <code>Animal</code>, but that would entirely defeat the whole point of the really fast implementation, which uses a secret array so it can be rapidly cloned, whereas copying object properties is very much slower.</p>
-
 <p>Or I could make <code>legs</code>, as a property getter, allocate a new middle object on the fly and pass through the <code>this</code> reference. So every time you so much as looked at a property, you'd be allocating an object that needs to be garbage collected. Modern GCs are amazing, but still, let's not invent work for them.</p>
-
 <p>So what if instead of properties, I made the user declare a function with two overloads for getting and setting? That solves the <code>this</code> problem, but greatly increases the boilerplate code overhead. The user would actually have to write two declarations for the overloads (stating the "property" type twice) and a third for the implementation:</p><pre><code class="typescript">// Ugh
 @doop
 legs(): number;
 legs(v: number): this;
 legs(v?: number): any { }
 </code></pre><p>The function body would be empty because the <code>doop</code> decorator replaces it with a working version. But it's just a big splurge of noise so it's not good enough. And yet it's the best usage syntax available. Ho hum.</p>
-
 <p>Lateral thinking to the rescue: in TypeScript we can declare the interface to a function with two overloads. Here it is again:</p><pre><code class="typescript">export interface Doop&lt;V, O&gt; {
     (): V;
     (newValue: V): O;
 }
 </code></pre><p>Note that <code>O</code> is the type of the object that owns the property, as that's what the "setter" overload has to return a new instance of.</p>
-
 <p>Using a getter in the actual doop library looks like this:</p><pre><code class="typescript">const l: number = a.legs();
 </code></pre><p>There are at least two possible interpretations of <code>a.legs()</code>:</p>
-
 <ul>
 <li><code>legs</code> is function that returns the number we want.</li>
-
 <li><code>legs</code> is a property backed by a getter function, that returns a function with at least one overload <code>(): number</code>, which when called returns the 
 number we want.</li>
 </ul>
-
 <p>To explain the second one more carefully: the part that says <code>a.legs</code> will actually call the getter function, which returns a second function, so
 <code>a.legs()</code> would actually make two calls. The returned function would need to be created on-the-fly so it has access to the relevant <code>this</code>, so this 
 is very much like the GC-heavy option I described earlier.</p>
-
 <p><em>But it's not possible to tell which it is from the syntax</em>. And that's quite good. Because if we tell the TypeScript compiler that we're declaring 
 a getter function that returns a function, it will generate JavaScript such as <code>a.legs()</code>. But at runtime, we can use the simple implementation 
 where <code>legs</code> is just a function. The <code>doop</code> decorator can make that switcheroo, and we get the best of both worlds: a one-liner declaration of a 
 property getter, and a minimal overhead implementation.</p>
-
 <p>Well, it seemed nifty to me when I realised it would work!</p>
-
 <p>So this is what the <code>doop</code> property decorator does: the user has declared a property, and all we care about is its name. All properties are the 
 same at runtime: just a function that can be called to either get or clone-mutate.</p>
-
 <p><a href="https://github.com/danielearwicker/doop">doop on GitHub</a></p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

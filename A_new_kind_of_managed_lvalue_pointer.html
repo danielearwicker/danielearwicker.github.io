@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -27,25 +27,21 @@
 <p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c__23.html">C#</a>  2014-04-27</p>
 
 <p>It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!</p>
-
 <p>Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
 much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an <code>Invoke</code> method.</p>
-
 <p>So all we need is an interface with a <code>Value</code> property. Objects supporting that interface can represent a single property that can be passed around like any other value:</p><pre><code class="csharp">public interface IProperty&lt;T&gt;
 {
     T Value { get; set; }
 }
 </code></pre><p>This is closely analogous to an old-fashioned pointer in C and C++, <a href="http://smellegantcode.wordpress.com/2008/05/06/pointers-to-value-types-in-c/">as I mused aloud all those years ago</a>. 
 Let's turn that whole idea into a strangely alluring language feature, which I'll call "property references", and then occasionally forget that terminology and call them pointers instead.</p>
-
 <p>Firstly, syntax. We could use actual pointer syntax, but <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">I already used some of that in yesterday's feature</a>. 
 Dagnabbit! Fortunately <a href="http://en.wikipedia.org/wiki/C%2B%2B/CX">C++/CX</a> has already paved the way: it has the concept of a reference to a fancy object that must be explicitly dereferenced. The syntax is like this:</p><pre><code class="csharp">MyClass ^r = %x;
 
 (*r).Foo();
-</code></pre><p>If this looks weird, try replacing <code>^</code> with <code>*</code> and <code>%</code> with <code>&amp;</code>. It's then exactly like C/C++. <code>^</code> is a postfix modifier on a type declaration 
+</code></pre><p>If this looks weird, try replacing <code>^</code> with <code>*</code> and <code>%</code> with <code>&amp;amp;</code>. It's then exactly like C/C++. <code>^</code> is a postfix modifier on a type declaration 
 that means "Will store a pointer to one of those", and <code>%</code> is a unary prefix operator that means "Give me a pointer to whatever comes next". And for the sake 
 of uniformity in common code, C++/CX always uses <code>*</code> to dereference.</p>
-
 <p>Before getting into the nitty-gritty of changing the compiler, let's survey the glorious sunny uplands we wish to invade. We should be able to do this in C#:</p><pre><code class="csharp">var x = 5;
 var px = %x; // Take a "pointer" to x
 
@@ -105,11 +101,9 @@ var y = px.Value; // var y = *x;
 }
 </code></pre><p>These don't need to be in <code>mscorlib.dll</code> (some of the later C# features rely on types in <code>System.Core.dll</code>). So we can just create a new 
 <code>System.Extras.dll</code> assembly and stick them in there.</p>
-
 <p>So, one thing that makes this a whole 'nother level of crazy compared to my first two forays in to compiler features is that here we are adding new syntax. 
 Fortunately Roslyn makes this quite easy. There's a file called <code>Syntax.xml</code> from which the project generates classes for all the nodes that can appear in a 
 syntax tree. We can (as usual) follow the example of what we find in there.</p>
-
 <p>All the unary prefix operators are in here, so they share a single class that can be distinguished by the <code>Kind</code> property:</p><pre><code class="xml">&lt;Node Name="PrefixUnaryExpressionSyntax" Base="ExpressionSyntax"&gt;
   &lt;Kind Name="UnaryPlusExpression"/&gt;
   &lt;Kind Name="UnaryMinusExpression"/&gt;
@@ -222,7 +216,6 @@ expressions. I figure that the new <code>%</code> operator should copy the exist
 It's not using functional parser combinators or anything "cool" and/or "academic". It's just a bunch of methods that examine the current token, do 
 switch statements, etc. On the plus side, it is very easy to learn how it works by stepping through it in the debugger. That's the saving grace of 
 procedural code: ease of hacking.</p>
-
 <p>I hooked into the same place that handles pointer syntax, as (again) its closely analogous.</p><pre><code class="csharp">private TypeSyntax ParsePointerTypeMods(TypeSyntax type)
 {
     // Check for pointer types
@@ -240,17 +233,14 @@ procedural code: ease of hacking.</p>
     return type;
 }
 </code></pre><p>Note: we don't have to write that <code>syntaxFactory.PropertyReferenceType</code> method. It's one of the pieces that are auto-generated from what we added to <code>Syntax.xml</code>.</p>
-
 <p>Now, we have the syntax. All we need now is to sort out the binding phase, which figures out whether the syntax actually makes sense (that when it refers 
 to a variable called <code>x</code>, there actually is one called <code>x</code>, and every expression has a type, etc.)</p>
-
 <p>And it is here that I am overcome with one of those attacks of laziness that are the hallmark of the truly great programmer, hem-hem. Faced with a pattern 
 like this:</p><pre><code class="csharp">System.Property.Bind(v =&gt; o = v, () =&gt; o)
 </code></pre><p>We don't want to have to write screeds of code that builds the <code>BoundExpression</code> that make up that pattern (believe me: I got about half-way through the 
 first lambda before realising I would be retired before finishing the whole thing). In any case, the compiler can already do it - that's its job. Ideally we 
 could use the existing parser to get a kind of "syntax template", in which we can replace certain identifiers with chunks of other syntax, and then ask the 
 existing binder to bind it. Then we'd have to do almost <em>no thinking at all</em>! Bliss.</p>
-
 <p>So for example:</p><pre><code class="csharp">private static readonly SyntaxTemplate _propertyReferenceTemplate
     = new SyntaxTemplate("System.Property.Bind(__v_pr__ =&gt; o = __v_pr__, () =&gt; o)");
                                         
@@ -263,7 +253,6 @@ private BoundExpression BindPropertyReferenceExpression(PrefixUnaryExpressionSyn
 it is reused for the lifetime of the compiler. It's immutable, hence thread-safe. Then every time I need to bind something like <code>%foo</code>, I can just replace 
 the <code>o</code> in the template with <code>foo</code> (which is in <code>node.Operand</code>). <code>Replace</code> returns a new <code>SyntaxTemplate</code> rather than modifying the original (that's what 
 immutability is all about).</p>
-
 <p>Again, binding is a recursive, procedural system. There's a big switch statement that calls out to methods that bind various things, so we need to hook our 
 new method <code>BindPropertyReferenceExpression</code> into that:</p><pre><code class="csharp">private BoundExpression BindExpressionInternal(ExpressionSyntax node, DiagnosticBag diagnostics, bool invoked, bool indexed)
 {
@@ -283,15 +272,12 @@ new method <code>BindPropertyReferenceExpression</code> into that:</p><pre><code
 </code></pre><p>See how there's a <code>switch</code> statement on an <code>enum</code>, then a cast - all the kinds of thing that beginners are told not to do when they learn C#, because 
 supposedly virtual method dispatch on a single object solves all problems. (<a href="http://stackoverflow.com/questions/1406860/how-can-i-replace-instanceof-in-this-case">Oh wait, no it doesn't</a>.) 
 But still, it wouldn't make sense to have a built-in type switch in languages like C#, Java or C++ (<a href="http://stackoverflow.com/a/1166083/27423">except apparently in one situation</a>).</p>
-
 <p>Anyway, <code>BindExpression</code> calls <code>BindExpressionInternal</code>, which calls our new <code>BindPropertyReferenceExpression</code> method, which expands our template and passes it 
-to <code>BindExpression</code>... we're going in circles! But it's okay. The reason this doesn't asplode the stack is because our template doesn't include further references to <code>%</code>.</p>
-
+to <code>BindExpression</code>… we're going in circles! But it's okay. The reason this doesn't asplode the stack is because our template doesn't include further references to <code>%</code>.</p>
 <p>Now, about that <code>RedirectDiagnostics</code> wrinkle. The binding process has a <code>DiagnosticBag</code> object that gets passed around. Any errors found are thrown in the bag. 
 Each error has a <code>Location</code> object, identifying the place in the user's source code where the error was spotted, so the locations were discovered at the parsing 
 stage. The problem we have is that we parse our template code separately, so the locations bear no relation to the user's source code. This means that the IDE's 
 text editor cannot put red squiggles in the right place.</p>
-
 <p>To fix this, I literally fix the diagnostics:</p><pre><code class="csharp">private T RedirectDiagnostics&lt;T&gt;(DiagnosticBag diagnostics, 
              CSharpSyntaxNode nodeWithLocation, 
              Func&lt;DiagnosticBag, T&gt; generate)
@@ -307,7 +293,6 @@ text editor cannot put red squiggles in the right place.</p>
 </code></pre><p>The <code>generate</code> function does the binding, but to a "fake" temporary <code>DiagnosticBag</code>, which we then copy into the real one but replacing all the 
 <code>Location</code> objects with a single good location. This isn't ideal. Recall that some of the syntax tree was inserted from the user's source and so 
 had perfectly good locations. I need to figure out a way of detecting whether a location is junk or not. But it sort of works.</p>
-
 <p>So, we have binding for <code>%</code>. For <code>*</code> we have to enhance the existing code, branching based on whether operand is a pointer:</p><pre><code class="csharp">private static readonly SyntaxTemplate _pointerIndirectionTemplate = new SyntaxTemplate("p.Value");
 
 // Based on ExpressionBinder::bindPtrIndirection.
@@ -348,6 +333,12 @@ define the <code>System.IProperty</code> and <code>System.Property</code> types 
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

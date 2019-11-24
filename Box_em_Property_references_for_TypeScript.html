@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -27,7 +27,6 @@
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-boxm.html">BOXM</a>  2017-01-11</p>
 
 <p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility <code>observable.box</code> (<a href="https://mobx.js.org/refguide/boxed.html">docs</a>). But I don't want to use that create all my properties and have to put <code>.get()</code> after every read access. I want to use the cool <code>@observable</code> decorator and just fetch my properties directly, and assign new values with <code>=</code>. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.</p>
-
 <p>For the overall idea, see <a href="https://github.com/danielearwicker/boxm">the project page</a>, or just look at the takeaway:</p><pre><code class="tsx">// MobX model:
 class Person {
     @observable firstName: string;
@@ -46,24 +45,16 @@ return (
 );
 
 </code></pre><p>That is, incredibly easy, tidy, declarative and statically-typed two-way binding. I'm working on another project called <a href="https://github.com/danielearwicker/bidi-mobx">bidi-mobx</a> that will exploit this idea and provide examples (including validation).</p>
-
 <p>Here I want to mention how it uses a few new-ish TypeScript features, and where it calls for possible future extensions to the language.</p>
-
 <p>Way back when <a href="https://github.com/dotnet/roslyn">Roslyn</a> first went open source and I got excited about how hackable it was, I added <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>. Just like you can get a reference to a method (called a <em>delegate</em> in C# - and, wonder of wonders, it's always properly bound to the right <code>this</code>), why not a reference to a specific mutable property? It's a bundling together of two methods: a getter and a setter. The pain is having no neat syntax to construct the reference, specifying the object and the property just once each.</p>
-
 <p>And as if in a demonstration of how TypeScript is <em>way</em> better than C#, you can now achieve the same end without having to change the compiler! It's statically type checked, although there is a limitation to this (and I'm not entirely sure how it would be fixed, but I wouldn't bet against TS fixing it soon).</p>
-
 <p>It's thanks to three separate features that play together very nicely. First, <code>keyof T</code> is a union of string literal types, in which each string is the name of a property of <code>T</code>. So it's a compile-time analogue of <code>Object.keys</code>.</p>
-
-<p>Second, if <code>K</code> is a string literal type and <code>T</code> has a property of that name, the type expression <code>T[K]</code> gives us the type of that property. This is a <em>type indexer</em>. The syntax looks just like the runtime JavaScript indexing operation where you pass a string property name to get its value. One way to think of this is that an interface is a collection (a dictionary or map) of types, keyed by names, and now we have a way to fetch an item from the collection. Maybe next we'll have <a href="https://github.com/Microsoft/TypeScript/issues/12424">conditional types</a>, and then who knows <a href="http://www.boost.org/doc/libs/1_63_0/libs/mpl/doc/refmanual/map.html">where we might end up</a>. Conditions need booleans to steer them, but TypeScript already has <code>true</code> and <code>false</code> as <em>types</em>. Hold onto your hats...</p>
-
+<p>Second, if <code>K</code> is a string literal type and <code>T</code> has a property of that name, the type expression <code>T[K]</code> gives us the type of that property. This is a <em>type indexer</em>. The syntax looks just like the runtime JavaScript indexing operation where you pass a string property name to get its value. One way to think of this is that an interface is a collection (a dictionary or map) of types, keyed by names, and now we have a way to fetch an item from the collection. Maybe next we'll have <a href="https://github.com/Microsoft/TypeScript/issues/12424">conditional types</a>, and then who knows <a href="http://www.boost.org/doc/libs/1_63_0/libs/mpl/doc/refmanual/map.html">where we might end up</a>. Conditions need booleans to steer them, but TypeScript already has <code>true</code> and <code>false</code> as <em>types</em>. Hold onto your hats…</p>
 <p>One slight wrinkle is that <code>T[K]</code> identifies a property, which might have the <code>readonly</code> modifier. Type indexing seems to ignore that modifier so that information is lost. This leads to the type hole I mentioned above. We want to target mutable properties only, but we can't tell if a property is <code>readonly</code> (or do much about it, even if we could tell - this is one place where conditional types would come in handy).</p>
-
 <p>Finally, there are now <em>mapped types</em>, which is a way of declaring a set of properties with a single declaration, e.g. there's now a standard definition in the TS core library:</p><pre><code class="ts">type Readonly&lt;T&gt; = {
     readonly [P in keyof T]: T[P];
 }
 </code></pre><p>The magic part is the <code>[P in keyof T]</code> which roughly means "repeat this line for each property of T", so if <code>T</code> has five properties then so will <code>Readonly&lt;T&gt;</code>. This is like <code>Array#map</code>, but operating on types at compile time instead of values at runtime. It might grow into a compile-time form of <a href="https://en.wikipedia.org/wiki/List_comprehension">list comprehension</a>.</p>
-
 <p>My use of these features is structurally very similar to <code>Readonly&lt;T&gt;</code>, except I wrap each property in another type:</p><pre><code class="ts">export type BoxedObject&lt;T&gt; = {
     readonly [K in keyof T]: BoxedValue&lt;T[K]&gt;;
 };
@@ -72,7 +63,6 @@ return (
     set(v: P): void;
 }
 </code></pre><p>So a <code>BoxedObject&lt;T&gt;</code> has properties that have the same name as the properties of <code>T</code>, and each property type <code>P</code> is "amplified" (wrapped) to become <code>BoxedValue&lt;P&gt;</code>. By the way, <code>BoxedValue</code> has been designed to match the shape of those boxed objects available at a low level in MobX. So if you define React components to accept <code>BoxedValue</code> props, they will be broadly compatible.</p>
-
 <p>The only other thing is to look at the implementation. Actually there are two. Implementing <code>BoxedValue</code> is trivial, but <code>BoxedObject</code> must <em>seem</em> to have a property when you ask it for one. The fast way to do this (I've timed it) is to use <a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Proxy">Proxy</a>.</p><pre><code class="ts">const handler: ProxyHandler&lt;any&gt; = {
     get(target: any, key: PropertyKey) {
         return makeBoxedValue(target, key);
@@ -84,6 +74,12 @@ return (
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

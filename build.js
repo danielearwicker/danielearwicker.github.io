@@ -4,6 +4,13 @@ var showdown = require("showdown");
 var xml2js = require("xml2js");
 var fs = require("fs");
 var path = require("path");
+var jsdom_1 = require("jsdom");
+var window = new jsdom_1.JSDOM("<!DOCTYPE html><html></html>").window;
+var target = global;
+target.window = window;
+target.DOMParser = window.DOMParser;
+target.document = window.document;
+var showdownKatex = require("showdown-katex");
 var inputPath = "pages";
 var templatePath = "templates";
 var outputPath = ".";
@@ -129,7 +136,11 @@ var articles = fs.readdirSync(inputPath).map(function (name) {
             var rest = code.substr(newLine + 1);
             return "<pre><code class=\"" + lang + "\">" +
                 rest.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</code></pre>";
-        }, function (plain) { return new showdown.Converter().makeHtml(plain); });
+        }, function (plain) { return new showdown.Converter({
+            extensions: [
+                showdownKatex(),
+            ]
+        }).makeHtml(plain); });
     };
     var body = getBody(linked);
     var formattedTags = formatTags(splitTags(tags));

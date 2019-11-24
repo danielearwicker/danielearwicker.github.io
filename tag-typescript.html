@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -37,7 +37,6 @@
 <h2>Box 'em! - Property references for TypeScript</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-boxm.html">BOXM</a>  2017-01-11</p>
 <p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility <code>observable.box</code> (<a href="https://mobx.js.org/refguide/boxed.html">docs</a>). But I don't want to use that create all my properties and have to put <code>.get()</code> after every read access. I want to use the cool <code>@observable</code> decorator and just fetch my properties directly, and assign new values with <code>=</code>. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.</p>
-
 <p>For the overall idea, see <a href="https://github.com/danielearwicker/boxm">the project page</a>, or just look at the takeaway:</p>
 <p><a href="Box_em_Property_references_for_TypeScript.html">Read on...</a></p>
 <hr>
@@ -52,12 +51,10 @@
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-12-20</p>
 <p>It's been a couple of months since I had a scrap of time to do anything with <a href="https://github.com/danielearwicker/immuto">Immuto</a> - 
 I've been up to my knees in WPF/C# instead (working for a living).</p>
-
 <p>This break has given me a new perspective (aside from the obvious one that WPF is yucky). The executive summary is that I don't 
 see myself ever using Immuto seriously. The way I look at it now is almost as a satire on the rigid idea of "single reducer 
 function for the whole application state". It wasn't intended that way! I was genuinely into it and was expecting to use it in
 my job. But now it looks very different. And as Immuto is just a flavour of Redux, it's a broader comment on Redux itself.</p>
-
 <p>What do I mean by a satire? I mean it's like I was trying to show the absurdity of something by pretending to take it seriously. 
 (Except I <em>was</em> taking it seriously). My dad told me a story from around 1969 when he went to a conference. The latest hot 
 debate topic at the time was <a href="http://www.cs.utexas.edu/users/EWD/ewd02xx/EWD215.PDF">Goto Considered Harmful</a>, and some speaker 
@@ -70,7 +67,6 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>Immuto - Radical Unification</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-22</p>
 <p><a href="https://github.com/danielearwicker/immuto">Immuto</a> continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.</p>
-
 <p>The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:</p>
 <p><a href="Immuto_Radical_Unification.html">Read on...</a></p>
 <hr>
@@ -78,9 +74,7 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>Immuto - Working with React (An Example)</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-16</p>
 <p><em>UPDATE - I'm in the move-fast-and-break-things phase so a couple of details in here are already out of date. In particular, properties are now unified with cursors. See the various repos for details.</em></p>
-
 <p>In <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a> I introduced the <a href="https://github.com/danielearwicker/immuto">Immuto library</a> by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!</p>
-
 <p>What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:</p>
 <p><a href="Immuto_Working_with_React_An_Example.html">Read on...</a></p>
 <hr>
@@ -94,9 +88,7 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>Immuto - Strongly Typed Redux Composition</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-11</p>
 <p><a href="What_s_good_about_Redux.html">What's good about Redux</a>, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. <a href="http://redux.js.org/docs/basics/Actions.html">Read the docs, they're easy</a>.</p>
-
 <p>There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.</p>
-
 <p>One composition feature is <code>combineReducers</code>, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.</p>
 <p><a href="Immuto_Strongly_Typed_Redux_Composition.html">Read on...</a></p>
 <hr>
@@ -104,9 +96,7 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>TypeScript and runtime typing - EPISODE II</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-10</p>
 <p><em>Prompted by <a href="https://github.com/Microsoft/TypeScript/pull/10676#issuecomment-245653348">a revealing comment from Anders Hejlsberg</a>.</em></p>
-
 <p>Something wonderful happened between <code>typescript@beta</code> and <code>typescript@rc</code> (i.e. just in time for version 2.0).</p>
-
 <p>Way, way back in TypeScript 1.8 (February 2016!) we gained the ability to use string literals as types:</p>
 <p><a href="TypeScript_and_runtime_typing_EPISODE_II.html">Read on...</a></p>
 <hr>
@@ -114,22 +104,15 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>TypeScript and runtime typing</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-04</p>
 <p><em>Prompted by <a href="https://www.reddit.com/r/typescript/comments/50zj95/how_to_make_a_class_type/">this question on Reddit</a>.</em></p>
-
 <blockquote>
   <p>I'd want to declare a type that points to class extending another class. Please note, a CLASS not INSTANCE.
   I've tried something like this:</p>
-  
   <p><code>type EventClass = class extends Event;</code></p>
-  
   <p><code>type Listener = (data: class extends Event) =&gt; void;</code></p>
-  
   <p>and later on:</p>
-  
   <p><code>private handlers: Map&lt;EventClass,Listener[]&gt;;</code></p>
-  
   <p>But unfortunately this syntax does not work. How I can declare a type that points to CLASS extending another CLASS?</p>
 </blockquote>
-
 <p>You want a runtime value that specifies a type of event, so you can use it as the key in a <code>Map</code>.</p>
 <p><a href="TypeScript_and_runtime_typing.html">Read on...</a></p>
 <hr>
@@ -138,12 +121,10 @@ Structured Programmers, and the structure of the program become more and more ab
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-03-13</p>
 <p>Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs
 from JavaScript.</p>
-
 <ol>
 <li><p>a method's <code>this</code> reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens
 to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the
 function internally refers to <code>this</code>.</p></li>
-
 <li><p>a function value (known as a "delegate") has operators <code>+</code>, <code>-</code>, <code>+=</code>, <code>-=</code> that allow it to be combined with other compatible functions
 to create a new single function that, when invoked, causes the constituent functions to be invoked.</p></li>
 </ol>
@@ -153,7 +134,6 @@ to create a new single function that, when invoked, causes the constituent funct
 <h2>Introducing doop</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a>  2016-03-08</p>
 <p>As great as <a href="https://facebook.github.io/immutable-js/">Immutable.js</a> is, especially with a TypeScript declaration included in the package, the <code>Record</code> class leaves me a little disappointed.</p>
-
 <p>In an ordinary class with public properties we're used to being able to say:</p>
 <p><a href="Introducing_doop.html">Read on...</a></p>
 <hr>
@@ -161,15 +141,11 @@ to create a new single function that, when invoked, causes the constituent funct
 <h2>TypeScript is not really a superset of JavaScript and that is a Good Thing</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2015-07-11</p>
 <p>Questions:</p>
-
 <ul>
 <li>What does it mean for a programming language to be a superset of another programming language?</li>
-
 <li>What's a programming language?</li>
-
 <li>What's a program?</li>
 </ul>
-
 <p>In this discussion, a program, regardless of language, is a <strong>stream of characters</strong>.</p>
 <p><a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">Read on...</a></p>
 <hr>
@@ -178,6 +154,12 @@ to create a new single function that, when invoked, causes the constituent funct
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

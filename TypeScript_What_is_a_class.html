@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -34,7 +34,6 @@ const c1: typeof C = C;
 const c2: C = new C();
 const c3: C = C;
 </code></pre><p>Note that <code>c3</code> is a type error. <code>C</code> is not of type <code>C</code>. <code>C</code> is a function, a named object that exists at runtime, and like any identifier its type can be written as <code>typeof C</code>, so <code>c1</code> has to work. But at compile time, <code>C</code> is an interface, conformed to by the object we get back from <code>new C()</code>, so that's why <code>c2</code> works.</p>
-
 <p>Interfaces are used in TypeScript to describe anything that has properties. In JavaScript a function can have properties of its own, so the definitive way to describe a function is with an interface. This lambda-like style:</p><pre><code class="ts">type F = (arg1: number, arg2: string) =&gt; string
 </code></pre><p>is an abbreviation for:</p><pre><code class="ts">interface F {
     (arg1: number, arg2: string): string
@@ -69,7 +68,6 @@ console.log(new C().i);
     s: string;
 }
 </code></pre><p>So <code>TypeOfC</code> describes a <code>new</code>-able function, because we declare that it has <code>new</code>-able function with no name. <code>s</code> is a property of the function, whereas <code>i</code> is a property of the objects created when you call the function.</p>
-
 <p>We can declare a <code>const</code> of type <code>TypeOfC</code> and assign <code>C</code> to it:</p><pre><code class="">// Compatible:
 const c2: TypeOfC = C;
 
@@ -82,9 +80,7 @@ console.log(new c2().i);
     s: string;
 }
 </code></pre><p>Recall what we established right at the start: when you write a class <code>C</code>, you give two meanings to that name. In the namespace of types, you create a type <code>C</code> that describes the objects returned by <code>new C()</code>. In the namespace of runtime objects, you create a function <code>C</code>. TypeScript never confuses the two meanings because every spot in your code is unambiguously referring to either a compile-time type or a runtime object.</p>
-
-<p>And we don't need to declare <code>TypeOfC</code> at all, because we can just use TypeScript's built-in feature for getting the type of a named object: <code>typeof C</code>. In JavaScript, <code>typeof</code> takes an expression and returns a string describing its type (to an extent...) In TypeScript that is still exactly the same, of course, but also <code>typeof</code> can be used in type declarations to get the type of an expression.</p>
-
+<p>And we don't need to declare <code>TypeOfC</code> at all, because we can just use TypeScript's built-in feature for getting the type of a named object: <code>typeof C</code>. In JavaScript, <code>typeof</code> takes an expression and returns a string describing its type (to an extent…) In TypeScript that is still exactly the same, of course, but also <code>typeof</code> can be used in type declarations to get the type of an expression.</p>
 <p>Hence:</p><pre><code class="">// Compatible:
 const c2: typeof C = C;
 
@@ -97,6 +93,12 @@ console.log(new c2().i);
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

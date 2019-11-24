@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -27,52 +27,33 @@
 <p class="meta"><a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-json-mobx.html">JSON-MOBX</a>  2017-02-15</p>
 
 <p>This is a follow-on to <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>, in which I noted the parallels between MobX and React.</p>
-
 <ul>
 <li>A <code>computed</code> "renders" a "view" of some data, and automatically updates when the source data changes. Like a React component, except generalised to cover any data, not just Virtual DOM.</li>
-
 <li>An <code>observable</code> is like the <code>setState</code> facility in stateful React components, except that its automatic ability to notify <code>computed</code> (and <code>autorun</code>) observers works by spooky "action at a distance" and so doesn't have to take place inside one component.</li>
 </ul>
-
 <p>But this still leaves one major feature of React unaddressed, and that is <em>reconciliation</em>. What is this about, and how can it be useful in a more general way in MobX?</p>
-
 <h2 id="whatproblemdoesreconciliationsolve">What problem does reconciliation solve?</h2>
-
 <p>Suppose you have some source data, which may change at any time, and you want to maintain a transformed variant of it. Whenever the source data changes, you need to update your variant. Stupid example: the source data is a list of numbers, and you want a list of strings containing those numbers:</p><pre><code class="ts">[1, 2, 3] --&gt; ["1", "2", "3"]
 </code></pre><p>By far the easiest way to do this is to throw away the old list of strings and recreate it from scratch, every time the number list changes. This is what <a href="http://handlebarsjs.com">HTML templating systems</a> have long done, it's what your React component's <code>render</code> does, and it's what <code>computed</code> does.</p>
-
 <p>The alternative, which is to identify the specific changes that have occurred in the input and poke corresponding specific changes into your output. This is hard - not in the above trival example, of course, but when the relationship between the input and output data is more complicated, it becomes almost a certainty that you'll get something wrong and your output data will drift out of step with the input. Much easier to throw away and rebuild.</p>
-
 <p>By the way, it's tempting to label these two approaches as "functional-immutable" and "imperative-mutable". That would be a misunderstanding. The throw-away-and-rebuild approach does automatically avoid modifying old data (it discards it entirely), but the alternative can - and very often <em>is</em> - used in functional-immutable systems, to avoid cloning and discarding large complex data structures just because one little bit has changed. In fact it's exactly what Redux does! Unfortunately, the resulting combination of responsibilities is even worse: you not only have to correctly translate changes in input to changes in output, but you then have to "ripple up" to the root as well. Like trying to tie a knot in a tightrope while you're balancing on it. So this distinction isn't relevant here: when we talk about updating some data, we could mean actually mutating or functional-style non-destructive updating.</p>
-
 <p>Okay, so what are the drawbacks of pure throw-away-and-rebuild? Well, we're creating and throwing away a lot of objects. Could be a problem (always measure before worrying too much though). More pressingly, what if the output objects we build have extra degrees of freedom? By which I mean they have their own bits of state that can change <em>between</em> changes to the input?</p>
-
 <p>Drawing from the well of modern classics, let's say my input is a list of string describing tasks to be done. The source data says what tasks exist. I want a list of <code>TodoItem</code> objects:</p><pre><code class="ts">["Bake bread",            [new TodoItem("Bake bread"),
  "Impeach Trump",   --&gt;    new TodoItem("Impeach Trump"), 
  "Cancel Brexit"]          new TodoItem("Cancel Brexit")] 
 </code></pre><p>The interesting thing about <code>TodoItem</code>s is that they have a <code>completed</code> boolean, initially <code>false</code>. The input strings do not. At any time, I want to be able to toggle the <code>completed</code> boolean on any task, but also at any time the list of underlying strings may change.</p>
-
 <p>When that happens, I don't want to lose the selection state of any surviving <code>TodoItem</code>s. But that's what would happen if I used throw-away-and-rebuild. I would get a new set of <code>TodoItem</code>s in which <code>completed</code> is <code>false</code>.</p>
-
 <p>This is precisely the problem faced by React, and is far more important than concerns about performance, etc. A component can render complex stateful DOM elements, such as <code>&lt;video&gt;</code>, alongside simple things like a <code>&lt;span&gt;</code> showing the current playback time of the video clip. Each <code>render</code> must not throw away and discard the video player's state, or your video would keep going back to the start every time the playback time ticked forward one second.</p>
-
 <p>The solution, which gives us the best of all worlds for zero effort, is reconciliation. Well, I say zero effort: once a general reconciliation system has been implemented by some library (such as React), we applications authors don't have to lift a finger.</p>
-
 <p>And reconciliation means that we (the application authors) can write code that feels like throw-away-and-rebuild, "rendering" a specification of the desired state, but then the library takes care of making the minimum number of spot adjustments to the current state in order to bring it into line with our newly rendered specifications, taking care not to destroy associated data. In this case, we'd render the fact that we want a specific set of <code>TodoItem</code>s, and the library would add and delete actual <code>TodoItem</code> objects from the list accordingly.</p>
-
 <h2 id="approachestoserialization">Approaches to serialization</h2>
-
 <p>Now we're going to take what appears to be a right-turn into another subject entirely. But it's not!</p>
-
 <p>Serialization refers to any mechanism for turning a set of objects in memory into a flat stream suitable for storing (or sending over a wire) and later reassembling into another set of objects in memory. By far the most popular pattern for doing this has the following API:</p><pre><code class="ts">const serializedStuff = api.save(myObject);
 
 const newObject = api.load(serializedStuff);
 </code></pre><p>So it's a way of <em>cloning an object</em>, via an intermediate representation that can be moved between processes. By "round-tripping" your object via some <code>serializedStuff</code>, you get a separate object that is a duplicate of the original.</p>
-
 <p>The MobX project itself <a href="https://github.com/mobxjs/serializr">hosts a fine implementation of this pattern</a>.</p>
-
 <p>This API earns "coolness" brownie points from the mere fact that it is pure. No objects are mutated in the making of this motion picture. And this does make it nice and simple. It also allows the type of the root object to vary freely.</p>
-
 <p>But consider an alternative API:</p><pre><code class="ts">const serializedStuff = api.save(myObject);
 
 const newObject = new MyClass();
@@ -83,39 +64,25 @@ myObject.changeStuff();
 
 api.load(myObject, oldVersion);
 </code></pre><p>So I can roll back an object to a previous state. The <code>load</code> implementation can be sophisticated. Where it's dealing with a collection, it can minimize the changes it makes to only those required to honour the specification in <code>oldVersion</code>. Does this sound familiar?</p>
-
 <p>Yes, the <code>load</code> function is performing reconciliation. The <code>save</code> function is rendering a "virtual" object model (playing the roll of a <code>render</code> method), and the <code>load</code> function is reconciling <code>myObject</code> with that virtual object model.</p>
-
 <p>So this kind of serialization mechanism is the remaining piece of the React feature set.</p>
-
 <p>By the way, sophisticated serialization systems deal with things like proper graphs where two objects can refer to a third object and it takes care of serializing the third object only once. We're not going to worry about that here; we're only interested in simple tree-shaped object models.</p>
-
 <h2 id="mobxstatetree">Mobx-state-tree</h2>
-
 <p>Another extremely interesting project-in-progress called <a href="https://github.com/mobxjs/mobx-state-tree">mobx-state-tree</a> is currently incubating in the MobX project. It is very different from MobX itself in that it mandates a much more restricted structure and even a style for constructing objects, and also its own kind of runtime-type metadata system. So it's quite a big thing to bite into. But it has some very interesting features, particularly JSON patches.</p>
-
 <p>In this context the striking thing about it is this pair of linchpin functions in its API:</p>
-
 <ul>
 <li><code>getSnapshot(model)</code>: returns a snapshot representing the current state of the model</li>
-
 <li><code>applySnapshot(model, snapshot)</code>: updates the state of the model and all its descendants to the state represented by the snapshot</li>
 </ul>
-
 <p>Yep, <code>applySnapshot</code> is the <em>second</em> kind of <code>load</code> function. Does it perform reconciliation? e.g. what does <code>applySnapshot</code> do to an <a href="https://github.com/mobxjs/mobx-state-tree/blob/master/src/types/array.ts">array</a>?</p><pre><code class="ts">@action applySnapshot(node: Node, target, snapshot): void {
     // TODO: make a smart merge here, try to reuse instances..
     target.replace(snapshot)
 }
 </code></pre><p>So yes, it looks like reconciliation is the eventual intention, even if it's not there yet.</p>
-
 <p>In <a href="https://youtu.be/etnPDw5PKqg?t=44m40s">the introductory talk, at 44:40, Michel Weststrate</a> makes a fantastic point: give a class a <code>@computed</code> getter called <code>json</code> that returns its JSON representation, and then apply this concept consistently across all the classes and collections that comprise your state tree, and then suddenly you have a very efficient way of grabbing an immutable snapshot whenever you need one. Subsequent requests for the JSON of an object that hasn't changed will return the same JSON structure without recomputing anything.</p>
-
 <p>This is <em>fantastic</em>. It means we can have the convenience of mutating the state tree wherever that makes sense (it very often does in a UI) but if we want regular immutable snapshots of the state then we can get them, and they are effectively costless, sharing unchanged parts with previous snapshots.</p>
-
 <p>And it means we already have the implementation of our <code>api.save(obj)</code> - it's basically just: <code>obj =&gt; obj.json</code>. Okay, onward to <code>load</code>.</p>
-
 <h2 id="computedpropertiescanalsohavesetters">Computed properties can also have setters!</h2>
-
 <p>Oh yes. Maybe not such a well known feature, but totally legit. Extending the example from Michel's slide:</p><pre><code class="ts">class Todo {
     @observable id = 0;
     @observable text = "";
@@ -135,24 +102,17 @@ api.load(myObject, oldVersion);
     }
 }
 </code></pre><p>Now this works both ways. And so <code>load(obj, data)</code> is basically <code>obj.json = data</code>.</p>
-
 <p>The only downer with this is that it's going to be a pain writing classes where we have to list our properties three times: in the declaration, in the <code>get json</code> and in the <code>set json</code>. What a drag. So we could really use a decorator:</p><pre><code class="ts">class Todo {
     @json @observable id = 0;
     @json @observable text = "";
     @json @observable completed = false;
 }
 </code></pre><p>This simply builds a <code>json</code> property, backed by a MobX <code>computed</code>, that does the equivalent of the above hand-written example. Now we're really cooking.</p>
-
 <p>The drawback of this (and this is a general problem with decorators anyway) is that TypeScript doesn't know that <code>Todo</code> has a <code>json</code> property. So for convenience we still need our <code>load</code>/<code>save</code> API, to perform a simple runtime check for the validity of the operation. I'll call them <code>json.load</code> and <code>json.save</code> to clarify that they operate on the <code>json</code> property of objects. I'm not hugely troubled by strict type safety in serialization formats because, theoretically cool as it is, usually we evolve the format over time anyway.</p>
-
 <p>Anyway, this establishes a general pattern. Wherever we need to finely control how an object is represented in JSON - or <em>how it reconciles itself with some JSON instructions</em> - we can just give it a custom <code>@computed json</code> property. So with this one concept, any kind of extension or reusable utility can be added. This means we don't actually need a separate type metadata system. It's a lot thinner and more lightweight than the full mobx-state-tree implementation - less ambitious - but it means I can start using it right now and know that I'll never get stuck.</p>
-
 <p>Okay, so clearly I've put this on <a href="https://github.com/danielearwicker/json-mobx">github</a> and <a href="https://www.npmjs.com/package/json-mobx">npm</a>.</p>
-
 <h2 id="arraysandidentifiers">Arrays and identifiers</h2>
-
 <p>Initially I included a <code>Collection</code> class that wrapped an array and implemented <code>json</code> to serialize it. This worked, but added some verbosity in regular usage. <a href="https://github.com/mrjjwright">John Wright</a> suggested building in support for arrays, and this made a lot of sense.</p>
-
 <p>This is very much a <code>MobX</code>-based library (<code>json</code> is always <code>@computed</code>), and clearly we need arrays to be observable in order to correctly update the JSON representation whenever the array changes. Therefore we extend observable arrays by adding a <code>json</code> property to them. To construct such an enhanced array, we provide <code>json.array</code>:</p><pre><code class="ts">class TodoStore {
     @json todos = json.array(() =&gt; new Todo());
 }
@@ -160,48 +120,29 @@ api.load(myObject, oldVersion);
     @json todos = json.arrayOf(Todo);
 }
 </code></pre><p>In React the reconciliation process relies on each item in a list having a <code>key</code> prop that is unique-valued within the list. It's exactly the same here, except that the unique valued property is called <code>&lt;id&gt;</code>. Another difference is that <em>you don't have to assign it</em>. The library takes care of associating a unique (short) number identifier to your objects, and then saving it in the JSON representation so that it can be matched up in future reconciliations.</p>
-
 <p>This means we can go ahead and rip the <code>id</code> property out of the <code>Todo</code> class. We don't need one. Reconciliation will work fine, regardless.</p>
-
 <p>On the other hand, we might want to retain it and use a meaningful ID (say, from a database system) or a natural key from the data. If so, we can tell <code>json.array</code> to use our ID property instead:</p><pre><code class="ts">class TodoStore {
     @json todos = json.arrayOf(Todo, "id");
 }
 </code></pre><p>The second parameter's type is <code>keyof T</code> (a feature added in TypeScript 2.1), so it has to be the name of a property in the array's item type.</p>
-
 <h2 id="undoohanddontforgetredo">Undo (oh, and don't forget Redo)</h2>
-
 <p>The oft-claimed unique advantage of Redux, and indeed anything based on immutable data, is that your app gets an undo feature "for free". The truth of this depends on whether you regard the boilerplate overhead of Redux as "free".</p>
-
 <p>But anyway, now we have effortless reconciliation and efficient snapshots, we can achieve precisely the same thing. Also because MobX already has built-in transactional updating, we can do things like batch up several operations into a single Undo/Redo step.</p>
-
 <p>This is such a win for this pattern that I've included an <code>Undo</code> class in the library itself. <a href="https://github.com/danielearwicker/json-mobx/blob/master/src/Undo.ts">The implementation is very short</a> but it has a subtlety.</p>
-
 <p>You construct it passing the root model object of your state tree.</p>
-
 <p>The <code>enabled</code> property is <code>false</code> to begin with. An <code>autorun</code> is created in the constructor that therefore runs immediately. On this first run it just captures the current state snapshot and sets <code>enabled</code> to <code>true</code>.</p>
-
 <p>This means that when the state tree changes, the handler runs again and this time <code>enabled</code> is true, and it pushes the previously captured state to the <code>undoStack</code>.</p>
-
 <p>The <code>enabled</code> property comes into play again when we need to execute the <code>undo</code> or <code>redo</code> actions (which are probably tied to some buttons in the UI). These are mutually symmetrical with respect to the two stacks: you pop from one stack to get the new current state, and you push the old current state onto the other stack. But before loading the new current state into the model, you set <code>enabled</code> to be false, to avoid interfering with the <code>undoStack</code>.</p>
-
 <p>So there's your optimal, super easy undo/redo system, and it really is "for free". Just put <code>@json</code> on the stuff you want to record.</p>
-
 <h2 id="whataboutpolymorphism">What about polymorphism?</h2>
-
 <p>I've written up how this works in the README, but it should by now come as no surprise that we solve the problem of mixed object types appearing on the same array by defining a <code>@computed json</code> property that takes care of it in a very simple way.</p>
-
 <p>Have fun!</p>
-
 <p>Those links again:</p>
-
 <ul>
 <li><a href="https://github.com/danielearwicker/json-mobx">json-mobx on github</a></li>
-
 <li><a href="https://www.npmjs.com/package/json-mobx">json-mobx on npm</a></li>
 </ul>
-
 <p>And for a working example, take a look at:</p>
-
 <ul>
 <li><a href="https://github.com/danielearwicker/baltar">baltar</a></li>
 </ul>
@@ -210,6 +151,12 @@ api.load(myObject, oldVersion);
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

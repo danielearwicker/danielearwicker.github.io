@@ -18,16 +18,22 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
-                <h2> Two Cheers for SQL</h2>
+                <h2>Unfortunate Bifurcations</h2>
+<p class="meta"><a href="tag-c__23.html">C#</a>  2019-11-24</p>
+<p>Although this is going to seem like a series of picky complaints about C#, really it's about how any language has to evolve, and is a compromise between past and future, and the whole thing is quite difficult.</p>
+<p>Also some speculation on what the future of language interoperability will be.</p>
+<p>The kind of problem I'm going to pick on is where languages separate two concepts and treat them differently, making a virtue of the differences, but then it becomes a pain deal with them generically. The language designers seem to be saying "You shouldn't need to treat these two things the same; they're fundamentally different. You're doing it all wrong!" And yet…</p>
+<p><a href="Unfortunate_Bifurcations.html">Read on...</a></p>
+<hr>
+
+<h2> Two Cheers for SQL</h2>
 <p class="meta"><a href="tag-sql.html">SQL</a>  2019-08-26</p>
-<p>What is there to say about this old stain on the technology landscape? Settle in...</p>
-
+<p>What is there to say about this old stain on the technology landscape? Settle in…</p>
 <p>SQL is not "cool". It probably never has been. On the one hand there are the technologies we hate, and on the other the technologies no one uses.</p>
-
 <p>Having spent a few years going back and forth on the merits of SQL, I'm in a weird place. I now think it is both underrated <em>and</em> overrated, and not merely because other people are too extreme in their opinions. I genuinely think SQL is both a fine idea and a terrible idea at the same time. There is a way of using it that makes sense, and many other ways that don't.</p>
 <p><a href="Two_Cheers_for_SQL.html">Read on...</a></p>
 <hr>
@@ -35,9 +41,7 @@
 <h2>Factory Injection in C#</h2>
 <p class="meta"><a href="tag-c__23.html">C#</a> <a href="tag-injection.html">INJECTION</a> <a href="tag-factory.html">FACTORY</a>  2019-07-02</p>
 <p><strong>Update</strong> - <em>There was a nasty bug in the original version of this post! Where I previously registered the factories with <code>AddSingleton</code>, I now use <code>AddTransient</code>, and I call out the reason for this below.</em></p>
-
 <p>The modern C# ecosystem (based on dotnet core, due to become .NET 5) enjoys a standard dependency injection system that is, despite its minimalism, is pretty much all you need.</p>
-
 <p>In some ways the ideal dependency injection system is nothing at all: isolate your components by writing an interface/class pair, and make each class accept interfaces to give it access to whatever services it needs. Very often the sole reason for the existence of the interface to go with each class is so that it can be mocked out in unit tests for classes that depend on it. (It's worth noting that in languages based on dynamically typed runtimes there is typically no need to do this - it's especially irksome to see this pattern being imported unnecessarily into TypeScript, where every class is <em>already</em> an interface.)</p>
 <p><a href="Factory_Injection_in_C.html">Read on...</a></p>
 <hr>
@@ -45,9 +49,7 @@
 <h2>Hangfire - A Tale of Several Queues</h2>
 <p class="meta"><a href="tag-c__23.html">C#</a> <a href="tag-hangfire.html">HANGFIRE</a>  2019-05-24</p>
 <p>If you've used <a href="https://www.hangfire.io/">Hangfire</a> you know it's a really quick and easy way to give your app a queue of durable background jobs, with automatic retrying and a very nifty dashboard to let you see what's happening right now. Jobs can trigger further jobs and so a complex series of processing stages can be decoupled and spill out into a queue of little units of work.</p>
-
 <p>You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:</p>
-
 <pre><code>[Enqueued] -&gt; [Processing] -&gt; [Finished]
 </code></pre>
 <p><a href="Hangfire_A_Tale_of_Several_Queues.html">Read on...</a></p>
@@ -74,13 +76,10 @@
 <h2>json-mobx - Like React, but for Data (Part 2)</h2>
 <p class="meta"><a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-json-mobx.html">JSON-MOBX</a>  2017-02-15</p>
 <p>This is a follow-on to <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>, in which I noted the parallels between MobX and React.</p>
-
 <ul>
 <li>A <code>computed</code> "renders" a "view" of some data, and automatically updates when the source data changes. Like a React component, except generalised to cover any data, not just Virtual DOM.</li>
-
 <li>An <code>observable</code> is like the <code>setState</code> facility in stateful React components, except that its automatic ability to notify <code>computed</code> (and <code>autorun</code>) observers works by spooky "action at a distance" and so doesn't have to take place inside one component.</li>
 </ul>
-
 <p>But this still leaves one major feature of React unaddressed, and that is <em>reconciliation</em>. What is this about, and how can it be useful in a more general way in MobX?</p>
 <p><a href="json_mobx_Like_React_but_for_Data_Part_2.html">Read on...</a></p>
 <hr>
@@ -88,9 +87,7 @@
 <h2>Redux in Pieces</h2>
 <p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-redux.html">REDUX</a>  2017-01-28</p>
 <p>Last July I noted down my thoughts on <a href="What_s_good_about_Redux.html">Redux</a> with some hints of the concerns that eventually led to <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto</a>.</p>
-
 <p>I've since rediscovered my love of <code>observable</code> and <code>computed</code> via <a href="MobX_Like_React_but_for_Data.html">MobX</a>, which is like the good parts of <a href="http://knockoutjs.com">Knockout.js</a> made even better by a very careful, thoughtful implementation.</p>
-
 <p>Even so, this is <em>not</em> the same thing as abandoning immutability and purity. There's nothing stopping you using those techniques within a system of observables. Indeed <a href="https://github.com/danielearwicker/bidi-mobx">bidi-mobx</a> abstracts away all mutation and allows entire UIs to be declared from pure expressions. The data transformation is carried out by objects called adaptors that contain pairs of <em>pure</em> functions between <code>View</code> and <code>Model</code> representations. Only the user gets to do mutation!</p>
 <p><a href="Redux_in_Pieces.html">Read on...</a></p>
 <hr>
@@ -98,7 +95,6 @@
 <h2>Box 'em! - Property references for TypeScript</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-boxm.html">BOXM</a>  2017-01-11</p>
 <p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility <code>observable.box</code> (<a href="https://mobx.js.org/refguide/boxed.html">docs</a>). But I don't want to use that create all my properties and have to put <code>.get()</code> after every read access. I want to use the cool <code>@observable</code> decorator and just fetch my properties directly, and assign new values with <code>=</code>. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.</p>
-
 <p>For the overall idea, see <a href="https://github.com/danielearwicker/boxm">the project page</a>, or just look at the takeaway:</p>
 <p><a href="Box_em_Property_references_for_TypeScript.html">Read on...</a></p>
 <hr>
@@ -112,9 +108,7 @@
 <h2>MobX - Like React, but for Data</h2>
 <p class="meta"><a href="tag-frp.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-redux.html">REDUX</a> <a href="tag-react.html">REACT</a>  2016-12-28</p>
 <p>Catching up on blogged opinions about MobX and where it fits in (especially in relation to Redux), I see much confusion. There is a suspicion of it arising from fear of mutability. It has none of the frameworky ceremony of Redux, and that seems to cause anxiety in some.</p>
-
 <p>Even its defenders seem a little apologetic, like MobX is okay <em>despite</em> the heresy of allowing data to be mutable and object-oriented. The great Basarat even humorously <a href="https://twitter.com/basarat/status/812150927947800578">welcomed me to the dark side!</a></p>
-
 <p>I'm fine with being on the edgy team. You'll usually find me in my leather jacket and shades, posing on my parked Harley Davidson and chewing on a matchstick, intimidating the townspeople. Why? I don't have to explain myself to you, lady.</p>
 <p><a href="MobX_Like_React_but_for_Data.html">Read on...</a></p>
 <hr>
@@ -125,11 +119,9 @@
 <a href="http://knockoutjs.com">Knockout.js</a>, I wanted to 
 <a href="https://smellegantcode.wordpress.com/2013/02/25/eventless-programming-part-1-why-the-heck/">recreate it for C#</a>.
 At the time I wasn't actively using C# so I never got to really use it and left it alone.</p>
-
 <p>But in the last year and a half I've written a few view models for a WPF application. The first time
 I did it I couldn't believe how primitive and laborious it was in comparison. So I started idly 
 messing with Eventless in my spare time - mostly deleting stuff - to make it XAML-friendly.</p>
-
 <p>Just like Knockout, and now <a href="https://github.com/mobxjs/mobx">MobX</a>, it makes the process delightfully simple. You just declare stuff and it works!</p>
 <p><a href="Eventless_XAML_Flavoured.html">Read on...</a></p>
 <hr>
@@ -138,12 +130,10 @@ messing with Eventless in my spare time - mostly deleting stuff - to make it XAM
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-12-20</p>
 <p>It's been a couple of months since I had a scrap of time to do anything with <a href="https://github.com/danielearwicker/immuto">Immuto</a> - 
 I've been up to my knees in WPF/C# instead (working for a living).</p>
-
 <p>This break has given me a new perspective (aside from the obvious one that WPF is yucky). The executive summary is that I don't 
 see myself ever using Immuto seriously. The way I look at it now is almost as a satire on the rigid idea of "single reducer 
 function for the whole application state". It wasn't intended that way! I was genuinely into it and was expecting to use it in
 my job. But now it looks very different. And as Immuto is just a flavour of Redux, it's a broader comment on Redux itself.</p>
-
 <p>What do I mean by a satire? I mean it's like I was trying to show the absurdity of something by pretending to take it seriously. 
 (Except I <em>was</em> taking it seriously). My dad told me a story from around 1969 when he went to a conference. The latest hot 
 debate topic at the time was <a href="http://www.cs.utexas.edu/users/EWD/ewd02xx/EWD215.PDF">Goto Considered Harmful</a>, and some speaker 
@@ -156,7 +146,6 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>Immuto - Radical Unification</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-22</p>
 <p><a href="https://github.com/danielearwicker/immuto">Immuto</a> continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.</p>
-
 <p>The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:</p>
 <p><a href="Immuto_Radical_Unification.html">Read on...</a></p>
 <hr>
@@ -164,9 +153,7 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>Immuto - Working with React (An Example)</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-16</p>
 <p><em>UPDATE - I'm in the move-fast-and-break-things phase so a couple of details in here are already out of date. In particular, properties are now unified with cursors. See the various repos for details.</em></p>
-
 <p>In <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a> I introduced the <a href="https://github.com/danielearwicker/immuto">Immuto library</a> by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!</p>
-
 <p>What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:</p>
 <p><a href="Immuto_Working_with_React_An_Example.html">Read on...</a></p>
 <hr>
@@ -180,9 +167,7 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>Immuto - Strongly Typed Redux Composition</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-11</p>
 <p><a href="What_s_good_about_Redux.html">What's good about Redux</a>, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. <a href="http://redux.js.org/docs/basics/Actions.html">Read the docs, they're easy</a>.</p>
-
 <p>There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.</p>
-
 <p>One composition feature is <code>combineReducers</code>, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.</p>
 <p><a href="Immuto_Strongly_Typed_Redux_Composition.html">Read on...</a></p>
 <hr>
@@ -190,9 +175,7 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>TypeScript and runtime typing - EPISODE II</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-10</p>
 <p><em>Prompted by <a href="https://github.com/Microsoft/TypeScript/pull/10676#issuecomment-245653348">a revealing comment from Anders Hejlsberg</a>.</em></p>
-
 <p>Something wonderful happened between <code>typescript@beta</code> and <code>typescript@rc</code> (i.e. just in time for version 2.0).</p>
-
 <p>Way, way back in TypeScript 1.8 (February 2016!) we gained the ability to use string literals as types:</p>
 <p><a href="TypeScript_and_runtime_typing_EPISODE_II.html">Read on...</a></p>
 <hr>
@@ -200,22 +183,15 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>TypeScript and runtime typing</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-09-04</p>
 <p><em>Prompted by <a href="https://www.reddit.com/r/typescript/comments/50zj95/how_to_make_a_class_type/">this question on Reddit</a>.</em></p>
-
 <blockquote>
   <p>I'd want to declare a type that points to class extending another class. Please note, a CLASS not INSTANCE.
   I've tried something like this:</p>
-  
   <p><code>type EventClass = class extends Event;</code></p>
-  
   <p><code>type Listener = (data: class extends Event) =&gt; void;</code></p>
-  
   <p>and later on:</p>
-  
   <p><code>private handlers: Map&lt;EventClass,Listener[]&gt;;</code></p>
-  
   <p>But unfortunately this syntax does not work. How I can declare a type that points to CLASS extending another CLASS?</p>
 </blockquote>
-
 <p>You want a runtime value that specifies a type of event, so you can use it as the key in a <code>Map</code>.</p>
 <p><a href="TypeScript_and_runtime_typing.html">Read on...</a></p>
 <hr>
@@ -223,15 +199,11 @@ Structured Programmers, and the structure of the program become more and more ab
 <h2>What's good about Redux</h2>
 <p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-react.html">REACT</a>  2016-07-24</p>
 <p><a href="http://redux.js.org/">Redux</a> is based on series of really simple <em>what-if</em> questions:</p>
-
 <ol>
 <li><em>What if</em> all the data in your app was immutable?</li>
-
 <li>Okay, now it's stuck. But <em>what if</em> there was only a single solitary mutable variable holding the complete state for your entire app? To change any bit of state, you just assign a slightly different immutable tree to that variable.</li>
-
 <li>And <em>what if</em> the only way to mutate the state was to create a POJO describing a high-level action, and dispatch it through a single giant processing system, describing the change to make?</li>
 </ol>
-
 <p>A number of interesting advantages follow from sticking to this discipline. It's ideal for <a href="https://facebook.github.io/react/">ReactJS</a>. You can log everything your users do and replay it, stuff like that. You can store the state snapshots, or just the actions, or both. You can recover your app by loading in an old snapshot and then playing the recent actions to bring it up to date. If you want to know the complete story of how your application ended up in the state it's in now, you've got it. And aside from these nice capabilities, it's worth remembering a lot of bugs arise from fiddling with mutable state at the wrong time. Who needs that?</p>
 <p><a href="What_s_good_about_Redux.html">Read on...</a></p>
 <hr>
@@ -240,12 +212,10 @@ Structured Programmers, and the structure of the program become more and more ab
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2016-03-13</p>
 <p>Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs
 from JavaScript.</p>
-
 <ol>
 <li><p>a method's <code>this</code> reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens
 to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the
 function internally refers to <code>this</code>.</p></li>
-
 <li><p>a function value (known as a "delegate") has operators <code>+</code>, <code>-</code>, <code>+=</code>, <code>-=</code> that allow it to be combined with other compatible functions
 to create a new single function that, when invoked, causes the constituent functions to be invoked.</p></li>
 </ol>
@@ -255,7 +225,6 @@ to create a new single function that, when invoked, causes the constituent funct
 <h2>Introducing doop</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a>  2016-03-08</p>
 <p>As great as <a href="https://facebook.github.io/immutable-js/">Immutable.js</a> is, especially with a TypeScript declaration included in the package, the <code>Record</code> class leaves me a little disappointed.</p>
-
 <p>In an ordinary class with public properties we're used to being able to say:</p>
 <p><a href="Introducing_doop.html">Read on...</a></p>
 <hr>
@@ -263,15 +232,11 @@ to create a new single function that, when invoked, causes the constituent funct
 <h2>TypeScript is not really a superset of JavaScript and that is a Good Thing</h2>
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a>  2015-07-11</p>
 <p>Questions:</p>
-
 <ul>
 <li>What does it mean for a programming language to be a superset of another programming language?</li>
-
 <li>What's a programming language?</li>
-
 <li>What's a program?</li>
 </ul>
-
 <p>In this discussion, a program, regardless of language, is a <strong>stream of characters</strong>.</p>
 <p><a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">Read on...</a></p>
 <hr>
@@ -279,10 +244,8 @@ to create a new single function that, when invoked, causes the constituent funct
 <h2>A new kind of managed lvalue pointer</h2>
 <p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c__23.html">C#</a>  2014-04-27</p>
 <p>It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!</p>
-
 <p>Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
 much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an <code>Invoke</code> method.</p>
-
 <p>So all we need is an interface with a <code>Value</code> property. Objects supporting that interface can represent a single property that can be passed around like any other value:</p>
 <p><a href="A_new_kind_of_managed_lvalue_pointer.html">Read on...</a></p>
 <hr>
@@ -290,7 +253,6 @@ much better served in this regard: delegates are a way to treat a method as a va
 <h2>Using pointer syntax as a shorthand for IEnumerable</h2>
 <p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c__23.html">C#</a>  2014-04-26</p>
 <p>Another quickie extension to C#. In the current language, a type declaration <code>T!</code> is shorthand for <code>Nullable</code>.</p>
-
 <p>But equally important in modern C# programs are sequences of values, so a similar shorthand for <code>IEnumerable</code> would be ideal. 
 The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
 this was the choice made by the intriguing <a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/">research language Cω</a> 
@@ -302,9 +264,7 @@ that influenced LINQ, so let's copy that:</p>
 <p class="meta"><a href="tag-roslyn.html">ROSLYN</a> <a href="tag-c__23.html">C#</a>  2014-04-23</p>
 <p><strong>I'm going to show you how to enable a new kind of operator overloading by adding exactly four (4) lines of code to a single file in the C# 6 compiler 
 preview. Yes, I was surprised too!</strong></p>
-
 <p>After seeing the video of Anders Hejlsberg showing how easy it is to hack the new open source C# compiler, I had to give it a try.</p>
-
 <p>My aim was (I assumed) a lot more ambitious and crazy than his demo. I thought it would take ages to figure out. But it was still tempting to aim high and 
 actually implement a substantial new feature, because there are a few I've been wondering about over the years.</p>
 <p><a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Read on...</a></p>
@@ -314,10 +274,8 @@ actually implement a substantial new feature, because there are a few I've been 
 <p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a>  2013-11-04</p>
 <p><em>This project was a lot of fun, but it has a big roadblock that has to be overcome by any text-based project: internationalisation. Hence I don't see it being 
 generally useful outside of Western-language-only projects without a lot more work.</em></p>
-
 <p>I'm developing a rich text editor from scratch in JavaScript, atop the HTML5 canvas. It's called Carota (Latin for carrot, which sounds like "caret", and I 
 like carrots).</p>
-
 <p><a href="http://earwicker.com/carota/">Here is the demo page</a>, which is very self-explanatory, in that it presents a bunch of information about the editor, inside 
 the editor itself, so you can fiddle with it and instantly see how it persists the text in JSON. As you can see, it's quite far along. In fact I suspect it
 is already good enough for every way I currently make use of rich text in browser applications. If your browser is old, it will not work. (Hint: IE8 is way old.)</p>
@@ -328,6 +286,12 @@ is already good enough for every way I currently make use of rich text in browse
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

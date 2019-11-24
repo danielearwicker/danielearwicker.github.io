@@ -1,0 +1,299 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | Unfortunate Bifurcations</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">        
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="https://www.fiscaltechnologies.com/">FISCAL Technologies Ltd</a>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+            </div>
+            
+            <div class="content">
+                <h1>Unfortunate Bifurcations</h1>
+<hr>
+<p class="meta"><a href="tag-c__23.html">C#</a>  2019-11-24</p>
+
+<p>Although this is going to seem like a series of picky complaints about C#, really it's about how any language has to evolve, and is a compromise between past and future, and the whole thing is quite difficult.</p>
+<p>Also some speculation on what the future of language interoperability will be.</p>
+<p>The kind of problem I'm going to pick on is where languages separate two concepts and treat them differently, making a virtue of the differences, but then it becomes a pain deal with them generically. The language designers seem to be saying "You shouldn't need to treat these two things the same; they're fundamentally different. You're doing it all wrong!" And yet…</p>
+<p>Java did this with its separation between:</p>
+<ul>
+<li>user-defined (and standard library) types, known as classes, whose objects are <em>referred to</em> by variables known as references, and can be aliased (that is, more than one variable can refer to the same object), and have no built-in way of being copied, and (as a technical detail) are garbage collected. Assignment always means "copy the identity so as to refer to the same object", and equality means "same object?"</li>
+<li>primitive built-in types such as <code>boolean</code> and various numeric ones that are always owned by a single variable or field, and can all be copied. They either live on the stack or inside another object. Assignment means "copy the value" and equality means "same value?"</li>
+</ul>
+<p>It seems at first that I can use either as the type of a variable, or a parameter, or a returned value, so they're there are a lot of places where they are interchangeable, but these ultimately fall apart in various annoying ways. I can define my own types for objects that can be aliased, but not if I want to create an object that can't be aliased. There is further pain when dealing with generics. Only class types can be used as type parameters. Primitives have to be <em>boxed</em> (stored inside a wrapper object of class type), so every primitive has a corresponding box type. This damages performance enough that most general purpose libraries have to provide <a href="https://docs.oracle.com/javase/8/docs/api/java/util/stream/IntStream.html">primitive-specific specialisations of their classes</a>.</p>
+<p>The language automatically coerces primitives to their box type where it can, but <a href="https://stackoverflow.com/a/5199418/27423">this can lead to strange problems</a> due to the different meaning of equality for class and primitive types, and some unfortunate details of how auto-boxing works.</p>
+<p>C# improved on this situation a lot. With its <code>struct</code> keyword it lets you define your own compound types that work just like primitives, and collectively they are all known as <em>value</em> types. Auto-boxing is a lot more seamless. Also you can define what the <code>==</code> operation means on your types, which can be used to hide the differences. Finally, it did a much better job with generics, eliminating most needs for boxing and hand-maintained specialisations.</p>
+<p>Generics provide us with a way to be abstract about certain details. Suppose we want to capture the pattern of retrying operations. A basic example:</p><pre><code class="cs">var answer = Util.Retry(() =&gt; GetTheAnswer());
+</code></pre><p>That <code>Retry</code> method calls the operation passed into it until it succeeds without throwing, and passed back the result. What type is the parameter to <code>Retry</code>? It needs to return a value, so it's going to be <code>Func&lt;T&gt;</code>. C# will infer the <code>T</code> from my usage, so <code>answer</code> ends up having the same type as is returned by <code>GetTheAnswer</code>. Neat.</p>
+<p>The efficient way to deal with values of primitive types is likely to be different to that for handling reference types, but this detail is hidden from us in C# - the JIT automatically produces one instance of directly executable machine code to be used for all reference types in place of <code>T</code>, and then one further instance for every value type we use. This expansion <em>isn't</em> done by the C# compiler, which just has to produce a single generic version of the <a href="https://en.wikipedia.org/wiki/Common_Intermediate_Language">CIL bytecode</a>.</p>
+<p>How about:</p><pre><code class="cs">Util.Retry(() =&gt; CauseTheSideEffect());
+</code></pre><p>Same idea, but now I don't need a return value, because <code>CauseTheSideEffect</code> "returns" <code>void</code>. Is this going to work? <code>Retry</code> is going to be something like this:</p><pre><code class="cs">T Retry&lt;T&gt;(Func&lt;T&gt; operation)
+{
+    for (int n = 4; n &gt;= 0; n--)
+    {
+        try
+        { 
+            return operation();
+        }
+        catch (x) when (x &gt; 0)
+        {
+            // log x?
+        }
+    }
+}
+</code></pre><p>So we'd like <code>T</code> to be able to be <code>void</code>. It doesn't seem to be asking much, because we're never doing anything with <code>T</code> as a value; we just return it. It seems like the language could be lax about this and let a <code>return</code> statement precede a call to a <code>void</code> method inside another <code>void</code> method. <a href="https://www.geeksforgeeks.org/return-void-functions-c/">This is what C++ does.</a>.</p>
+<p>But C++ can get away with this because it instantiates its version of generics (templates) by pretty much replaying your source code like a macro, so if <code>void</code> caused trouble somewhere inside the template's code this would produce an error message, often quite confusingly. C# doesn't work like that - it produces <em>one</em> version of your code in CIL, and CIL uses a different instruction for calling a <code>void</code> method. This unfortunate bifurcation runs deep.</p>
+<p>We can mask the problem by providing an overload like this:</p><pre><code class="cs">void Retry(Action operation) 
+     =&gt; Retry(() =&gt; 
+        {
+            operation();
+            return 0; 
+        });
+</code></pre><p>The return value is arbitrary. And so in theory the C# compiler could allow us to use the underlying <code>Func&lt;T&gt;</code> version of <code>Retry</code> by noticing we aren't returning anything and therefore filling in the <code>return 0;</code> for us at the point of use. But obviously it shouldn't always do this, because it would weaken the compiler's ability to spot bugs, due to it silently passing dummy values into our code.</p>
+<p>There are other bifurcations that are even more problematic. The worst is probably <code>async</code>/<code>await</code>. Extending our example:</p><pre><code class="cs">var answer = await Util.Retry(() =&gt; GetTheAnswerAsync());
+</code></pre><p>Now we have to re-write retry to accept a <code>Func&lt;Task&lt;T&gt;&gt;</code> and use <code>async</code>/<code>await</code> internally, and then restore our original synchronous version via a wrapper overload:</p><pre><code class="cs">T Retry(Func&lt;T&gt; operation) 
+     =&gt; Retry(() =&gt; Task.FromResult(operation())).Result;
+</code></pre><p>So we have to wrap the result of the inner <code>operation</code> in a <code>Task&lt;T&gt;</code> and then extract the <code>Result</code> on the outside. Thanks to the way <code>await</code> works this won't actually involve any hidden asynchrony: the inner <code>Task&lt;T&gt;</code> is already completed, so <code>await</code> doesn't try to yield control, and similarly the <code>Result</code> property doesn't need to <code>Wait</code>.</p>
+<p>It's once you have two such bifurcations that things like <code>Retry</code> become tedious: you need <em>four</em> overloads to cover every case.</p>
+<p>With the addition of nullable references in C# 8 there is another nasty example, which is actually the old split between reference and value types coming back to bite us. Surprisingly, there is currently no way to express <code>T?</code> where <code>T</code> is any type, value or reference. Support for nullable value types has been in the language for a very long time, but they work very differently because for a value type adding support for an additional <code>null</code> state requires extra storage along side the value itself (and to get at the value requires you to look in the <code>Value</code> property). Reference types by contrast have always supported the special <code>null</code> value; what's being added now is the ability to constrain them so they (mostly) don't allow <code>null</code>, which is essentially a compile-time concept. So although the language seems to have a general concept of a nullable "thing", it really doesn't. It just uses the same <code>?</code> suffix syntax to denote the nullable variants of two entirely different things.</p>
+<p>As a deliberately simple example consider the good old <em>Maybe</em> monadic bind operator, popularly defined as <code>IsNotNull</code>:</p><pre><code class="cs">public static TResult? IsNotNull&lt;TArg, TResult&gt;(
+    this TArg? arg, 
+    Func&lt;TArg, TResult&gt; operation)
+        where TArg : class
+        where TResult : class
+            =&gt; arg != null ? operation(arg) : null;
+</code></pre><p>Note that I've had to constrain both <code>TArg</code> and <code>TResult</code> as being reference types (<code>where</code>… <code>class</code>). So to cover every possible combination of <code>struct</code> and <code>class</code> for the input and result, I need four overloads! But even worse, this time I can't cheat by making three of them into simple wrappers that call into a single implementation. A nullable reference type is really just a plain reference type in a compile-time disguise, where as a nullable value type is entirely different from its underlying value type at runtime. We have no choice but to copy and paste the code of our method four times, and make slight modifications to each case:</p><pre><code class="cs">public static TResult? IsNotNull&lt;TArg, TResult&gt;(
+    this TArg? arg,
+    Func&lt;TArg, TResult?&gt; operation)
+        where TArg : class
+        where TResult : class
+            =&gt; arg != null ? operation(arg) : null;
+
+public static TResult? IsNotNull&lt;TArg, TResult&gt;(
+    this TArg? arg, 
+    Func&lt;TArg, TResult?&gt; operation)
+        where TArg : struct
+        where TResult : class
+            =&gt; arg != null ? operation(arg.Value) : null;
+
+public static TResult? IsNotNull&lt;TArg, TResult&gt;(
+    this TArg? arg, 
+    Func&lt;TArg, TResult?&gt; operation)
+        where TArg : class
+        where TResult : struct
+            =&gt; arg != null ? operation(arg) : default;
+
+public static TResult? IsNotNull&lt;TArg, TResult&gt;(
+    this TArg? arg,
+    Func&lt;TArg, TResult?&gt; operation)
+        where TArg : struct
+        where TResult : struct
+            =&gt; arg != null ? operation(arg.Value) : default;    
+</code></pre><p>When we say <code>arg != null</code>, in half the cases (where <code>arg</code> is a value type) that's just sugar for <code>arg.HasValue</code>, but such sugar is non-existent when we need to get the value: we have to say <code>arg.Value</code>. Also when we want to substitute <code>null</code>, in half the cases (where the result is a value type) we have to use the <code>default</code> keyword, which is the 7.x abbreviation of <code>default(TResult?)</code> and means "<code>Nullable&lt;TResult&gt;</code> with no value".</p>
+<p>If this was a less trivial example, it would be a genuine pain to maintain those four version. If you had to add another generic nullable parameter, it would double again the number of hand-maintained not-quite-the-same overloads required.</p>
+<p>Now combine that with <code>async</code> versions of everything and you double the overloads again. See how these bifurcations get out hand - before you know it <a href="https://en.wikipedia.org/wiki/Wheat_and_chessboard_problem#Second_half_of_the_chessboard">you're in the second half of the chessboard.</a> Okay, that's a slight exaggeration.</p>
+<p>Anyway, this kind of evolutionary pain is why people start again with new languages. But I think the way forward is already indicated. The CLR is a runtime that is too opinionated and richly featured. This was intended to create a way forward so that a wide range of languages could share libraries with each other. When that happens, it will be utopia compared with today.</p>
+<p>But the CLR isn't going to be the platform for that utopia. It was intended to be general enough to support all languages, but now even its flagship showcase language, C#, is showing the strain of supporting its real life users while constrained by the CLR's underlying model. Yes, it's better than the JVM, but that's a very low bar.</p>
+<p>Meanwhile the last decade has seen runtimes for Javascript become so ingeniously self-optimising that they can compete with native code even for raw number crunching. There are 3D game engines written in JS. There are emulators for mainstream processors written in plain JS that <a href="https://bellard.org/jslinux/">can boot actual operating systems in the browser</a> - nearly a decade ago this was done for a minimal Linux, but Windows 2000 is now there too.</p>
+<p>WebAssembly in a sense grew out of such efforts, but it has only just started. At the moment it provides a sandbox within which an old-school native C/C++ codebase can freely scribble over its own patch of memory without causing wider damage. It does not yet define how a hosted language may expose fine grained objects that will be automatically garbage collected, and can have named members inside them, some of which may be callable. Hopefully when that step is taken, it will initially be as minimal and vague as possible, instead of (as the CLR did) trying to cover every possible approach with fine-grained features.</p>
+<p>And then we will have a real breakthrough, because a wide range of languages will be able to move on to the super-fast JS runtimes and bring their libraries with them. We will be able to create data structures that lace together objects written in C#, JavaScript and Python, all to be collected by the same GC.</p>
+<p>TypeScript has shown that a type system can be organically fitted over a very dynamic object model, and it can grow to meet user needs in ways that long ago left C# in the dust. I wonder if the future of C# lies in switching its home runtime from the CLR to JS.</p>
+
+            </div>
+            
+            <div class="outer">                                
+                <table class="recent" align="center"><tr>
+    <td>
+        <strong>Unfortunate Bifurcations</strong>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
+    </td>
+    <td class="date"> 2019-08-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Factory_Injection_in_C.html">Factory Injection in C#</a>
+    </td>
+    <td class="date"> 2019-07-02</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Hangfire_A_Tale_of_Several_Queues.html">Hangfire - A Tale of Several Queues</a>
+    </td>
+    <td class="date"> 2019-05-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="How_Does_Auth_work.html"> How Does Auth work?</a>
+    </td>
+    <td class="date"> 2018-11-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_2_Baby_Bathwater_Routing_etc.html"> From Ember to React, Part 2: Baby, Bathwater, Routing, etc.</a>
+    </td>
+    <td class="date"> 2018-03-18</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_1_Why_Not_Ember.html"> From Ember to React, Part 1: Why Not Ember?</a>
+    </td>
+    <td class="date"> 2017-11-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="json_mobx_Like_React_but_for_Data_Part_2.html">json-mobx - Like React, but for Data (Part 2)</a>
+    </td>
+    <td class="date"> 2017-02-15</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Redux_in_Pieces.html">Redux in Pieces</a>
+    </td>
+    <td class="date"> 2017-01-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Box_em_Property_references_for_TypeScript.html">Box 'em! - Property references for TypeScript</a>
+    </td>
+    <td class="date"> 2017-01-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_s_up_with_this.html"> TypeScript - What's up with this?</a>
+    </td>
+    <td class="date"> 2017-01-01</td>    
+</tr>
+<tr>
+    <td>
+        <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>
+    </td>
+    <td class="date"> 2016-12-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
+    </td>
+    <td class="date"> 2016-12-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Epilogue.html">Immuto - Epilogue</a>
+    </td>
+    <td class="date"> 2016-12-20</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Radical_Unification.html">Immuto - Radical Unification</a>
+    </td>
+    <td class="date"> 2016-09-22</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Working_with_React_An_Example.html">Immuto - Working with React (An Example)</a>
+    </td>
+    <td class="date"> 2016-09-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_is_a_class.html"> TypeScript - What is a class?</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing_EPISODE_II.html">TypeScript and runtime typing - EPISODE II</a>
+    </td>
+    <td class="date"> 2016-09-10</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing.html">TypeScript and runtime typing</a>
+    </td>
+    <td class="date"> 2016-09-04</td>    
+</tr>
+<tr>
+    <td>
+        <a href="What_s_good_about_Redux.html">What's good about Redux</a>
+    </td>
+    <td class="date"> 2016-07-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">  
+                <div class="rss">Want to comment on anything? <a href="https://github.com/danielearwicker/danielearwicker.github.io/issues">Create an issue!</a></div>              
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

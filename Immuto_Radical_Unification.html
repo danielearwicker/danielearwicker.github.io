@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -27,15 +27,12 @@
 <p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-immuto.html">IMMUTO</a>  2016-09-22</p>
 
 <p><a href="https://github.com/danielearwicker/immuto">Immuto</a> continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.</p>
-
 <p>The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:</p><pre><code class="ts">declare function getBook(shelf: Shelf, id: number): Book;
 </code></pre><p>And here's one that gets a shelf from a shop:</p><pre><code class="ts">declare function getShelf(shop: Shop, id: number): Shelf;
 </code></pre><p>If we have a <code>shelfId</code> and a <code>bookId</code>, to go straight from shop to book:</p><pre><code class="ts">const book = getBook(getShelf(shop, shelfId), bookId);
 </code></pre><p>Ugh. The nesting makes it confusing. This is why people like methods on objects:</p><pre><code class="ts">const book = shop.getShelf(shelfId).getBook(bookId);
 </code></pre><p>That's the clarity of left-to-right composition. In Immuto we have clean pure-data interfaces, and we declare actions on them and form them into reducers. One kind of action is called a <code>reference</code> and it builds a function that works a bit like <code>getBook</code> and <code>getShelf</code>, except it deals with cursors to data. So it suffered from the same nested composition ugliness.</p>
-
 <p>What we need, taking a leaf out of functional programming, is a piping operator. I've added a method called <code>$</code> to the <code>Cursor</code> interface, which means "look up", and corresponds to the familiar <code>.</code> operator in many object orientated languages.</p>
-
 <p>So if my <code>Shop</code> has a collection <code>shelves</code> (of type <code>Shelves</code>) in which each item is a <code>Shelf</code>, and a <code>Shelf</code> has a collection <code>books</code> (of type <code>Books</code>) in which each item is a <code>Book</code>, I can get a cursor to a book like this:</p><pre><code class="ts">const book = shop.$(Shop.shelves)
                  .$(Shelves.at(shelfId))
                  .$(Shelf.books)
@@ -46,9 +43,7 @@
                  [Shelf.books]
                  [Books.at(bookId)]
 </code></pre><p>But indexers are very special in JavaScript and you can't just implement them like any function.</p>
-
-<p>One other change I made yesterday which I've hinted at above is that I've ripped out the special treatment of collections. It was an unnecessary concept that needed special explanation, it was a bit too magical which made the explanation difficult, and it baked in too much functionality that you might not want. Not all collections need to support random access deletion, for example. Also there are fundamental difference between kinds of collections: if you delete item 4 from an array, you renumber items 5, 6, 7... whereas that doesn't happen with a map. Do I hide that difference or let it leak out? These are all decisions I shouldn't be taking.</p>
-
+<p>One other change I made yesterday which I've hinted at above is that I've ripped out the special treatment of collections. It was an unnecessary concept that needed special explanation, it was a bit too magical which made the explanation difficult, and it baked in too much functionality that you might not want. Not all collections need to support random access deletion, for example. Also there are fundamental difference between kinds of collections: if you delete item 4 from an array, you renumber items 5, 6, 7… whereas that doesn't happen with a map. Do I hide that difference or let it leak out? These are all decisions I shouldn't be taking.</p>
 <p>So now collections are just a data type with a reducer and some actions, same as anything else:</p><pre><code class="ts">export type Books = { [id: number]: Book };
 
 export namespace Books {
@@ -57,13 +52,18 @@ export namespace Books {
     export const reduce = reducer(empty).action(at);
 }
 </code></pre><p>I give the collection type a name, then I write a namespace for it, exposing only the actions I want. The <code>objectByNumber</code> function provides a way to get a cursor to a <code>Book</code> out of a collection of <code>Books</code>, i.e. it returns a traversal function suitable for passing to the new <code>.$()</code> piping operator.</p>
-
 <p>There are now quite a few examples of this in <a href="https://github.com/danielearwicker/immuto-react">immuto-react</a> and <a href="https://github.com/danielearwicker/immuto-example">immuto-example</a>.</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

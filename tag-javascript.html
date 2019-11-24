@@ -18,16 +18,14 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
                 <h2>Redux in Pieces</h2>
 <p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-redux.html">REDUX</a>  2017-01-28</p>
 <p>Last July I noted down my thoughts on <a href="What_s_good_about_Redux.html">Redux</a> with some hints of the concerns that eventually led to <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto</a>.</p>
-
 <p>I've since rediscovered my love of <code>observable</code> and <code>computed</code> via <a href="MobX_Like_React_but_for_Data.html">MobX</a>, which is like the good parts of <a href="http://knockoutjs.com">Knockout.js</a> made even better by a very careful, thoughtful implementation.</p>
-
 <p>Even so, this is <em>not</em> the same thing as abandoning immutability and purity. There's nothing stopping you using those techniques within a system of observables. Indeed <a href="https://github.com/danielearwicker/bidi-mobx">bidi-mobx</a> abstracts away all mutation and allows entire UIs to be declared from pure expressions. The data transformation is carried out by objects called adaptors that contain pairs of <em>pure</em> functions between <code>View</code> and <code>Model</code> representations. Only the user gets to do mutation!</p>
 <p><a href="Redux_in_Pieces.html">Read on...</a></p>
 <hr>
@@ -35,15 +33,11 @@
 <h2>What's good about Redux</h2>
 <p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-react.html">REACT</a>  2016-07-24</p>
 <p><a href="http://redux.js.org/">Redux</a> is based on series of really simple <em>what-if</em> questions:</p>
-
 <ol>
 <li><em>What if</em> all the data in your app was immutable?</li>
-
 <li>Okay, now it's stuck. But <em>what if</em> there was only a single solitary mutable variable holding the complete state for your entire app? To change any bit of state, you just assign a slightly different immutable tree to that variable.</li>
-
 <li>And <em>what if</em> the only way to mutate the state was to create a POJO describing a high-level action, and dispatch it through a single giant processing system, describing the change to make?</li>
 </ol>
-
 <p>A number of interesting advantages follow from sticking to this discipline. It's ideal for <a href="https://facebook.github.io/react/">ReactJS</a>. You can log everything your users do and replay it, stuff like that. You can store the state snapshots, or just the actions, or both. You can recover your app by loading in an old snapshot and then playing the recent actions to bring it up to date. If you want to know the complete story of how your application ended up in the state it's in now, you've got it. And aside from these nice capabilities, it's worth remembering a lot of bugs arise from fiddling with mutable state at the wrong time. Who needs that?</p>
 <p><a href="What_s_good_about_Redux.html">Read on...</a></p>
 <hr>
@@ -52,10 +46,8 @@
 <p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a>  2013-11-04</p>
 <p><em>This project was a lot of fun, but it has a big roadblock that has to be overcome by any text-based project: internationalisation. Hence I don't see it being 
 generally useful outside of Western-language-only projects without a lot more work.</em></p>
-
 <p>I'm developing a rich text editor from scratch in JavaScript, atop the HTML5 canvas. It's called Carota (Latin for carrot, which sounds like "caret", and I 
 like carrots).</p>
-
 <p><a href="http://earwicker.com/carota/">Here is the demo page</a>, which is very self-explanatory, in that it presents a bunch of information about the editor, inside 
 the editor itself, so you can fiddle with it and instantly see how it persists the text in JSON. As you can see, it's quite far along. In fact I suspect it
 is already good enough for every way I currently make use of rich text in browser applications. If your browser is old, it will not work. (Hint: IE8 is way old.)</p>
@@ -66,6 +58,12 @@ is already good enough for every way I currently make use of rich text in browse
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

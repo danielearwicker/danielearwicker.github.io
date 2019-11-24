@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -28,74 +28,66 @@
 
 <p>It's been a couple of months since I had a scrap of time to do anything with <a href="https://github.com/danielearwicker/immuto">Immuto</a> - 
 I've been up to my knees in WPF/C# instead (working for a living).</p>
-
 <p>This break has given me a new perspective (aside from the obvious one that WPF is yucky). The executive summary is that I don't 
 see myself ever using Immuto seriously. The way I look at it now is almost as a satire on the rigid idea of "single reducer 
 function for the whole application state". It wasn't intended that way! I was genuinely into it and was expecting to use it in
 my job. But now it looks very different. And as Immuto is just a flavour of Redux, it's a broader comment on Redux itself.</p>
-
 <p>What do I mean by a satire? I mean it's like I was trying to show the absurdity of something by pretending to take it seriously. 
 (Except I <em>was</em> taking it seriously). My dad told me a story from around 1969 when he went to a conference. The latest hot 
 debate topic at the time was <a href="http://www.cs.utexas.edu/users/EWD/ewd02xx/EWD215.PDF">Goto Considered Harmful</a>, and some speaker 
 put some source code on the overhead projector and invited the room to critique it. Hands went up and all the suggestions were 
 to get rid of the GOTOs, of course. So as a group they began editing the code to try and get rid of the GOTOs and be good 
 Structured Programmers, and the structure of the program become more and more absurd and unreadable as the exercise progressed. </p>
-
 <p>The moral is that <em>sometimes</em> a GOTO is the least bad option, so don't be too dogmatic in applying your precious rules. But the
 point is, the presenter of that talk let the absurdity of the situation become apparent all by itself, merely by taking it 
 seriously and seeing where that led. I feel I've done the same thing with Redux, except by accident.</p>
-
 <p>If we have a single reducer function, in a large complex application its going to end up large and complex. So we need to break
 it down into composable pieces and tie those pieces together. With a really slick declaritive way of creating and composing
 those pieces, this becomes second nature, and we can build applications of unlimited scope and cleverness, all the while fully
 conforming <em>to the letter if not the spirit</em> of the law that there must be a single reducer function for our whole app.</p>
-
-<p>There is a single reducer function... you just wouldn't know this from looking at the code. Nor would you ever care.</p>
-
+<p>There is a single reducer function… you just wouldn't know this from looking at the code. Nor would you ever care.</p>
 <p>The same goes for the "single state atom", the variable that holds the result of the most recent execution of the whole-app 
 reducer. There is only one mutable variable in the entire app. But again, who cares? The value of that variable is some deep
 nested hierarchy within which their are many islands that each encapsulate some separate portion of the application state. So
 in any meaningful sense it's not one value. It's many.</p>
-
 <p>Yes, we artificially stitch them together so we can store them in a single state variable, but by doing so we introduce a need 
 to constantly discard and rebuild all the outer structure every time something lower down is modified.</p>
-
 <p>All so that we can comply with a rule: single reducer, single state variable. What does this give us? In theory, easier
 debugging, and other facilities that depend on keeping old versions of our state tree. The killer demo is "look how easily I
 can implement undo!"</p>
-
 <p>But the truth is that you can add undo to any application that has the ability load/save its state to JSON. It doesn't need
 to keep its state in one immutable tree. It just needs to be able to assemble all the pieces of its live state into a single
 "snapshot" tree when asked, and then later be able to parse such a snapshot and assign pieces of it to wherever they belong
 in the live state. <a href="https://github.com/danielearwicker/nimbah/blob/master/js/undo.js">Here's an example I wrote four years ago</a>.</p>
-
 <p>As for debugging and understanding the correctness of your app, of course there's no substitute for having a simple requirement
 so your app doesn't need to be complex. In the real world, requirements are not simple. But we in software we (over and over) 
 apply the golden rule of "divide and conquer", breaking complex problems down into simple pieces that can be independently
 solved, reasoned about and tested. This is why Immuto was my necessary response to Redux.</p>
-
 <p>But if my large complex app is really just a lot of small simple apps stuck together, it doesn't matter that much <em>how</em> I
 stick them together. Does it really create any issues if I have multiple independent stores, one for each piece? Of course 
 not. Does it help much with anything if I insist on making them share a single store? Not really, no.</p>
-
 <p>I did progress somewhat with Immuto beyond what I committed/pushed. In particular, I got some way with polymorphism: a
 React component that could have multiple implementations, each implementation being able to store data of its own type within
 the state. I implemented recursive structures (e.g. a tree in which some nodes are folders with child nodes and others are 
 leaves or terminals). It was kind of working! But it was complex. I loved that complexity, because I'm a nerd.</p>
-
 <p>But now I have the strange feeling that when I got exciting about Redux, I accepted its basic principles not because they 
 conferred any advantage, but because I could see that they didn't present any obstacles to a sufficiently smart person, and I
 wanted to prove it. It provided me with a nice challenge or diversion. It was a brain-teaser and I got deeply into it. But
 the end product is, I suspect, hard for anyone else to pick up and learn, so that in itself is an obstacle. If I were to 
 foist it onto my team and someone asks me "But <em>why</em> do we need to do it this way?" there is no answer. It was just cool to 
 figure out.</p>
-
 <p>RIP Immuto. You were fun!</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>

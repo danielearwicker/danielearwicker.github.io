@@ -4,14 +4,20 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2019-08-26T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2019-11-24T00:00:00Z</lastBuildDate>
+    <item>
+      <title>Unfortunate Bifurcations</title>
+      <pubDate> 2019-11-24T00:00:00Z</pubDate>
+      <description>&lt;p&gt;Although this is going to seem like a series of picky complaints about C#, really it's about how any language has to evolve, and is a compromise between past and future, and the whole thing is quite difficult.&lt;/p&gt;
+&lt;p&gt;Also some speculation on what the future of language interoperability will be.&lt;/p&gt;
+&lt;p&gt;The kind of problem I'm going to pick on is where languages separate two concepts and treat them differently, making a virtue of the differences, but then it becomes a pain deal with them generically. The language designers seem to be saying "You shouldn't need to treat these two things the same; they're fundamentally different. You're doing it all wrong!" And yet…&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Unfortunate_Bifurcations.html</link>
+    </item>
     <item>
       <title> Two Cheers for SQL</title>
       <pubDate> 2019-08-26T00:00:00Z</pubDate>
-      <description>&lt;p&gt;What is there to say about this old stain on the technology landscape? Settle in...&lt;/p&gt;
-
+      <description>&lt;p&gt;What is there to say about this old stain on the technology landscape? Settle in…&lt;/p&gt;
 &lt;p&gt;SQL is not "cool". It probably never has been. On the one hand there are the technologies we hate, and on the other the technologies no one uses.&lt;/p&gt;
-
 &lt;p&gt;Having spent a few years going back and forth on the merits of SQL, I'm in a weird place. I now think it is both underrated &lt;em&gt;and&lt;/em&gt; overrated, and not merely because other people are too extreme in their opinions. I genuinely think SQL is both a fine idea and a terrible idea at the same time. There is a way of using it that makes sense, and many other ways that don't.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Two_Cheers_for_SQL.html</link>
     </item>
@@ -19,9 +25,7 @@
       <title>Factory Injection in C#</title>
       <pubDate> 2019-07-02T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;strong&gt;Update&lt;/strong&gt; - &lt;em&gt;There was a nasty bug in the original version of this post! Where I previously registered the factories with &lt;code&gt;AddSingleton&lt;/code&gt;, I now use &lt;code&gt;AddTransient&lt;/code&gt;, and I call out the reason for this below.&lt;/em&gt;&lt;/p&gt;
-
 &lt;p&gt;The modern C# ecosystem (based on dotnet core, due to become .NET 5) enjoys a standard dependency injection system that is, despite its minimalism, is pretty much all you need.&lt;/p&gt;
-
 &lt;p&gt;In some ways the ideal dependency injection system is nothing at all: isolate your components by writing an interface/class pair, and make each class accept interfaces to give it access to whatever services it needs. Very often the sole reason for the existence of the interface to go with each class is so that it can be mocked out in unit tests for classes that depend on it. (It's worth noting that in languages based on dynamically typed runtimes there is typically no need to do this - it's especially irksome to see this pattern being imported unnecessarily into TypeScript, where every class is &lt;em&gt;already&lt;/em&gt; an interface.)&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Factory_Injection_in_C.html</link>
     </item>
@@ -29,9 +33,7 @@
       <title>Hangfire - A Tale of Several Queues</title>
       <pubDate> 2019-05-24T00:00:00Z</pubDate>
       <description>&lt;p&gt;If you've used &lt;a href="https://www.hangfire.io/"&gt;Hangfire&lt;/a&gt; you know it's a really quick and easy way to give your app a queue of durable background jobs, with automatic retrying and a very nifty dashboard to let you see what's happening right now. Jobs can trigger further jobs and so a complex series of processing stages can be decoupled and spill out into a queue of little units of work.&lt;/p&gt;
-
 &lt;p&gt;You can setup one database (such as Redis) to store the state of all your jobs, and then multiple identical workers can attach to that database and munch through the jobs, taking them through the lifecycle:&lt;/p&gt;
-
 &lt;pre&gt;&lt;code&gt;[Enqueued] -&amp;gt; [Processing] -&amp;gt; [Finished]
 &lt;/code&gt;&lt;/pre&gt;</description>
       <link>http://danielearwicker.github.io/Hangfire_A_Tale_of_Several_Queues.html</link>
@@ -58,13 +60,10 @@
       <title>json-mobx - Like React, but for Data (Part 2)</title>
       <pubDate> 2017-02-15T00:00:00Z</pubDate>
       <description>&lt;p&gt;This is a follow-on to &lt;a href="MobX_Like_React_but_for_Data.html"&gt;MobX - Like React, but for Data&lt;/a&gt;, in which I noted the parallels between MobX and React.&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;A &lt;code&gt;computed&lt;/code&gt; "renders" a "view" of some data, and automatically updates when the source data changes. Like a React component, except generalised to cover any data, not just Virtual DOM.&lt;/li&gt;
-
 &lt;li&gt;An &lt;code&gt;observable&lt;/code&gt; is like the &lt;code&gt;setState&lt;/code&gt; facility in stateful React components, except that its automatic ability to notify &lt;code&gt;computed&lt;/code&gt; (and &lt;code&gt;autorun&lt;/code&gt;) observers works by spooky "action at a distance" and so doesn't have to take place inside one component.&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;p&gt;But this still leaves one major feature of React unaddressed, and that is &lt;em&gt;reconciliation&lt;/em&gt;. What is this about, and how can it be useful in a more general way in MobX?&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/json_mobx_Like_React_but_for_Data_Part_2.html</link>
     </item>
@@ -72,9 +71,7 @@
       <title>Redux in Pieces</title>
       <pubDate> 2017-01-28T00:00:00Z</pubDate>
       <description>&lt;p&gt;Last July I noted down my thoughts on &lt;a href="What_s_good_about_Redux.html"&gt;Redux&lt;/a&gt; with some hints of the concerns that eventually led to &lt;a href="Immuto_Strongly_Typed_Redux_Composition.html"&gt;Immuto&lt;/a&gt;.&lt;/p&gt;
-
 &lt;p&gt;I've since rediscovered my love of &lt;code&gt;observable&lt;/code&gt; and &lt;code&gt;computed&lt;/code&gt; via &lt;a href="MobX_Like_React_but_for_Data.html"&gt;MobX&lt;/a&gt;, which is like the good parts of &lt;a href="http://knockoutjs.com"&gt;Knockout.js&lt;/a&gt; made even better by a very careful, thoughtful implementation.&lt;/p&gt;
-
 &lt;p&gt;Even so, this is &lt;em&gt;not&lt;/em&gt; the same thing as abandoning immutability and purity. There's nothing stopping you using those techniques within a system of observables. Indeed &lt;a href="https://github.com/danielearwicker/bidi-mobx"&gt;bidi-mobx&lt;/a&gt; abstracts away all mutation and allows entire UIs to be declared from pure expressions. The data transformation is carried out by objects called adaptors that contain pairs of &lt;em&gt;pure&lt;/em&gt; functions between &lt;code&gt;View&lt;/code&gt; and &lt;code&gt;Model&lt;/code&gt; representations. Only the user gets to do mutation!&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Redux_in_Pieces.html</link>
     </item>
@@ -82,7 +79,6 @@
       <title>Box 'em! - Property references for TypeScript</title>
       <pubDate> 2017-01-11T00:00:00Z</pubDate>
       <description>&lt;p&gt;This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility &lt;code&gt;observable.box&lt;/code&gt; (&lt;a href="https://mobx.js.org/refguide/boxed.html"&gt;docs&lt;/a&gt;). But I don't want to use that create all my properties and have to put &lt;code&gt;.get()&lt;/code&gt; after every read access. I want to use the cool &lt;code&gt;@observable&lt;/code&gt; decorator and just fetch my properties directly, and assign new values with &lt;code&gt;=&lt;/code&gt;. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.&lt;/p&gt;
-
 &lt;p&gt;For the overall idea, see &lt;a href="https://github.com/danielearwicker/boxm"&gt;the project page&lt;/a&gt;, or just look at the takeaway:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Box_em_Property_references_for_TypeScript.html</link>
     </item>
@@ -96,9 +92,7 @@
       <title>MobX - Like React, but for Data</title>
       <pubDate> 2016-12-28T00:00:00Z</pubDate>
       <description>&lt;p&gt;Catching up on blogged opinions about MobX and where it fits in (especially in relation to Redux), I see much confusion. There is a suspicion of it arising from fear of mutability. It has none of the frameworky ceremony of Redux, and that seems to cause anxiety in some.&lt;/p&gt;
-
 &lt;p&gt;Even its defenders seem a little apologetic, like MobX is okay &lt;em&gt;despite&lt;/em&gt; the heresy of allowing data to be mutable and object-oriented. The great Basarat even humorously &lt;a href="https://twitter.com/basarat/status/812150927947800578"&gt;welcomed me to the dark side!&lt;/a&gt;&lt;/p&gt;
-
 &lt;p&gt;I'm fine with being on the edgy team. You'll usually find me in my leather jacket and shades, posing on my parked Harley Davidson and chewing on a matchstick, intimidating the townspeople. Why? I don't have to explain myself to you, lady.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/MobX_Like_React_but_for_Data.html</link>
     </item>
@@ -109,11 +103,9 @@
 &lt;a href="http://knockoutjs.com"&gt;Knockout.js&lt;/a&gt;, I wanted to 
 &lt;a href="https://smellegantcode.wordpress.com/2013/02/25/eventless-programming-part-1-why-the-heck/"&gt;recreate it for C#&lt;/a&gt;.
 At the time I wasn't actively using C# so I never got to really use it and left it alone.&lt;/p&gt;
-
 &lt;p&gt;But in the last year and a half I've written a few view models for a WPF application. The first time
 I did it I couldn't believe how primitive and laborious it was in comparison. So I started idly 
 messing with Eventless in my spare time - mostly deleting stuff - to make it XAML-friendly.&lt;/p&gt;
-
 &lt;p&gt;Just like Knockout, and now &lt;a href="https://github.com/mobxjs/mobx"&gt;MobX&lt;/a&gt;, it makes the process delightfully simple. You just declare stuff and it works!&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Eventless_XAML_Flavoured.html</link>
     </item>
@@ -122,12 +114,10 @@ messing with Eventless in my spare time - mostly deleting stuff - to make it XAM
       <pubDate> 2016-12-20T00:00:00Z</pubDate>
       <description>&lt;p&gt;It's been a couple of months since I had a scrap of time to do anything with &lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto&lt;/a&gt; - 
 I've been up to my knees in WPF/C# instead (working for a living).&lt;/p&gt;
-
 &lt;p&gt;This break has given me a new perspective (aside from the obvious one that WPF is yucky). The executive summary is that I don't 
 see myself ever using Immuto seriously. The way I look at it now is almost as a satire on the rigid idea of "single reducer 
 function for the whole application state". It wasn't intended that way! I was genuinely into it and was expecting to use it in
 my job. But now it looks very different. And as Immuto is just a flavour of Redux, it's a broader comment on Redux itself.&lt;/p&gt;
-
 &lt;p&gt;What do I mean by a satire? I mean it's like I was trying to show the absurdity of something by pretending to take it seriously. 
 (Except I &lt;em&gt;was&lt;/em&gt; taking it seriously). My dad told me a story from around 1969 when he went to a conference. The latest hot 
 debate topic at the time was &lt;a href="http://www.cs.utexas.edu/users/EWD/ewd02xx/EWD215.PDF"&gt;Goto Considered Harmful&lt;/a&gt;, and some speaker 
@@ -140,7 +130,6 @@ Structured Programmers, and the structure of the program become more and more ab
       <title>Immuto - Radical Unification</title>
       <pubDate> 2016-09-22T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto&lt;/a&gt; continues to evolve rapidly. To ensure that I comply with Semantic Versioning, in which major version 0 implies an unstable API, I've been making major breaking changes every day or so.&lt;/p&gt;
-
 &lt;p&gt;The major shift since the first write-up is left-to-right cursor composition. Example - here's the signature of a function that gets a book from a shelf:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Immuto_Radical_Unification.html</link>
     </item>
@@ -148,9 +137,7 @@ Structured Programmers, and the structure of the program become more and more ab
       <title>Immuto - Working with React (An Example)</title>
       <pubDate> 2016-09-16T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;em&gt;UPDATE - I'm in the move-fast-and-break-things phase so a couple of details in here are already out of date. In particular, properties are now unified with cursors. See the various repos for details.&lt;/em&gt;&lt;/p&gt;
-
 &lt;p&gt;In &lt;a href="Immuto_Strongly_Typed_Redux_Composition.html"&gt;Immuto - Strongly Typed Redux Composition&lt;/a&gt; I introduced the &lt;a href="https://github.com/danielearwicker/immuto"&gt;Immuto library&lt;/a&gt; by coyly describing a wish-list of features, as if I hadn't already written the darn thing. Shucks!&lt;/p&gt;
-
 &lt;p&gt;What I didn't do was show how to make a working UI in React, using Immuto to define all the actions and the structure of the store. The missing piece is another package:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Immuto_Working_with_React_An_Example.html</link>
     </item>
@@ -158,9 +145,7 @@ Structured Programmers, and the structure of the program become more and more ab
       <title>Immuto - Strongly Typed Redux Composition</title>
       <pubDate> 2016-09-11T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;a href="What_s_good_about_Redux.html"&gt;What's good about Redux&lt;/a&gt;, I once asked, and I answered with a few things. Like React, it is one of those rare outbreaks of sanity that happen now and then. &lt;a href="http://redux.js.org/docs/basics/Actions.html"&gt;Read the docs, they're easy&lt;/a&gt;.&lt;/p&gt;
-
 &lt;p&gt;There's very little to the library (which is a good thing), because the main thing it implements is the store, which in its basic form is a very simple idea. I noted before how it says very little about composition patterns. I want ways of plugging reducers together, but with complete static type safety, so that it is not possible to dispatch the wrong kind of action, or an action whose data is not of the right type.&lt;/p&gt;
-
 &lt;p&gt;One composition feature is &lt;code&gt;combineReducers&lt;/code&gt;, which from a static typing perspective leaves us nowhere to go. Sometimes this happens because TypeScript is lacking some capability, but sometimes it's just because the library has done something undesirable and I think that's the case here, for reasons I will now go into at great length.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Immuto_Strongly_Typed_Redux_Composition.html</link>
     </item>
@@ -174,9 +159,7 @@ Structured Programmers, and the structure of the program become more and more ab
       <title>TypeScript and runtime typing - EPISODE II</title>
       <pubDate> 2016-09-10T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;em&gt;Prompted by &lt;a href="https://github.com/Microsoft/TypeScript/pull/10676#issuecomment-245653348"&gt;a revealing comment from Anders Hejlsberg&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-
 &lt;p&gt;Something wonderful happened between &lt;code&gt;typescript@beta&lt;/code&gt; and &lt;code&gt;typescript@rc&lt;/code&gt; (i.e. just in time for version 2.0).&lt;/p&gt;
-
 &lt;p&gt;Way, way back in TypeScript 1.8 (February 2016!) we gained the ability to use string literals as types:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_and_runtime_typing_EPISODE_II.html</link>
     </item>
@@ -184,22 +167,15 @@ Structured Programmers, and the structure of the program become more and more ab
       <title>TypeScript and runtime typing</title>
       <pubDate> 2016-09-04T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;em&gt;Prompted by &lt;a href="https://www.reddit.com/r/typescript/comments/50zj95/how_to_make_a_class_type/"&gt;this question on Reddit&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
-
 &lt;blockquote&gt;
   &lt;p&gt;I'd want to declare a type that points to class extending another class. Please note, a CLASS not INSTANCE.
   I've tried something like this:&lt;/p&gt;
-  
   &lt;p&gt;&lt;code&gt;type EventClass = class extends Event;&lt;/code&gt;&lt;/p&gt;
-  
   &lt;p&gt;&lt;code&gt;type Listener = (data: class extends Event) =&amp;gt; void;&lt;/code&gt;&lt;/p&gt;
-  
   &lt;p&gt;and later on:&lt;/p&gt;
-  
   &lt;p&gt;&lt;code&gt;private handlers: Map&amp;lt;EventClass,Listener[]&amp;gt;;&lt;/code&gt;&lt;/p&gt;
-  
   &lt;p&gt;But unfortunately this syntax does not work. How I can declare a type that points to CLASS extending another CLASS?&lt;/p&gt;
 &lt;/blockquote&gt;
-
 &lt;p&gt;You want a runtime value that specifies a type of event, so you can use it as the key in a &lt;code&gt;Map&lt;/code&gt;.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_and_runtime_typing.html</link>
     </item>
@@ -207,15 +183,11 @@ Structured Programmers, and the structure of the program become more and more ab
       <title>What's good about Redux</title>
       <pubDate> 2016-07-24T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;a href="http://redux.js.org/"&gt;Redux&lt;/a&gt; is based on series of really simple &lt;em&gt;what-if&lt;/em&gt; questions:&lt;/p&gt;
-
 &lt;ol&gt;
 &lt;li&gt;&lt;em&gt;What if&lt;/em&gt; all the data in your app was immutable?&lt;/li&gt;
-
 &lt;li&gt;Okay, now it's stuck. But &lt;em&gt;what if&lt;/em&gt; there was only a single solitary mutable variable holding the complete state for your entire app? To change any bit of state, you just assign a slightly different immutable tree to that variable.&lt;/li&gt;
-
 &lt;li&gt;And &lt;em&gt;what if&lt;/em&gt; the only way to mutate the state was to create a POJO describing a high-level action, and dispatch it through a single giant processing system, describing the change to make?&lt;/li&gt;
 &lt;/ol&gt;
-
 &lt;p&gt;A number of interesting advantages follow from sticking to this discipline. It's ideal for &lt;a href="https://facebook.github.io/react/"&gt;ReactJS&lt;/a&gt;. You can log everything your users do and replay it, stuff like that. You can store the state snapshots, or just the actions, or both. You can recover your app by loading in an old snapshot and then playing the recent actions to bring it up to date. If you want to know the complete story of how your application ended up in the state it's in now, you've got it. And aside from these nice capabilities, it's worth remembering a lot of bugs arise from fiddling with mutable state at the wrong time. Who needs that?&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/What_s_good_about_Redux.html</link>
     </item>
@@ -224,12 +196,10 @@ Structured Programmers, and the structure of the program become more and more ab
       <pubDate> 2016-03-13T00:00:00Z</pubDate>
       <description>&lt;p&gt;Just as in JavaScript, C# functions are first class entities - you can pass them around in variables. There are two ways that C# differs
 from JavaScript.&lt;/p&gt;
-
 &lt;ol&gt;
 &lt;li&gt;&lt;p&gt;a method's &lt;code&gt;this&lt;/code&gt; reference is automatically bound to the object it belongs to. In JS a "method" is just an object property that happens
 to contain a function. If copied into a separate variable and then called, there may or may not be a problem depending on whether the
 function internally refers to &lt;code&gt;this&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-
 &lt;li&gt;&lt;p&gt;a function value (known as a "delegate") has operators &lt;code&gt;+&lt;/code&gt;, &lt;code&gt;-&lt;/code&gt;, &lt;code&gt;+=&lt;/code&gt;, &lt;code&gt;-=&lt;/code&gt; that allow it to be combined with other compatible functions
 to create a new single function that, when invoked, causes the constituent functions to be invoked.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;</description>
@@ -239,7 +209,6 @@ to create a new single function that, when invoked, causes the constituent funct
       <title>Introducing doop</title>
       <pubDate> 2016-03-08T00:00:00Z</pubDate>
       <description>&lt;p&gt;As great as &lt;a href="https://facebook.github.io/immutable-js/"&gt;Immutable.js&lt;/a&gt; is, especially with a TypeScript declaration included in the package, the &lt;code&gt;Record&lt;/code&gt; class leaves me a little disappointed.&lt;/p&gt;
-
 &lt;p&gt;In an ordinary class with public properties we're used to being able to say:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Introducing_doop.html</link>
     </item>
@@ -247,15 +216,11 @@ to create a new single function that, when invoked, causes the constituent funct
       <title>TypeScript is not really a superset of JavaScript and that is a Good Thing</title>
       <pubDate> 2015-07-11T00:00:00Z</pubDate>
       <description>&lt;p&gt;Questions:&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;What does it mean for a programming language to be a superset of another programming language?&lt;/li&gt;
-
 &lt;li&gt;What's a programming language?&lt;/li&gt;
-
 &lt;li&gt;What's a program?&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;p&gt;In this discussion, a program, regardless of language, is a &lt;strong&gt;stream of characters&lt;/strong&gt;.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html</link>
     </item>
@@ -263,10 +228,8 @@ to create a new single function that, when invoked, causes the constituent funct
       <title>A new kind of managed lvalue pointer</title>
       <pubDate> 2014-04-27T00:00:00Z</pubDate>
       <description>&lt;p&gt;It's already the evening and I haven't yet added anything to the C# compiler today, so here goes!&lt;/p&gt;
-
 &lt;p&gt;Properties have special support in C#, but they are not "first class". You can't get a reference to a property and pass it around as a value. Methods are 
 much better served in this regard: delegates are a way to treat a method as a value. But they are just objects with an &lt;code&gt;Invoke&lt;/code&gt; method.&lt;/p&gt;
-
 &lt;p&gt;So all we need is an interface with a &lt;code&gt;Value&lt;/code&gt; property. Objects supporting that interface can represent a single property that can be passed around like any other value:&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/A_new_kind_of_managed_lvalue_pointer.html</link>
     </item>
@@ -274,7 +237,6 @@ much better served in this regard: delegates are a way to treat a method as a va
       <title>Using pointer syntax as a shorthand for IEnumerable</title>
       <pubDate> 2014-04-26T00:00:00Z</pubDate>
       <description>&lt;p&gt;Another quickie extension to C#. In the current language, a type declaration &lt;code&gt;T!&lt;/code&gt; is shorthand for &lt;code&gt;Nullable&lt;/code&gt;.&lt;/p&gt;
-
 &lt;p&gt;But equally important in modern C# programs are sequences of values, so a similar shorthand for &lt;code&gt;IEnumerable&lt;/code&gt; would be ideal. 
 The asterisk symbol is underused (you can suffix a type with asterisk to make a pointer, but only in unsafe contexts), and 
 this was the choice made by the intriguing &lt;a href="http://research.microsoft.com/en-us/um/cambridge/projects/comega/"&gt;research language Cω&lt;/a&gt; 
@@ -286,9 +248,7 @@ that influenced LINQ, so let's copy that:&lt;/p&gt;</description>
       <pubDate> 2014-04-23T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;strong&gt;I'm going to show you how to enable a new kind of operator overloading by adding exactly four (4) lines of code to a single file in the C# 6 compiler 
 preview. Yes, I was surprised too!&lt;/strong&gt;&lt;/p&gt;
-
 &lt;p&gt;After seeing the video of Anders Hejlsberg showing how easy it is to hack the new open source C# compiler, I had to give it a try.&lt;/p&gt;
-
 &lt;p&gt;My aim was (I assumed) a lot more ambitious and crazy than his demo. I thought it would take ages to figure out. But it was still tempting to aim high and 
 actually implement a substantial new feature, because there are a few I've been wondering about over the years.&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/Adding_crazily_powerful_operator_overloading_to_C_6.html</link>
@@ -298,10 +258,8 @@ actually implement a substantial new feature, because there are a few I've been 
       <pubDate> 2013-11-04T00:00:00Z</pubDate>
       <description>&lt;p&gt;&lt;em&gt;This project was a lot of fun, but it has a big roadblock that has to be overcome by any text-based project: internationalisation. Hence I don't see it being 
 generally useful outside of Western-language-only projects without a lot more work.&lt;/em&gt;&lt;/p&gt;
-
 &lt;p&gt;I'm developing a rich text editor from scratch in JavaScript, atop the HTML5 canvas. It's called Carota (Latin for carrot, which sounds like "caret", and I 
 like carrots).&lt;/p&gt;
-
 &lt;p&gt;&lt;a href="http://earwicker.com/carota/"&gt;Here is the demo page&lt;/a&gt;, which is very self-explanatory, in that it presents a bunch of information about the editor, inside 
 the editor itself, so you can fiddle with it and instantly see how it persists the text in JSON. As you can see, it's quite far along. In fact I suspect it
 is already good enough for every way I currently make use of rich text in browser applications. If your browser is old, it will not work. (Hint: IE8 is way old.)&lt;/p&gt;</description>

@@ -18,7 +18,7 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (6)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
@@ -27,142 +27,87 @@
 <p class="meta"><a href="tag-saas.html">SAAS</a> <a href="tag-federation.html">FEDERATION</a>  2018-11-24</p>
 
 <p><em>Abstract</em>: Authentication is figuring out who someone is, and authorization is concerned with what they are allowed to do (or any other useful information about them). The basic approach is straightforward, but it becomes more useful and interesting when you consider many separate services that all need to collectively accept requests from the same users.</p>
-
 <p>The more gnarly aspects of this are solved problems - or at least, are part of an on-going arms race against the Bad Guys - so it would be foolish to reimplement something so critically important. You really should reuse an existing implementation. But the best way to be sure you are using something correctly is to get the gist of how it works.</p>
-
 <h1 id="thepasswordproblem">The password problem</h1>
-
 <p>We're all familiar with the process of being authenticated: whenever you enter your username and password you are being authenticated. There are other fancy ways, like looking at your phone's camera, but they all boil down to the same thing: supplying some data that only you can supply. We can call it your password, whether or not it's something you type in.</p>
-
 <p>This works well as long as you are the only person who knows your password, so your ability to produce it on demand proves that you are you. But you don't want to be sharing it willy-nilly; the more you do that, the more chances there are for someone to steal it. Nor would it be convenient to remember a different password for every service.</p>
-
 <p>Things get even worse when you consider that services are often layered, by making use of other services. Your private medical data are stored in one service, and you want to allow another service to access those data for processing in some way. It seems you have to give your password to this processing service, but that doesn't limit its ability to act on your behalf - you'll have given away complete control over your identity.</p>
-
 <h1 id="authenticationasaservice">Authentication as a service</h1>
-
 <p>What you need is a single authentication service, <code>A</code>, which is the only thing you have to trust, and therefore the only thing to which you ever give your password. When you try to access some other service, <code>S</code>, and it wants to know who you are, it redirects you to <code>A</code> (providing the address of <code>S</code> so that <code>A</code> knows where to redirect back to later).</p>
-
 <p><code>A</code> asks you for your username and password. As a security-savvy user, you can check your address bar and see that you're talking to trustworthy <code>A</code>, so you go ahead happily. <code>A</code> checks that your credentials are legit, and redirects back to <code>S</code>, also passing some <em>token</em>, which is a chunk of information that <code>S</code> can use to find out who you are.</p>
-
 <h1 id="implementingabrieflydont">Implementing <code>A</code> (briefly: don't)</h1>
-
 <p>We'll come back to the token in a moment. First it's worth reiterating the importance of not implementing your own version of <code>A</code>. <a href="https://www.owasp.org/images/7/72/OWASP_Top_10-2017_%28en%29.pdf.pdf">You already have enough security crap to worry about</a> without becoming responsible for telling all your users when hackers have stolen their passwords. In short, it is not okay for <code>A</code> to store a table of usernames and corresponding plaintext passwords. The password must be cryptographically hashed, and the resulting gibberish stored instead.</p>
-
 <p>But even so-called secure hashes can be brute-force cracked. To slow this process down, rather than just hashing the password, it should first be combined with some extra random data called <em>salt</em>, which must be unique to every user (and regenerated anew whenever they change their password). This stops the use of pre-computed tables of hash results. Another technique is to deliberately use a really slow (computationally intensive) hashing algorithm - that is, slow enough to make it impractical to use brute force cracking, but not so slow that you can't authenticate a user with acceptable latency.</p>
-
 <p>The crackers keep getting faster hardware, so an <code>A</code> service has to keep getting better at slowing them down. It's a full time job, so it makes sense for the rest of us to stand on the shoulders of giants.</p>
-
 <h1 id="sowhatsatoken">So what's a token?</h1>
-
 <p>We noted earlier that from the perspective of a service <code>S</code>, the role of <code>A</code> is to be a black box to which a user can be redirected, so that a little while later they will return to <code>S</code> with something called a token. This somehow lets <code>S</code> know who the user is. All subsequent requests sent from the client (say, the user's browser) will include the token as the only thing that indicates who is trying to use <code>S</code>.</p>
-
 <p>The token is proof that a certain user has <em>recently</em> provided their password to <code>A</code> because they want to use <code>S</code>. And so it has a time limit on its validity. When that expires, another token must be obtained.</p>
-
 <p>Ideally it would not be possible to forge a token. Otherwise a hostile client could act on behalf of a user without them needing to provide their password. But of course given that valid tokens are just patterns of information, they can be constructed by anyone. The best we can do is ensure that it is terrifically unlikely that a valid token could be constructed without the user's password.</p>
-
 <p>Given a token, <code>S</code> now needs a way to <em>validate</em> the token, to check that it is genuine. It also needs a way to get things like a username, or an email address, or even an answer to a question such as "So are they allowed to delete everything?" from a given token. These facts are known as <em>claims</em>.</p>
-
 <h1 id="scopes">Scopes</h1>
-
 <p>Note that the line between authentication and authorization is being blurred here. It's not as fundamental a distinction as it might seem - more a matter of interpretation. We could adopt a silly rule such as:</p>
-
 <blockquote>
   <p>"Anyone whose first name begins with a vowel is allowed to launch missiles"</p>
 </blockquote>
-
 <p>and so merely by knowing the user's first name we have enough information to authorize them. Or a service could use the user's email address as the key into its own database of authorization rules.</p>
-
 <p>But that would only solve the problem of authorizing a user to do things with one service. Now consider a layered situation, like the example of your medical data managed in one service, and another service that you want to be able to access some of your medical data. A total of four parties are now involved:</p>
-
 <ul>
 <li>the user</li>
-
 <li>the authentication service, <code>A</code></li>
-
 <li>the third-party service, <code>T</code>, that wants to do something with the user's data</li>
-
 <li>the ultimate service, <code>S</code>, that owns the user's data (such as the medical data)</li>
 </ul>
-
 <p>This is where it becomes helpful for the service <code>A</code> to become both an authentication and (by design, not merely potential interpretation) an authorization service. Rather than authorizing the user to do something, the user is authorizing <code>T</code> to access <code>S</code> on the user's behalf.</p>
-
 <p>When <code>T</code> redirects to <code>A</code>, it can also specify a set of required <em>scopes</em> previously defined by <code>S</code>, which might more helpfully be described as capabilities. In the example of your medical data, the possible scopes might include the ability to read the history of your heart rate, or your blood pressure, or your current medication, and <code>T</code> may only be interested in the heart rate data. Before generating a token, <code>A</code> will ask the user "Do you want to allow <code>T</code> to read your heart rate?" If the answer is yes it would generate a token that enabled that capability only. <code>T</code> could then use that token when contacting the medical data service <code>S</code>. And <code>S</code> would actually check the scopes enabled in the token before allowing certain operations to proceed.</p>
-
 <p>So if you're just looking for a solution to the problem of authorizing users directly accessing your service, you could be forgiven for wondering what the point of scopes is. Supposing you are the author of <code>S</code>, the repository that owns the data, and you've created a UI for accessing it so the user can manage their data directly. One wrinkle of using a scope-based authorization service is that the first time your user accesses your service via your UI, they will be asked:</p>
-
 <blockquote>
   <p>Do you want to allow Acme UI the following permissions?</p>
-  
   <ul>
   <li>Read blood pressure</li>
-  
   <li>Read current medication</li>
-  
   <li>Change current medication</li>
   </ul>
 </blockquote>
-
 <p>It will seem quite jarring for your users to be asked if they want to allow this to happen - of course they do. It's a baffling question to a user who has just started trying to use a service directly. As far as they are concerned, your UI and your service are one and the same thing, and it makes no sense as a user to be asked if you trust one to access the other.</p>
-
 <p>But think about how your service's data might be useful to another service. This is when scopes become a relevant concept: they are a way to give your users control over how third party services can use your service on their behalf.</p>
-
 <p>Note that from the perspective of <code>T</code>, both <code>A</code> and <code>S</code> are black boxes, and the contents or structure of tokens is entirely irrelevant. <code>T</code> wants to access <code>S</code> on behalf of the user, and <code>A</code> is simply a magic genie that generates a token that makes this possible.</p>
-
 <p>But let's dig a little deeper into the ultimate case where at last there's only one service involved, and it actually cares about what the token signifies: is it valid, and what claims (facts about the user) does it yield?</p>
-
 <h1 id="opaquetokens">Opaque tokens</h1>
-
 <p>The first kind of <code>A</code> I remember integrating with was CAS 1.0, a popular Java solution. It used the word <em>ticket</em> instead of token, but these seem to be roughly interchangeable terms: a value that represents something. Has anyone used <em>baton</em>?</p>
-
 <p>The ticket was <em>opaque</em>, meaning that it was impossible to parse it. It was essentially just a long string of random data. So a service <code>S</code> would have to go back to <code>A</code> directly to request the actual useful information associated with the ticket.</p>
-
-<p>The obvious downside of this is the extra cost of a round-trip from <code>S</code> to <code>A</code> for every request handled by <code>S</code>. Consider that there may be a large number of services <code>S1</code>, <code>S2</code>... <code>S</code><sub>n</sub> all hitting <code>A</code> every time they are used, and it becomes clear that <code>A</code> will be a potential bottleneck. So maybe every <code>S</code> ends up maintaining its own cache of information obtained from the ticket.</p>
-
+<p>The obvious downside of this is the extra cost of a round-trip from <code>S</code> to <code>A</code> for every request handled by <code>S</code>. Consider that there may be a large number of services <code>S1</code>, <code>S2</code>… <code>S</code><sub>n</sub> all hitting <code>A</code> every time they are used, and it becomes clear that <code>A</code> will be a potential bottleneck. So maybe every <code>S</code> ends up maintaining its own cache of information obtained from the ticket.</p>
 <p>I said <em>potential</em> bottleneck, because it is worth noting that a service like <code>A</code> could be made so highly available that it adds no significant burden to all <code>S</code><sub>n</sub>. For token validation purposes, <code>A</code> is a hash table in which each key is a token mapped to a set of facts about a user. It could be implemented by a Redis cluster with certain commands disabled (any such as <code>KEYS *</code> that allow keys to be listed). When a user is authenticated, a random string is generated to be their token, and stored as a key in Redis, with the value being (say) a JSON object of useful facts about the user. The key would be set to expire automatically. And any <code>S</code> would be able to validate a token and learn about the user in a single step by simply trying to <code>GET</code> its value from Redis. This would effectively be a centralized form of the same kind of caching that each <code>S</code> would otherwise have to implement.</p>
-
 <p>But this is speculation - we're not going to be implementing <code>A</code>, right?</p>
-
 <h1 id="transparenttokens">Transparent tokens</h1>
-
 <p>There is an alternative to opaque tokens, hinted at by the name. Any sort of additional round-trip to a central cache incurs some cost, however much we are able to minimize it, so it would be good to eliminate it altogether.</p>
-
 <p>A <em>transparent</em> token is directly parseable: it contains the very information the service needs, such as the user's name and their authorized capabilities.</p>
-
 <p>But this introduces another problem: if the token is a bundle of information, and is sent by the client, then what's to stop a hostile client from generating a token itself that says "Yup, this guy is totally allowed to do everything"?</p>
-
 <p>As usual there is no such thing as a free lunch, and here we pay with a different kind of complexity. A transparent token must contain two parts: the payload of useful information and a <em>signature</em>.</p>
-
 <h1 id="digitalsignatures">Digital signatures</h1>
-
 <p>If you're familiar with asymmetric encryption by RSA, where a sender can encrypt a message with the recipient's public key and so only the recipient can decrypt it with their private key, you almost have a way to implement signatures.</p>
-
 <p>First, the RSA function is actually symmetrical, in the sense that you can reverse the roles of the private and public keys and it still has the same secure capabilities. So if <code>A</code> were to hash the payload (to make it small enough to fit in a single block) and then pass it to the RSA function with <code>A</code>'s private key, the result would be a signature. The token can contain the payload and the signature. A recipient, <code>S</code>, can validate the token by calling the RSA function with the signature and <code>A</code>'s public key, to get back the hashed payload. It then only has to hash the payload itself and check that it is the same as the decrypted version.</p>
-
 <p>So to be able to validate tokens, <code>S</code> just needs <code>A</code>'s public key, and it can do the whole thing without needing to contact any central service every time.</p>
-
 <h1 id="oauth20andjwt">OAuth 2.0 and JWT</h1>
-
 <p>There is sufficient complexity in this idea that any home-made concoction is likely to be riddled with bugs that could entirely undermine its security. So once again, while it might be fun to build your own, it would be madness to rely on it.</p>
-
 <p>One popular kind of transparent token is a <a href="https://tools.ietf.org/html/rfc7519">JWT</a>, which consists of some base64 strings separated by <code>.</code> characters. One of the strings is the payload, another is the signature.</p>
-
 <p>In OAuth 2.0 HTTPS requests include a header:</p>
-
 <pre><code>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
 </code></pre>
-
 <p>It is of course vitally important that such requests use HTTPS, not plaintext HTTP, because anyone with a valid token can act as the user who generated it.</p>
-
 <h1 id="examplegithub">Example: GitHub</h1>
-
 <p>Take a look at the <a href="https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/">Github documentation</a> for accessing their API. They are the ultimate repository <code>S</code>. They define scopes such as <code>repo</code>, <code>notifications</code>, <code>gist</code>. You are going to write a third-party service <code>T</code>, so you can access GitHub on behalf of a user already known to GitHub.</p>
-
 <p>(You'll notice that authorization requires two steps: the redirect to <code>A</code>, and then an HTTPS call from your service to an endpoint in <code>A</code> that lets you exchange a temporary code for a genuine access token. Some providers support <em>implicit</em> grants, which avoid this extra call, but Github doesn't.)</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
     <td>
         <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
     </td>
