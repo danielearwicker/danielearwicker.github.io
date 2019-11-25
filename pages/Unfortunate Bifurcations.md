@@ -5,7 +5,7 @@ Although this is going to seem like a series of picky complaints about C#, reall
 
 Also some speculation on what the future of language interoperability will be.
 
-The kind of problem I'm going to pick on is where languages separate two concepts and treat them differently, making a virtue of the differences, but then it becomes a pain deal with them generically. The language designers seem to be saying "You shouldn't need to treat these two things the same; they're fundamentally different. You're doing it all wrong!" And yet...
+The kind of problem I'm going to pick on is where languages separate two concepts and treat them differently, making a virtue of the differences, but then it becomes a pain dealing with them generically. The language designers seem to be saying "You shouldn't need to treat these two things the same; they're fundamentally different. You're doing it all wrong!" And yet...
 
 Java did this with its separation between:
 

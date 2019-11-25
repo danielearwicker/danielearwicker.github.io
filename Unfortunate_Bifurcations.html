@@ -28,7 +28,7 @@
 
 <p>Although this is going to seem like a series of picky complaints about C#, really it's about how any language has to evolve, and is a compromise between past and future, and the whole thing is quite difficult.</p>
 <p>Also some speculation on what the future of language interoperability will be.</p>
-<p>The kind of problem I'm going to pick on is where languages separate two concepts and treat them differently, making a virtue of the differences, but then it becomes a pain deal with them generically. The language designers seem to be saying "You shouldn't need to treat these two things the same; they're fundamentally different. You're doing it all wrong!" And yet…</p>
+<p>The kind of problem I'm going to pick on is where languages separate two concepts and treat them differently, making a virtue of the differences, but then it becomes a pain dealing with them generically. The language designers seem to be saying "You shouldn't need to treat these two things the same; they're fundamentally different. You're doing it all wrong!" And yet…</p>
 <p>Java did this with its separation between:</p>
 <ul>
 <li>user-defined (and standard library) types, known as classes, whose objects are <em>referred to</em> by variables known as references, and can be aliased (that is, more than one variable can refer to the same object), and have no built-in way of being copied, and (as a technical detail) are garbage collected. Assignment always means "copy the identity so as to refer to the same object", and equality means "same object?"</li>
