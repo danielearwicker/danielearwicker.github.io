@@ -2,7 +2,7 @@ tags: style
 date: 2020-03-07
 title: Abstraction is a Thing
 
-When aliens finally pay us a visit and they start floating around our cities, struggling to pronounce greetings from a phrasebook, we will no doubt say to one another, "Apparently aliens are a thing now." When we recognise something has started happening all the time, we call it "a thing". Or we might remind our friend in a tone of heavy irony, after they accidentally walking into a lamppost, "Yup, lampposts are still a thing."
+When aliens finally pay us a visit and they start floating around our cities, struggling to pronounce greetings from a phrasebook, we will no doubt say to one another, "Apparently aliens are a thing now." When we recognise something has started happening all the time, we call it "a thing". Or we might remind our friend in a tone of heavy irony, after they accidentally walk into a lamppost, "Yup, lampposts are still a thing."
 
 Of course, deep down every "thing" is just subatomic particles and forces. There is nothing else. Except of course there is! It's a frustrating thing about casual pop science explanations that they stray into that kind of obsessive reductionism. Things don't stop existing just because you found out what they're made of. No one seriously stops referring to chairs and tables when they learn about atoms. I can't put it better than Stephen Pinker:
 
