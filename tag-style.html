@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | react</title>
+        <title>Daniel Earwicker | style</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">        
     </head>
@@ -22,54 +22,10 @@
             </div>
             
             <div class="content">
-                <h2> From Ember to React, Part 2: Baby, Bathwater, Routing, etc.</h2>
-<p class="meta"><a href="tag-ember.html">EMBER</a> <a href="tag-react.html">REACT</a> <a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a>  2018-03-18</p>
-<p><em>Abstract</em>: Last time, which was too long ago, I explained why Ember is terrible and must be burnt to the ground. This time I'll begin to explain why it's not actually all terrible and we should run back into the burning building to rescue the good parts. This will lead us to answer the question: can React Router be used with MobX?</p>
-<p><a href="From_Ember_to_React_Part_2_Baby_Bathwater_Routing_etc.html">Read on...</a></p>
-<hr>
+                <h2>How to abstract, or when is a thing</h2>
+<p class="meta"><a href="tag-style.html">STYLE</a>  2020-03-07</p>
 
-<h2> From Ember to React, Part 1: Why Not Ember?</h2>
-<p class="meta"><a href="tag-ember.html">EMBER</a> <a href="tag-react.html">REACT</a> <a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a>  2017-11-07</p>
-<p><em>Abstract</em>: We just replaced our entire Ember codebase with a new one written in React, TypeScript and MobX. It was a pretty engrossing couple of weeks. THIS IS OUR STORY.</p>
-<p><a href="From_Ember_to_React_Part_1_Why_Not_Ember.html">Read on...</a></p>
-<hr>
-
-<h2>json-mobx - Like React, but for Data (Part 2)</h2>
-<p class="meta"><a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-json-mobx.html">JSON-MOBX</a>  2017-02-15</p>
-<p>This is a follow-on to <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>, in which I noted the parallels between MobX and React.</p>
-<ul>
-<li>A <code>computed</code> "renders" a "view" of some data, and automatically updates when the source data changes. Like a React component, except generalised to cover any data, not just Virtual DOM.</li>
-<li>An <code>observable</code> is like the <code>setState</code> facility in stateful React components, except that its automatic ability to notify <code>computed</code> (and <code>autorun</code>) observers works by spooky "action at a distance" and so doesn't have to take place inside one component.</li>
-</ul>
-<p>But this still leaves one major feature of React unaddressed, and that is <em>reconciliation</em>. What is this about, and how can it be useful in a more general way in MobX?</p>
-<p><a href="json_mobx_Like_React_but_for_Data_Part_2.html">Read on...</a></p>
-<hr>
-
-<h2>Box 'em! - Property references for TypeScript</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-boxm.html">BOXM</a>  2017-01-11</p>
-<p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility <code>observable.box</code> (<a href="https://mobx.js.org/refguide/boxed.html">docs</a>). But I don't want to use that create all my properties and have to put <code>.get()</code> after every read access. I want to use the cool <code>@observable</code> decorator and just fetch my properties directly, and assign new values with <code>=</code>. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.</p>
-<p>For the overall idea, see <a href="https://github.com/danielearwicker/boxm">the project page</a>, or just look at the takeaway:</p>
-<p><a href="Box_em_Property_references_for_TypeScript.html">Read on...</a></p>
-<hr>
-
-<h2>MobX - Like React, but for Data</h2>
-<p class="meta"><a href="tag-frp.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-redux.html">REDUX</a> <a href="tag-react.html">REACT</a>  2016-12-28</p>
-<p>Catching up on blogged opinions about MobX and where it fits in (especially in relation to Redux), I see much confusion. There is a suspicion of it arising from fear of mutability. It has none of the frameworky ceremony of Redux, and that seems to cause anxiety in some.</p>
-<p>Even its defenders seem a little apologetic, like MobX is okay <em>despite</em> the heresy of allowing data to be mutable and object-oriented. The great Basarat even humorously <a href="https://twitter.com/basarat/status/812150927947800578">welcomed me to the dark side!</a></p>
-<p>I'm fine with being on the edgy team. You'll usually find me in my leather jacket and shades, posing on my parked Harley Davidson and chewing on a matchstick, intimidating the townspeople. Why? I don't have to explain myself to you, lady.</p>
-<p><a href="MobX_Like_React_but_for_Data.html">Read on...</a></p>
-<hr>
-
-<h2>What's good about Redux</h2>
-<p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-immutability.html">IMMUTABILITY</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-react.html">REACT</a>  2016-07-24</p>
-<p><a href="http://redux.js.org/">Redux</a> is based on series of really simple <em>what-if</em> questions:</p>
-<ol>
-<li><em>What if</em> all the data in your app was immutable?</li>
-<li>Okay, now it's stuck. But <em>what if</em> there was only a single solitary mutable variable holding the complete state for your entire app? To change any bit of state, you just assign a slightly different immutable tree to that variable.</li>
-<li>And <em>what if</em> the only way to mutate the state was to create a POJO describing a high-level action, and dispatch it through a single giant processing system, describing the change to make?</li>
-</ol>
-<p>A number of interesting advantages follow from sticking to this discipline. It's ideal for <a href="https://facebook.github.io/react/">ReactJS</a>. You can log everything your users do and replay it, stuff like that. You can store the state snapshots, or just the actions, or both. You can recover your app by loading in an old snapshot and then playing the recent actions to bring it up to date. If you want to know the complete story of how your application ended up in the state it's in now, you've got it. And aside from these nice capabilities, it's worth remembering a lot of bugs arise from fiddling with mutable state at the wrong time. Who needs that?</p>
-<p><a href="What_s_good_about_Redux.html">Read on...</a></p>
+<p><a href="How_to_abstract_or_when_is_a_thing.html">Read on...</a></p>
 <hr>
 
             </div>
