@@ -8,7 +8,7 @@ Of course, deep down every "thing" is just subatomic particles and forces. There
 
 > Good reductionism (also called hierarchical reductionism) consists not of *replacing* one field of knowledge with another but of *connecting* or *unifying* them.The building blocks used by one field are put under the microscope of another.
 
-The things we identify, and speak in terms of, in may not be of fundamental importance to the universe, but they are important to us. We explain what's going on in the world in terms of helpful concepts, of appropriate scale. We're not just going to *exist* in the world; we're trying to *understand* the world. That's what all these things are for.
+The things we identify, and speak in terms of, may not be of fundamental importance to the universe, but they are important to us. We explain what's going on in the world in terms of helpful concepts, of appropriate scale. We're not just going to *exist* in the world; we're trying to *understand* the world. That's what all these things are for.
 
 Constructing software is very like this. The "atoms" of software might be operations on values in memory or registers. Explaining how a large program works by throwing the machine code instructions up on a projector, and scrolling through them while saying "See?! I told you it was simple!" is not usually that helpful. We rarely even see these atoms; they are the output of a compiler. Instead we deal with goodly-sized things.
 
