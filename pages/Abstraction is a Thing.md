@@ -1,6 +1,5 @@
 tags: style
 date: 2020-03-07
-title: Abstraction is a Thing
 
 When aliens finally pay us a visit and they start floating around our cities, struggling to pronounce greetings from a phrasebook, we will no doubt say to one another, "Apparently aliens are a thing now." When we recognise something has started happening all the time, we call it "a thing". Or we might remind our friend in a tone of heavy irony, after they accidentally walk into a lamppost, "Yup, lampposts are still a thing."
 
@@ -49,7 +48,7 @@ The `map` thing is an abstraction, a black box, a building block. Someone had to
 
 ## Humans, Ugh
 
-Yet despite their essential importance in helping us understand both the real and software worlds, abstractions are nevertheless a source of controversy. The reason is obvious: they are things we summoned by human beings for our convenience, and we often annoy each other. We're in the realm of the dreaded *social problems*:
+Yet despite their essential importance in helping us understand both the real and software worlds, abstractions are nevertheless a source of controversy. The reason is obvious: they are things summoned by human beings for our convenience, and we often annoy each other. We're in the realm of the dreaded *social problems*:
 
 - New senior member joins team and is assigned a grand new goal (how motivational!) But they find the existing code is built on abstractions that just get in their way. In fact they're pretty sure that if all that abstract nonsense was torn down and replaced with reams of atomic verbosity, it would be easier to build the new abstractions they actually need. It would have been better if the last bunch of bozos hadn't tried to be so clever and invent so many useless abstractions.
 
