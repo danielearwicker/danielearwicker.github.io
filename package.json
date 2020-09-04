@@ -8,7 +8,7 @@
     "@types/node": "^7.0.29",
     "jsdom": "^15.2.0",
     "neaten": "0.0.1",
-    "showdown": "^1.4.3",
+    "showdown": "^1.9.1",
     "showdown-katex": "^0.6.0",
     "xml2js": "^0.4.16"
   },
