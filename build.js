@@ -4,9 +4,9 @@ var showdown = require("showdown");
 var xml2js = require("xml2js");
 var fs = require("fs");
 var path = require("path");
-var jsdom_1 = require("jsdom");
-var window = new jsdom_1.JSDOM("<!DOCTYPE html><html></html>").window;
-var target = global;
+var jsdom = require("jsdom");
+var window = new jsdom.JSDOM("<!DOCTYPE html><html></html>").window;
+var target = globalThis;
 target.window = window;
 target.DOMParser = window.DOMParser;
 target.document = window.document;
@@ -137,6 +137,7 @@ var articles = fs.readdirSync(inputPath).map(function (name) {
             return "<pre><code class=\"" + lang + "\">" +
                 rest.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</code></pre>";
         }, function (plain) { return new showdown.Converter({
+            tables: true,
             extensions: [
                 showdownKatex(),
             ]

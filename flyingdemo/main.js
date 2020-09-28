@@ -9,7 +9,12 @@ function touchArray(touches) {
 function log(touches, label) {
     return;
     var div = document.querySelector('.log');
-    div.innerHTML = '<p>' + label + '</p>' + '<ul>' + touches.map(function (t) { return '<li>' + t.pageX + ', ' + t.pageY + '</li>'; }).join('') + '</ul>';
+    div.innerHTML = '<p>' + label + '</p>' +
+        '<ul>' +
+        touches.map(function (t) {
+            return '<li>' + t.pageX + ', ' + t.pageY + '</li>';
+        }).join('') +
+        '</ul>';
 }
 function main() {
     var velocity = new THREE.Vector3(0, 0, 0), pitch = 0, roll = 0, yaw = 0;
@@ -45,32 +50,16 @@ function main() {
     }
     // Ship-shape!
     var vertices = [
-        0,
-        0,
-        -1,
-        -1,
-        -0.3,
-        1,
-        0,
-        0.6,
-        1,
-        1,
-        -0.3,
-        1
+        0, 0, -1,
+        -1, -0.3, 1,
+        0, 0.6, 1,
+        1, -0.3, 1
     ];
     var indices = [
-        2,
-        1,
-        0,
-        0,
-        3,
-        2,
-        1,
-        3,
-        0,
-        2,
-        3,
-        1
+        2, 1, 0,
+        0, 3, 2,
+        1, 3, 0,
+        2, 3, 1
     ];
     var ship = new THREE.Mesh(new THREE.PolyhedronGeometry(vertices, indices, 2, 0), material);
     scene.add(ship);

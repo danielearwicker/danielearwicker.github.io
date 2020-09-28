@@ -2,6 +2,15 @@ import * as showdown from "showdown";
 import * as xml2js from "xml2js";
 import * as fs from "fs";
 import * as path from "path";
+import * as jsdom from "jsdom";
+
+const window = new jsdom.JSDOM("<!DOCTYPE html><html></html>").window;
+const target = globalThis as any;
+target.window = window;
+target.DOMParser = window.DOMParser;
+target.document = window.document;
+
+import * as showdownKatex from "showdown-katex";
 
 const inputPath = "pages";
 const templatePath = "templates";
@@ -180,7 +189,11 @@ const articles = fs.readdirSync(inputPath).map(name => {
             return "<pre><code class=\"" + lang + "\">" +
                 rest.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</code></pre>";
 
-        }, plain => new showdown.Converter().makeHtml(plain));
+        }, plain => new showdown.Converter({
+            tables: true,
+            extensions: [
+                showdownKatex(),
+            ]}).makeHtml(plain));
 
     const body = getBody(linked);
 

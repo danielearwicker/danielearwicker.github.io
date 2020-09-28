@@ -1,0 +1,344 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker |  The Blob Lottery</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">      
+        <style>
+            .katex-html {
+                display: none;
+            }
+            th {
+                color: black;
+                padding: 0.5em;
+            }
+            td {
+                color: black;
+                padding: 0.2em;
+            }
+        </style>  
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="https://www.fiscaltechnologies.com/">FISCAL Technologies Ltd</a>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-cloud.html">CLOUD (1)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-probability.html">PROBABILITY (1)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-style.html">STYLE (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+            </div>
+            
+            <div class="content">
+                <h1> The Blob Lottery</h1>
+<hr>
+<p class="meta"><a href="tag-cloud.html">CLOUD</a> <a href="tag-probability.html">PROBABILITY</a>  2020-09-27</p>
+
+<p>The simplest, cheapest and fastest form of storage in the cloud is the blob. It makes no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system.</p>
+<p>Today I'm going to consider the question: if we have a dataset that we want to store in the cloud, how far should we go in breaking it down into pieces? However we decide to organise the data (indexed, sorted or just however-it-comes), there are good reasons to want to break it into pieces. Regardless of any other choices we might make, I want to see what impact this "granularity" decision will have.</p>
+<p>My particular use case involves a dataset of many millions of items, of which thousands are updated on a regular basis. A naive first guess is that I should arrange cut the data into small enough pieces so that each of these batched updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?</p>
+<h2 id="worstcasescenario">Worst case scenario</h2>
+<p>In many lucky scenarios you can take advantage of patterns in how data is accessed, known as <a href="https://en.wikipedia.org/wiki/Locality_of_reference">locality of reference</a>. Building your design around such assumptions can give you a huge advantage, e.g. if a blog post is requested, we can assume the comments for that blog post are about to be requested very soon, so we should store them near to each other. Sometimes the past <em>is</em> a guide to the future!</p>
+<p>But here I'm going to be pessimistic and assume no such pattern can be found: the daily update selects around one in a thousand items entirely at random out of the full set. Where there's randomness, there's probability, which means our intuitions tend to skip important details and get wrong answers.</p>
+<h2 id="randomness">Randomness</h2>
+<p>In the tradition of rolling a die, suppose the dataset is divided into 6 equally sized pieces which we'll call pages. If you pick a random spot to update, that spot is equally likely to appear in any page, so the probability of a page being hit is 1/6. What about the probability of a page being hit at least once after two updates?</p>
+<p>Here there's a temptation to say 2/6, like the number on the top of the fraction is the number of updates. This is our intuition, and maybe we tend toward that guess because it happens to be a good approximation if the number on the bottom of the fraction is much larger. But it isn't right, because there's a 1/6 chance that the second update will land on the same page as the first. The more pages are hit, the fewer un-hit pages remain, so the likelihood of a collision increases. The clue is in the pesky <em>"at least once"</em>. To start with, all pages have equal probability of being hit, but once a page is hit, it stays hit, so the probability of it transitioning from un-hit to hit again on subsequent updates collapses to zero.</p>
+<p>This kind of problem is easier to solve if you flip it around. If a page avoids being hit several times in a row, those are truly independent events. A page that remains un-hit is still in the game. The probability of a page <em>not</em> being hit by one update is 5/6. If it survives two unscathed, that's two independent events and we can multiply the probabilities, 5/6 * 5/6, or 25/36. We can then subtract that from 1 to get the probability of a page being hit. More generally the probability of each of <code>N</code> pages being hit after <code>U</code> updates is:</p>
+<p><span><span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>P</mi><mo>=</mo><mn>1</mn><mo>−</mo><mo>(</mo><mfrac><mrow><mi>N</mi><mo>−</mo><mn>1</mn></mrow><mi>N</mi></mfrac><msup><mo>)</mo><mi>U</mi></msup></mrow><annotation encoding="application/x-tex">P = 1-({{N-1} \over N})^U</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.68333em; vertical-align: 0em;"></span><span style="margin-right: 0.13889em;" class="mord mathdefault">P</span><span class="mspace" style="margin-right: 0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height: 0.72777em; vertical-align: -0.08333em;"></span><span class="mord">1</span><span class="mspace" style="margin-right: 0.2222222222222222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222222222222222em;"></span></span><span class="base"><span class="strut" style="height: 1.217331em; vertical-align: -0.345em;"></span><span class="mopen">(</span><span class="mord"><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.872331em;"><span class="" style="top: -2.6550000000000002em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span style="margin-right: 0.10903em;" class="mord mathdefault mtight">N</span></span></span></span><span class="" style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span class="" style="top: -3.394em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span style="margin-right: 0.10903em;" class="mord mathdefault mtight">N</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.345em;"><span class=""></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span><span class="mclose"><span class="mclose">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8413309999999999em;"><span class="" style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span style="margin-right: 0.10903em;" class="mord mathdefault mtight">U</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>This is equivalent to the fraction of <code>N</code> pages we could typically expect to be hit after <code>U</code> updates.</p>
+<p>The inputs to the formula are integers, so it's a bit clunky for small values, but once you get into thousands of updates it smooths out into the same consistent curve at all scales:</p>
+<p><img src="resources/pages-hit-probability.png" alt="graph of probability curve" width="625" height="542"></p>
+<p>The x-axis is <code>N/U</code>, so 10 means the number of pages is 10 times the number of updates. As you can see, when the number of pages equals the number of updates, most of the pages are still hit, and you need around 10 times as many to keep it down to 10% of pages.</p>
+<h2 id="whatthistellsus">What this tells us</h2>
+<p>Why is this important? There are two potential performance costs involved here. If <code>N</code> is small, we will read/write large numbers of unaffected items because they happen to live in the same pages as affected items. Our intuition says moving large amounts of data unnecessarily is wasteful so we feel an urge to avoid that. On the other hand, if <code>N</code> is large, we perform more separate physical read/write operations, because our data has been dessicated into many tiny blobs. The question is, which of these is more costly?</p>
+<p>Back in olden times, when our data was stored in hard drives, there was the time taken to read data, mentioned in the ancient chronicles as 20ms/MB, but legend also told of a so-called seek time of 10ms. This meant that if you broke a megabyte of data up into 10 pieces that were scattered around the drive, it would take 120ms to read it all - the seek time overhead was huge. Maybe the overhead of dealing with many individual blobs will work like the seek time overhead. But this will obviously depend on how the blob storage service has been implemented. And there are lots about the internals of that service that we don't know.</p>
+<p>So to answer that question, we may as well do an experiment.</p>
+<h2 id="experimenttime">Experiment time!</h2>
+<p>I'm going to use Azure Blob Storage because I have plenty of allowance to play with. The test code will run from a VM deployed in the same Azure region, to give me the fastest possible access to the storage service. </p>
+<p>Suppose each item/record/whatever is 500 bytes, and there are 10 million items, so 5GB of data. Every so often I have to apply a wave of updates to a random 10,000 items. First, following my intuition, I'll try to keep the number of accessed pages down to 10%. So I know from the above formula I need to divide my items into 100,000 pages of 100 items. As we'll only be touching 10% of the pages, that will be 10,000 physical read/writes. To test both directions I will literally save a chunk of data equivalent to a page size, and then read it back again (this is the opposite order to a real update, but hopefully represents about the same amount of total work).</p>
+<p>But what if I didn't care how much data is read? So that we don't have to hold all the data in memory, we still partition it, but this time into a mere 100 pages. This is only 1% of the number of updates, and so this pretty much guarantees all the pages will be hit, but there will only be 100 physical read/writes.</p>
+<p>Also, the formula tells us it's not going to help us if we go for 1000 pages - it may sound like a lot, but this is only a tenth of the number of updates, and all the pages will still be hit. So if there's a seek time-like overhead, this is going to be a terrible choice for the number of pages.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">Pages</th>
+<th style="text-align:right;">Page size</th>
+<th style="text-align:right;">Pages hit</th>
+<th style="text-align:right;">Read/written</th>
+<th style="text-align:right;">Seconds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">1</td>
+<td style="text-align:right;">5 GB</td>
+<td style="text-align:right;">1</td>
+<td style="text-align:right;">5 GB</td>
+<td style="text-align:right;">66</td>
+</tr>
+<tr>
+<td style="text-align:right;">10</td>
+<td style="text-align:right;">500 MB</td>
+<td style="text-align:right;">10</td>
+<td style="text-align:right;">5 GB</td>
+<td style="text-align:right;">65</td>
+</tr>
+<tr>
+<td style="text-align:right;">100</td>
+<td style="text-align:right;">50 MB</td>
+<td style="text-align:right;">100</td>
+<td style="text-align:right;">5 GB</td>
+<td style="text-align:right;">68</td>
+</tr>
+<tr>
+<td style="text-align:right;">1,000</td>
+<td style="text-align:right;">5 MB</td>
+<td style="text-align:right;">1,000</td>
+<td style="text-align:right;">5 GB</td>
+<td style="text-align:right;">107</td>
+</tr>
+<tr>
+<td style="text-align:right;">10,000</td>
+<td style="text-align:right;">500 KB</td>
+<td style="text-align:right;">6,321</td>
+<td style="text-align:right;">3.16 GB</td>
+<td style="text-align:right;">171</td>
+</tr>
+<tr>
+<td style="text-align:right;">100,000</td>
+<td style="text-align:right;">50 KB</td>
+<td style="text-align:right;">9,516</td>
+<td style="text-align:right;">476 MB</td>
+<td style="text-align:right;">137</td>
+</tr>
+<tr>
+<td style="text-align:right;">1,000,000</td>
+<td style="text-align:right;">5 KB</td>
+<td style="text-align:right;">9,950</td>
+<td style="text-align:right;">49.8 MB</td>
+<td style="text-align:right;">137</td>
+</tr>
+<tr>
+<td style="text-align:right;">10,000,000</td>
+<td style="text-align:right;">500 B</td>
+<td style="text-align:right;">9,995</td>
+<td style="text-align:right;">5 MB</td>
+<td style="text-align:right;">134</td>
+</tr>
+</tbody>
+</table>
+<p>Well. As the number of pages increases, it becomes more and more likely there will be no collisions, until the number hit is roughly equal to the number of updates made (which, remember, is always 10,000). But the only thing we really care about is the total time taken. Basically we can shift 5 GB in both directions in just over a minute, as long as we don't break it up into more than a 100 or so pieces. That's only 1.33 Gbps, so slower than the raw read speed of an SSD, but we are writing too, so pretty impressive.</p>
+<p>But as we try to break it into smaller pieces in an attempt to cut the amount of data we have to transfer, the running time goes up, and while it comes down a little, it's at least twice as slow as reading all the data. This is true even when we're only reading 1/1000th of the dataset.</p>
+<h2 id="whyevenhavelotsofpages">Why even have lots of pages?</h2>
+<p>Of course, this does not mean that all systems that break data into smaller pieces are stupid. And this, by the way, includes popular databases that typically have quite small page sizes. In Microsoft SQL Server it's a measly 8 KB, which implies 625,000 pages, and would certainly be a poor size given the assumptions in my example scenario (even if not using cloud storage). But my example has been chosen specifically to illustrate a situation where such granular pages are not helpful, simply because my regular bulk processing runs will access 100,000 records at random from across the whole dataset, as quickly as possible. This is different from how a traditional RDBMS is typically used, where 1 or 2 records from the entire database are requested at a time by individual users, and also their access patterns are distinctly non-random. The majority of requests are aimed at recently stored records, and so the requests of current users will fall heavily on a few hundred pages that can be cached cheaply. And caching works wonders when writes are rarer than reads, which they very often are. But in my scenario, there are equal numbers of writes and reads, and the cache would constantly be defeated by randomness.</p>
+<h2 id="whyevenhavemorethanonepage">Why even have more than one page?</h2>
+<p>Supposing my scenario is applicable, and so lots of small pages would be counter-productive: why even bother to split the dataset at all? The obvious reason is that it may not fit conveniently into memory on a single server. 5 GB is not a huge amount of memory these days, but a cloud node that supports 50 GB is still pretty expensive. If you can segment the data, you have way more flexibility.</p>
+<p>The other important reason is to support parallel processing. Break the data up into 10 to 100 partitions and you can (temporarily) spin up that many nodes to separately perform the updating. Each partition is like a little separate world. The good news about blob storage services is that they elastically scale, meaning that as you throw more parallel requests at them, they just keep serving at the same speed per request. Want your processing to go 100 times faster? Just do 100 pieces of it at the same time.</p>
+<p>Of course it's not entirely that simple: what if the information that arrives to tell us what updates to make is also in random order? We'll need to route each piece of information the relevant partition. And we don't want to be doing that in tiny pieces, given what we know about the performance implications. If we receive 100,000 new versions of records to store, we need to split them into 100 parcels of 1000 records, one for each of our 100 partitions. The solution is to run a non-parallel first pass that constructs the input parcels as blobs, before we launch the all the parallel processing.</p>
+<p>To get the most out of parallel processing, we need to ensure that records are evenly divided between the partitions. The records will be accessed by some key, but we don't know in advance how that key's values will be distributed (or whether any pattern will persist over time). There are a number of strategies, but if the access pattern is truly random, we will do no real harm by shuffling the records any way we like. And so we can use the simplest approach of all, which is to simply hash the key to an integer and then scale it down to the number of partitions. The advantage of this is simplicity. We don't want to write our own database, we just want to store stuff in blobs with minimal logic required to locate the data we require. The logic described here is a few lines of code.</p>
+<p>By the way, for the kind of approach I'm using here, Azure's "hot" tier is appropriate, because you are not charged for the amount of data you transfer, only the total amount stored, and also a very small charge based on the number of individual requests you make. So there is even a financial incentive to make fewer requests for larger pieces of data, rather than more requests for smaller pieces.</p>
+<p>Even so, we <em>could</em> get more sophisticated. A single index blob could be used to describe ranges of key values belonging to partitions, mapping them to integer IDs of blobs containing their records. When partitions get too large it will be necessary to split them. Supposing they shrink, we'll have to merge them. The advantage of this is that where access to keys is not random, but instead turns out to exhibit locality of reference, we'll find that a given update wave will hit far fewer pages than predicted by the random model, as the updated records will often be clustered together in the same few pages.</p>
+<p>But has to be set against the downside: more complex code. We are drifting towards implementing a custom B+tree. And it probably isn't worth it, given the elastic scaling power of blob storage. We can churn through our 5 GB of data in just over a minute, or 150,000 records per second, even if we do it serially. If we do 10 in parallel, it goes up to 1.5 million records per second. If necessary, we can scale out to 100 partitions before any significant overhead is encountered, which seems to imply we can cover the whole dataset in under a second! This of course depends on whether the storage service is really <em>that</em> elastic, and how network traffic is routed inside the data centre. I haven't tested that yet…</p>
+<p>Probably worth seeing how you get on with that kind of raw speed before committing a more complex design.</p>
+
+            </div>
+            
+            <div class="outer">                                
+                <table class="recent" align="center"><tr>
+    <td>
+        <strong> The Blob Lottery</strong>
+    </td>
+    <td class="date"> 2020-09-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Abstraction_is_a_Thing.html">Abstraction is a Thing</a>
+    </td>
+    <td class="date"> 2020-03-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
+    </td>
+    <td class="date"> 2019-08-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Factory_Injection_in_C.html">Factory Injection in C#</a>
+    </td>
+    <td class="date"> 2019-07-02</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Hangfire_A_Tale_of_Several_Queues.html">Hangfire - A Tale of Several Queues</a>
+    </td>
+    <td class="date"> 2019-05-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="How_Does_Auth_work.html"> How Does Auth work?</a>
+    </td>
+    <td class="date"> 2018-11-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_2_Baby_Bathwater_Routing_etc.html"> From Ember to React, Part 2: Baby, Bathwater, Routing, etc.</a>
+    </td>
+    <td class="date"> 2018-03-18</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_1_Why_Not_Ember.html"> From Ember to React, Part 1: Why Not Ember?</a>
+    </td>
+    <td class="date"> 2017-11-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="json_mobx_Like_React_but_for_Data_Part_2.html">json-mobx - Like React, but for Data (Part 2)</a>
+    </td>
+    <td class="date"> 2017-02-15</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Redux_in_Pieces.html">Redux in Pieces</a>
+    </td>
+    <td class="date"> 2017-01-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Box_em_Property_references_for_TypeScript.html">Box 'em! - Property references for TypeScript</a>
+    </td>
+    <td class="date"> 2017-01-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_s_up_with_this.html"> TypeScript - What's up with this?</a>
+    </td>
+    <td class="date"> 2017-01-01</td>    
+</tr>
+<tr>
+    <td>
+        <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>
+    </td>
+    <td class="date"> 2016-12-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
+    </td>
+    <td class="date"> 2016-12-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Epilogue.html">Immuto - Epilogue</a>
+    </td>
+    <td class="date"> 2016-12-20</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Radical_Unification.html">Immuto - Radical Unification</a>
+    </td>
+    <td class="date"> 2016-09-22</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Working_with_React_An_Example.html">Immuto - Working with React (An Example)</a>
+    </td>
+    <td class="date"> 2016-09-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_is_a_class.html"> TypeScript - What is a class?</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing_EPISODE_II.html">TypeScript and runtime typing - EPISODE II</a>
+    </td>
+    <td class="date"> 2016-09-10</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing.html">TypeScript and runtime typing</a>
+    </td>
+    <td class="date"> 2016-09-04</td>    
+</tr>
+<tr>
+    <td>
+        <a href="What_s_good_about_Redux.html">What's good about Redux</a>
+    </td>
+    <td class="date"> 2016-07-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">  
+                <div class="rss">Want to comment on anything? <a href="https://github.com/danielearwicker/danielearwicker.github.io/issues">Create an issue!</a></div>              
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>

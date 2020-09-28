@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | Eventless - XAML Flavoured</title>
+        <title>Daniel Earwicker | probability</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">      
         <style>
@@ -35,21 +35,13 @@
             </div>
             
             <div class="content">
-                <h1>Eventless - XAML Flavoured</h1>
+                <h2> The Blob Lottery</h2>
+<p class="meta"><a href="tag-cloud.html">CLOUD</a> <a href="tag-probability.html">PROBABILITY</a>  2020-09-27</p>
+<p>The simplest, cheapest and fastest form of storage in the cloud is the blob. It makes no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system.</p>
+<p>Today I'm going to consider the question: if we have a dataset that we want to store in the cloud, how far should we go in breaking it down into pieces? However we decide to organise the data (indexed, sorted or just however-it-comes), there are good reasons to want to break it into pieces. Regardless of any other choices we might make, I want to see what impact this "granularity" decision will have.</p>
+<p>My particular use case involves a dataset of many millions of items, of which thousands are updated on a regular basis. A naive first guess is that I should arrange cut the data into small enough pieces so that each of these batched updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?</p>
+<p><a href="The_Blob_Lottery.html">Read on...</a></p>
 <hr>
-<p class="meta"><a href="tag-frp.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-eventless.html">EVENTLESS</a> <a href="tag-c__23.html">C#</a>  2016-12-24</p>
-
-<p>About four years ago, being so taken with data modeling approach used in 
-<a href="http://knockoutjs.com">Knockout.js</a>, I wanted to 
-<a href="https://smellegantcode.wordpress.com/2013/02/25/eventless-programming-part-1-why-the-heck/">recreate it for C#</a>.
-At the time I wasn't actively using C# so I never got to really use it and left it alone.</p>
-<p>But in the last year and a half I've written a few view models for a WPF application. The first time
-I did it I couldn't believe how primitive and laborious it was in comparison. So I started idly 
-messing with Eventless in my spare time - mostly deleting stuff - to make it XAML-friendly.</p>
-<p>Just like Knockout, and now <a href="https://github.com/mobxjs/mobx">MobX</a>, it makes the process delightfully simple. You just declare stuff and it works!</p>
-<p><a href="https://github.com/danielearwicker/eventless">Fork away!</a></p>
-<p>Or just install it via <a href="https://www.nuget.org/packages/Eventless/">nuget</a>. Also there is <a href="http://earwicker.com/eventless/html/ca2f21b1-fdbc-4b93-8fc1-051fdf574854.htm">complete API reference 
-documentation</a>.</p>
 
             </div>
             
@@ -140,7 +132,7 @@ documentation</a>.</p>
 </tr>
 <tr>
     <td>
-        <strong>Eventless - XAML Flavoured</strong>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
     </td>
     <td class="date"> 2016-12-24</td>    
 </tr>

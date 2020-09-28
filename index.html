@@ -3,7 +3,20 @@
         <meta charset="utf-8" /> 
         <title>Daniel Earwicker | earwiki</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
-        <link rel="stylesheet" href="style.css">        
+        <link rel="stylesheet" href="style.css">      
+        <style>
+            .katex-html {
+                display: none;
+            }
+            th {
+                color: black;
+                padding: 0.5em;
+            }
+            td {
+                color: black;
+                padding: 0.2em;
+            }
+        </style>  
     </head>
     <body>
         <div class="oneColumn">
@@ -18,11 +31,19 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-style.html">STYLE (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-cloud.html">CLOUD (1)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-probability.html">PROBABILITY (1)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-style.html">STYLE (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
-                <h2>Abstraction is a Thing</h2>
+                <h2> The Blob Lottery</h2>
+<p class="meta"><a href="tag-cloud.html">CLOUD</a> <a href="tag-probability.html">PROBABILITY</a>  2020-09-27</p>
+<p>The simplest, cheapest and fastest form of storage in the cloud is the blob. It makes no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system.</p>
+<p>Today I'm going to consider the question: if we have a dataset that we want to store in the cloud, how far should we go in breaking it down into pieces? However we decide to organise the data (indexed, sorted or just however-it-comes), there are good reasons to want to break it into pieces. Regardless of any other choices we might make, I want to see what impact this "granularity" decision will have.</p>
+<p>My particular use case involves a dataset of many millions of items, of which thousands are updated on a regular basis. A naive first guess is that I should arrange cut the data into small enough pieces so that each of these batched updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?</p>
+<p><a href="The_Blob_Lottery.html">Read on...</a></p>
+<hr>
+
+<h2>Abstraction is a Thing</h2>
 <p class="meta"><a href="tag-style.html">STYLE</a>  2020-03-07</p>
 <p>When aliens finally pay us a visit and they start floating around our cities, struggling to pronounce greetings from a phrasebook, we will no doubt say to one another, "Apparently aliens are a thing now." When we recognise something has started happening all the time, we call it "a thing". Or we might remind our friend in a tone of heavy irony, after they accidentally walk into a lamppost, "Yup, lampposts are still a thing."</p>
 <p>Of course, deep down every "thing" is just subatomic particles and forces. There is nothing else. Except of course there is! It's a frustrating thing about casual pop science explanations that they stray into that kind of obsessive reductionism. Things don't stop existing just because you found out what they're made of. No one seriously stops referring to chairs and tables when they learn about atoms. I can't put it better than Stephen Pinker:</p>
@@ -296,6 +317,12 @@ is already good enough for every way I currently make use of rich text in browse
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="The_Blob_Lottery.html"> The Blob Lottery</a>
+    </td>
+    <td class="date"> 2020-09-27</td>    
+</tr>
+<tr>
     <td>
         <a href="Abstraction_is_a_Thing.html">Abstraction is a Thing</a>
     </td>

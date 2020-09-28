@@ -4,7 +4,15 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2020-03-07T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2020-09-27T00:00:00Z</lastBuildDate>
+    <item>
+      <title> The Blob Lottery</title>
+      <pubDate> 2020-09-27T00:00:00Z</pubDate>
+      <description>&lt;p&gt;The simplest, cheapest and fastest form of storage in the cloud is the blob. It makes no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system.&lt;/p&gt;
+&lt;p&gt;Today I'm going to consider the question: if we have a dataset that we want to store in the cloud, how far should we go in breaking it down into pieces? However we decide to organise the data (indexed, sorted or just however-it-comes), there are good reasons to want to break it into pieces. Regardless of any other choices we might make, I want to see what impact this "granularity" decision will have.&lt;/p&gt;
+&lt;p&gt;My particular use case involves a dataset of many millions of items, of which thousands are updated on a regular basis. A naive first guess is that I should arrange cut the data into small enough pieces so that each of these batched updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/The_Blob_Lottery.html</link>
+    </item>
     <item>
       <title>Abstraction is a Thing</title>
       <pubDate> 2020-03-07T00:00:00Z</pubDate>
