@@ -2,6 +2,8 @@ tags: maps archival bbc
 date: 2021-02-07
 title: Domesday '86 Reloaded (Reloaded)
 
+TL;DR: [I built this yesterday](https://earwicker.com/dansday86/).
+
 Back in the mid-1980s my primary (same thing as elementary) school suddenly told us we had to come up with content for [a digital encyclopedia of the UK](https://en.wikipedia.org/wiki/BBC_Domesday_Project), conceptualised as a successor to William I's audit of his freshly conquered territory carried out exactly 900 years earlier. Yes, like the crowd-sourced Internet utopia envisaged in the mid-2000s, "Web 2.0", in which ordinary people are both the content providers and consumers, and will become empowered, and definitely won't turn into Nazis and storm the citadels of democracy. All the good parts of that somehow travelled back in time to 1985 (Marty). Except it wasn't really grass-roots, it was astro-turf: the BBC conspired with the schools to *make* it happen, in a top-down patrician Lord Reith type of way.
 
 Even so, to my childhood mind, it's like I'm Ford Prefect doing field research for The Guide and unfortunately I've been stranded on this pathetic little planet for slightly longer than expected and I'm not really from Guildford after all (or indeed ever).
