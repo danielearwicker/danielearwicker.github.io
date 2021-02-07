@@ -22,7 +22,7 @@ Here there's a temptation to say 2/6, like the number on the top of the fraction
 
 This kind of problem is easier to solve if you flip it around. If a page avoids being hit several times in a row, those are truly independent events. A page that remains un-hit is still in the game. The probability of a page *not* being hit by one update is 5/6. If it survives two unscathed, that's two independent events and we can multiply the probabilities, 5/6 * 5/6, or 25/36. We can then subtract that from 1 to get the probability of the page being hit at least once. More generally the probability of each of `N` pages being hit after `U` updates is:
 
-$$P = 1-({{N-1} \over N})^U$$
+![equation](resources/blob-math.jpg)
 
 This is equivalent to the fraction of `N` pages we could typically expect to be hit after `U` updates.
 
