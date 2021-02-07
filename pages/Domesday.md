@@ -138,4 +138,6 @@ Then when the site loads up, I grab that info and obey it (I use the coordinates
 
 [And here it is!](https://earwicker.com/dansday86/)
 
+I decided to call it Dansday '86, in honour of Dean Pelton from Community (except I *Chang*-ed it to my name instead of his.)
+
 The End.
