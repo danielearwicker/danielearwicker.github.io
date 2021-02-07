@@ -4,13 +4,21 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2020-09-27T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2021-02-07T00:00:00Z</lastBuildDate>
+    <item>
+      <title> Domesday '86 Reloaded (Reloaded)</title>
+      <pubDate> 2021-02-07T00:00:00Z</pubDate>
+      <description>&lt;p&gt;Back in the mid-1980s my primary (same thing as elementary) school suddenly told us we had to come up with content for &lt;a href="https://en.wikipedia.org/wiki/BBC_Domesday_Project"&gt;a digital encyclopedia of the UK&lt;/a&gt;, conceptualised as a successor to William I's audit of his freshly conquered territory carried out exactly 900 years earlier. Yes, like the crowd-sourced Internet utopia envisaged in the mid-2000s, "Web 2.0", in which ordinary people are both the content providers and consumers, and will become empowered, and definitely won't turn into Nazis and storm the citadels of democracy. All the good parts of that somehow travelled back in time to 1985 (Marty). Except it wasn't really grass-roots, it was astro-turf: the BBC conspired with the schools to &lt;em&gt;make&lt;/em&gt; it happen, in a top-down patrician Lord Reith type of way.&lt;/p&gt;
+&lt;p&gt;Even so, to my childhood mind, it's like I'm Ford Prefect doing field research for The Guide and unfortunately I've been stranded on this pathetic little planet for slightly longer than expected and I'm not really from Guildford after all (or indeed ever).&lt;/p&gt;
+&lt;p&gt;Then a year or so later the project was finished, and it was published on a couple of &lt;em&gt;laser discs&lt;/em&gt; (nothing will ever sound more futuristic and cheesy) that could only be interactively explored on some expensive modified hardware. But it was in a way a groundbreaking exercise that seems now like it was made of uncanny magical reverse echoes of trends that would not truly emerge for decades.&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Domesday_86_Reloaded_Reloaded.html</link>
+    </item>
     <item>
       <title> The Blob Lottery</title>
       <pubDate> 2020-09-27T00:00:00Z</pubDate>
-      <description>&lt;p&gt;The simplest, cheapest and fastest form of storage in the cloud is the blob. It makes no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system.&lt;/p&gt;
+      <description>&lt;p&gt;The simplest, cheapest and fastest form of storage in the cloud is the blob. It's very bare-bones, making no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system. But if you can put up with those limitations, you can save $$$.&lt;/p&gt;
 &lt;p&gt;Today I'm going to consider the question: if we have a dataset that we want to store in the cloud, how far should we go in breaking it down into pieces? However we decide to organise the data (indexed, sorted or just however-it-comes), there are good reasons to want to break it into pieces. Regardless of any other choices we might make, I want to see what impact this "granularity" decision will have.&lt;/p&gt;
-&lt;p&gt;My particular use case involves a dataset of many millions of items, of which thousands are updated on a regular basis. A naive first guess is that I should arrange cut the data into small enough pieces so that each of these batched updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?&lt;/p&gt;</description>
+&lt;p&gt;My particular use case involves a dataset of many millions of items, of which thousands are updated during a nightly "processing run". A naive first guess is that I should arrange cut the data into small enough pieces so that each of these nightly batch updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?&lt;/p&gt;</description>
       <link>http://danielearwicker.github.io/The_Blob_Lottery.html</link>
     </item>
     <item>

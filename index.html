@@ -31,15 +31,23 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-cloud.html">CLOUD (1)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-probability.html">PROBABILITY (1)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-style.html">STYLE (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-archival.html">ARCHIVAL (1)</a> <a href="tag-bbc.html">BBC (1)</a> <a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-cloud.html">CLOUD (1)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-maps.html">MAPS (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-probability.html">PROBABILITY (1)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-style.html">STYLE (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
-                <h2> The Blob Lottery</h2>
+                <h2> Domesday '86 Reloaded (Reloaded)</h2>
+<p class="meta"><a href="tag-maps.html">MAPS</a> <a href="tag-archival.html">ARCHIVAL</a> <a href="tag-bbc.html">BBC</a>  2021-02-07</p>
+<p>Back in the mid-1980s my primary (same thing as elementary) school suddenly told us we had to come up with content for <a href="https://en.wikipedia.org/wiki/BBC_Domesday_Project">a digital encyclopedia of the UK</a>, conceptualised as a successor to William I's audit of his freshly conquered territory carried out exactly 900 years earlier. Yes, like the crowd-sourced Internet utopia envisaged in the mid-2000s, "Web 2.0", in which ordinary people are both the content providers and consumers, and will become empowered, and definitely won't turn into Nazis and storm the citadels of democracy. All the good parts of that somehow travelled back in time to 1985 (Marty). Except it wasn't really grass-roots, it was astro-turf: the BBC conspired with the schools to <em>make</em> it happen, in a top-down patrician Lord Reith type of way.</p>
+<p>Even so, to my childhood mind, it's like I'm Ford Prefect doing field research for The Guide and unfortunately I've been stranded on this pathetic little planet for slightly longer than expected and I'm not really from Guildford after all (or indeed ever).</p>
+<p>Then a year or so later the project was finished, and it was published on a couple of <em>laser discs</em> (nothing will ever sound more futuristic and cheesy) that could only be interactively explored on some expensive modified hardware. But it was in a way a groundbreaking exercise that seems now like it was made of uncanny magical reverse echoes of trends that would not truly emerge for decades.</p>
+<p><a href="Domesday_86_Reloaded_Reloaded.html">Read on...</a></p>
+<hr>
+
+<h2> The Blob Lottery</h2>
 <p class="meta"><a href="tag-cloud.html">CLOUD</a> <a href="tag-probability.html">PROBABILITY</a>  2020-09-27</p>
-<p>The simplest, cheapest and fastest form of storage in the cloud is the blob. It makes no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system.</p>
+<p>The simplest, cheapest and fastest form of storage in the cloud is the blob. It's very bare-bones, making no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system. But if you can put up with those limitations, you can save $$$.</p>
 <p>Today I'm going to consider the question: if we have a dataset that we want to store in the cloud, how far should we go in breaking it down into pieces? However we decide to organise the data (indexed, sorted or just however-it-comes), there are good reasons to want to break it into pieces. Regardless of any other choices we might make, I want to see what impact this "granularity" decision will have.</p>
-<p>My particular use case involves a dataset of many millions of items, of which thousands are updated on a regular basis. A naive first guess is that I should arrange cut the data into small enough pieces so that each of these batched updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?</p>
+<p>My particular use case involves a dataset of many millions of items, of which thousands are updated during a nightly "processing run". A naive first guess is that I should arrange cut the data into small enough pieces so that each of these nightly batch updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?</p>
 <p><a href="The_Blob_Lottery.html">Read on...</a></p>
 <hr>
 
@@ -317,6 +325,12 @@ is already good enough for every way I currently make use of rich text in browse
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Domesday_86_Reloaded_Reloaded.html"> Domesday '86 Reloaded (Reloaded)</a>
+    </td>
+    <td class="date"> 2021-02-07</td>    
+</tr>
+<tr>
     <td>
         <a href="The_Blob_Lottery.html"> The Blob Lottery</a>
     </td>

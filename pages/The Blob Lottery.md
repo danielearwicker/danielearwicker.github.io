@@ -2,11 +2,11 @@ tags: cloud probability
 date: 2020-09-27
 title: The Blob Lottery
 
-The simplest, cheapest and fastest form of storage in the cloud is the blob. It makes no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system.
+The simplest, cheapest and fastest form of storage in the cloud is the blob. It's very bare-bones, making no attempt to compete with more high-level searchable storage offerings that help you by making your data searchable every which way. It's little more than a remote file system. But if you can put up with those limitations, you can save $$$.
 
 Today I'm going to consider the question: if we have a dataset that we want to store in the cloud, how far should we go in breaking it down into pieces? However we decide to organise the data (indexed, sorted or just however-it-comes), there are good reasons to want to break it into pieces. Regardless of any other choices we might make, I want to see what impact this "granularity" decision will have.
 
-My particular use case involves a dataset of many millions of items, of which thousands are updated on a regular basis. A naive first guess is that I should arrange cut the data into small enough pieces so that each of these batched updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?
+My particular use case involves a dataset of many millions of items, of which thousands are updated during a nightly "processing run". A naive first guess is that I should arrange cut the data into small enough pieces so that each of these nightly batch updates is required to read and write a minimal subset. The fewer raw bytes I have to transfer over the network, the faster my process should go, right?
 
 ## Worst case scenario
 
@@ -20,7 +20,7 @@ In the tradition of rolling a die, suppose the dataset is divided into 6 equally
 
 Here there's a temptation to say 2/6, like the number on the top of the fraction is the number of updates. This is our intuition, and maybe we tend toward that guess because it happens to be a good approximation if the number on the bottom of the fraction is much larger. But it isn't right, because there's a 1/6 chance that the second update will land on the same page as the first. The more pages are hit, the fewer un-hit pages remain, so the likelihood of a collision increases. The clue is in the pesky *"at least once"*. To start with, all pages have equal probability of being hit, but once a page is hit, it stays hit, so the probability of it transitioning from un-hit to hit again on subsequent updates collapses to zero.
 
-This kind of problem is easier to solve if you flip it around. If a page avoids being hit several times in a row, those are truly independent events. A page that remains un-hit is still in the game. The probability of a page *not* being hit by one update is 5/6. If it survives two unscathed, that's two independent events and we can multiply the probabilities, 5/6 * 5/6, or 25/36. We can then subtract that from 1 to get the probability of a page being hit. More generally the probability of each of `N` pages being hit after `U` updates is:
+This kind of problem is easier to solve if you flip it around. If a page avoids being hit several times in a row, those are truly independent events. A page that remains un-hit is still in the game. The probability of a page *not* being hit by one update is 5/6. If it survives two unscathed, that's two independent events and we can multiply the probabilities, 5/6 * 5/6, or 25/36. We can then subtract that from 1 to get the probability of the page being hit at least once. More generally the probability of each of `N` pages being hit after `U` updates is:
 
 $$P = 1-({{N-1} \over N})^U$$
 
@@ -30,19 +30,19 @@ The inputs to the formula are integers, so it's a bit clunky for small values, b
 
 ![graph of probability curve](resources/pages-hit-probability.png =625x542)
 
-The x-axis is `N/U`, so 10 means the number of pages is 10 times the number of updates. As you can see, when the number of pages equals the number of updates, most of the pages are still hit, and you need around 10 times as many to keep it down to 10% of pages.
+The x-axis is `N/U`, so 10 means the number of pages is 10 times the number of updates. As you can see, if the number of pages equals the number of updates, most of the pages will be hit, and you need around 10 times as many pages to keep it down to 10% of pages being hit.
 
 ## What this tells us
 
-Why is this important? There are two potential performance costs involved here. If `N` is small, we will read/write large numbers of unaffected items because they happen to live in the same pages as affected items. Our intuition says moving large amounts of data unnecessarily is wasteful so we feel an urge to avoid that. On the other hand, if `N` is large, we perform more separate physical read/write operations, because our data has been dessicated into many tiny blobs. The question is, which of these is more costly?
+Why is this important? There are two potential performance costs involved here. If `N` is small, the nightly operation will read/write large numbers of irrelevant items because they happen to live in the same pages as relevant items. Our intuition says moving large amounts of data unnecessarily is wasteful so we feel an urge to avoid that. On the other hand, if `N` is large, we perform more separate physical read/write operations, because our data has been dessicated into many tiny blobs. The question is, which of these is more costly?
 
-Back in olden times, when our data was stored in hard drives, there was the time taken to read data, mentioned in the ancient chronicles as 20ms/MB, but legend also told of a so-called seek time of 10ms. This meant that if you broke a megabyte of data up into 10 pieces that were scattered around the drive, it would take 120ms to read it all - the seek time overhead was huge. Maybe the overhead of dealing with many individual blobs will work like the seek time overhead. But this will obviously depend on how the blob storage service has been implemented. And there are lots about the internals of that service that we don't know.
+Back in olden times, when our data was stored in hard drives, there was the time taken to read data, mentioned in the ancient chronicles as 20ms/MB, but legend also told of a so-called seek time of 10ms. This meant that if you broke a megabyte of data up into 10 pieces that were scattered around the drive, it would take 120ms to read it all - the seek time overhead was huge. Maybe the overhead of dealing with many individual blobs will work like the seek time overhead. But this will obviously depend on how the blob storage service has been implemented. And there are lots of details about the internals of that service that we don't know.
 
 So to answer that question, we may as well do an experiment.
 
 ## Experiment time!
 
-I'm going to use Azure Blob Storage because I have plenty of allowance to play with. The test code will run from a VM deployed in the same Azure region, to give me the fastest possible access to the storage service. 
+I'm going to use Azure Blob Storage because I have plenty of allowance to play with. The test code will run from a VM deployed in the same Azure region, to give me the fastest possible access to the storage service. This is really important - running a test like this from your laptop at home gives a very misleading impression. Inside the data centre the networking is state-of-the-art.
 
 Suppose each item/record/whatever is 500 bytes, and there are 10 million items, so 5GB of data. Every so often I have to apply a wave of updates to a random 10,000 items. First, following my intuition, I'll try to keep the number of accessed pages down to 10%. So I know from the above formula I need to divide my items into 100,000 pages of 100 items. As we'll only be touching 10% of the pages, that will be 10,000 physical read/writes. To test both directions I will literally save a chunk of data equivalent to a page size, and then read it back again (this is the opposite order to a real update, but hopefully represents about the same amount of total work).
 
@@ -67,7 +67,7 @@ But as we try to break it into smaller pieces in an attempt to cut the amount of
 
 ## Why even have lots of pages?
 
-Of course, this does not mean that all systems that break data into smaller pieces are stupid. And this, by the way, includes popular databases that typically have quite small page sizes. In Microsoft SQL Server it's a measly 8 KB, which implies 625,000 pages, and would certainly be a poor size given the assumptions in my example scenario (even if not using cloud storage). But my example has been chosen specifically to illustrate a situation where such granular pages are not helpful, simply because my regular bulk processing runs will access 100,000 records at random from across the whole dataset, as quickly as possible. This is different from how a traditional RDBMS is typically used, where 1 or 2 records from the entire database are requested at a time by individual users, and also their access patterns are distinctly non-random. The majority of requests are aimed at recently stored records, and so the requests of current users will fall heavily on a few hundred pages that can be cached cheaply. And caching works wonders when writes are rarer than reads, which they very often are. But in my scenario, there are equal numbers of writes and reads, and the cache would constantly be defeated by randomness.
+Of course, this does not mean that all systems that break data into smaller pieces are stupid. And this, by the way, includes popular databases that typically have quite small page sizes. In Microsoft SQL Server it's a measly 8 KB, which implies 625,000 pages, and would certainly be a poor size given the assumptions in my example scenario (even if not using cloud storage). But my example has been chosen specifically to illustrate a situation where such granular pages are not helpful, simply because my regular bulk processing runs will access 10,000 records at random from across the whole dataset, as quickly as possible. This is different from how a traditional RDBMS is typically used, where 1 or 2 records from the entire database are requested at a time by individual users, and also their access patterns are distinctly non-random. The majority of requests are aimed at recently stored records, and so the requests of current users will fall heavily on a few hundred pages that can be cached cheaply. And caching works wonders when writes are rarer than reads, which they very often are. But in my scenario, there are equal numbers of writes and reads, and the cache would constantly be defeated by randomness.
 
 ## Why even have more than one page?
 

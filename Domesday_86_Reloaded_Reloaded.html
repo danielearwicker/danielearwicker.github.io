@@ -1,0 +1,336 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker |  Domesday '86 Reloaded (Reloaded)</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">      
+        <style>
+            .katex-html {
+                display: none;
+            }
+            th {
+                color: black;
+                padding: 0.5em;
+            }
+            td {
+                color: black;
+                padding: 0.2em;
+            }
+        </style>  
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="https://www.fiscaltechnologies.com/">FISCAL Technologies Ltd</a>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-archival.html">ARCHIVAL (1)</a> <a href="tag-bbc.html">BBC (1)</a> <a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (7)</a> <a href="tag-cloud.html">CLOUD (1)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-maps.html">MAPS (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-probability.html">PROBABILITY (1)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-style.html">STYLE (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+            </div>
+            
+            <div class="content">
+                <h1> Domesday '86 Reloaded (Reloaded)</h1>
+<hr>
+<p class="meta"><a href="tag-maps.html">MAPS</a> <a href="tag-archival.html">ARCHIVAL</a> <a href="tag-bbc.html">BBC</a>  2021-02-07</p>
+
+<p>Back in the mid-1980s my primary (same thing as elementary) school suddenly told us we had to come up with content for <a href="https://en.wikipedia.org/wiki/BBC_Domesday_Project">a digital encyclopedia of the UK</a>, conceptualised as a successor to William I's audit of his freshly conquered territory carried out exactly 900 years earlier. Yes, like the crowd-sourced Internet utopia envisaged in the mid-2000s, "Web 2.0", in which ordinary people are both the content providers and consumers, and will become empowered, and definitely won't turn into Nazis and storm the citadels of democracy. All the good parts of that somehow travelled back in time to 1985 (Marty). Except it wasn't really grass-roots, it was astro-turf: the BBC conspired with the schools to <em>make</em> it happen, in a top-down patrician Lord Reith type of way.</p>
+<p>Even so, to my childhood mind, it's like I'm Ford Prefect doing field research for The Guide and unfortunately I've been stranded on this pathetic little planet for slightly longer than expected and I'm not really from Guildford after all (or indeed ever).</p>
+<p>Then a year or so later the project was finished, and it was published on a couple of <em>laser discs</em> (nothing will ever sound more futuristic and cheesy) that could only be interactively explored on some expensive modified hardware. But it was in a way a groundbreaking exercise that seems now like it was made of uncanny magical reverse echoes of trends that would not truly emerge for decades.</p>
+<h2 id="digitalobsolescence">Digital Obsolescence</h2>
+<p>Domesday '86 has since become the widely referenced example of digital obsolescence, mainly because to anyone looking to make a Luddite point, the obvious comparison is just so irresistible: the original Domesday book was still readable because paper is forever. This is of course nonsense: paper rots, is scribbled on, gets soggy, burns (okay maybe not both of those at once). Maintaining something in a readable form requires effort and attention, even if that means keeping it in a special room, away from children, floods or flames, touched only by people wearing those fancy white science gloves. Nothing lasts forever unless we lavish care on it. If a thing disappears, it's because no one cared.</p>
+<p>And as it turns out, people did care about Domesday '86. <a href="http://www.ariadne.ac.uk/issue/36/tna/">Adrian Pearce's heroic efforts</a> produced a recovered, fully digitised dataset (originally the images on the discs were just analogue video frames), which he made available online, but it disappeared on his death in 2008. In any case, the BBC held the copyright and 2011 they spun up a project to give the material a modern (well, 2011) web-based UI. But then they pulled the plug on that site, entrusting the material to the National Archive. Meanwhile a <a href="https://www.domesday86.com/">really hardcore authentic preservation/revival Domesday '86 project</a> continues, aiming to emulate the original software and user experience as closely as possible.</p>
+<p>So a happy ending? Well, not quite. <a href="https://twitter.com/mumoss/status/1011904564910608384">As many have discovered</a>, when the National Archive made a copy of the BBC's site, they just webcrawled it to make <a href="https://webarchive.nationalarchives.gov.uk/20120116144044/http://www.bbc.co.uk/history/domesday">a static mirror, and stuck it online</a>. None of the interactive elements work, except that if you start from a content page for an actual place, you can click links to go North, South, East or West, so it's like a classic text adventure game: tedious and irritating.</p>
+<p>It's particularly galling that they also put a running clock's timestamp in the URL of each page as they copied it, e.g.</p><pre><code class="">https://webarchive.nationalarchives.gov.uk/20120316094313/http://www.bbc.co.uk/history/domesday/dblock/GB-348000-534000
+</code></pre><p>Right before the original BBC URL there's <code>20120316094313</code>, and as if to maximise the frustration, this is different across the pages. By the look of it, they backed up that page On March 16th, 2012 at 09:43 and 13 seconds. Why is this bad? Because apart from that stupid timestamp, this is very nearly a deterministic URL. The <code>GB-348000-534000</code> tells us the Ordinance Survey map coordinates for the south-west corner of the region covered by that page. But we can't make use of that fact unless we also know the exact time that they backed up that specific page. Ridiculous.</p>
+<h2 id="theidea">The Idea</h2>
+<p>It would be really cool if we could browser a modern map UX (i.e. Google Maps) on which there was layer of rectangles showing where the Domesday '86 project had data, and we could click on them to go to the official archive mirror page for that area. This would combine several advantages over conceivable alternatives:</p>
+<ul>
+<li>Inherent ability to compare today's landscape with The Past.</li>
+<li>No copyright issues: the map UX would only need the URLs of the Domesday archive pages, not any of the actual content.</li>
+<li>No need for any server backend!</li>
+</ul>
+<p>That last point needs finessing a bit. With "modern" web technology it can just be a static site that can be deployed onto a webserver, downloaded into browsers, which can then do all the magic. Okay, yes, it depends on Google maps continuing to exist, and also browsers. But so does a lot of the economy, which means people care about those things, which means they'll continue to exist. Just gotta piggyback on things that already have that quality of being-cared-about for the best chance of survival.</p>
+<p>So, to business.</p>
+<h2 id="crawlingthemirror">Crawling the Mirror</h2>
+<p>We need to get around that timestamp problem. The only way to do this is to write a new web-crawler. We can start on any page, download the HTML, and look for the links:</p>
+<p><img src="resources/dansday86/links.png" alt="Links to North, South, East, West"></p>
+<p>That gives us up to four more pages to download, and we can discard any we already know about. Proceeding like this, we will effectively crawl outwards from the starting point until we reach the edge of the map. As the program crawls, it can just output URLs to a log file. I write each URL twice: once when I discover its existence from a link, and then again when I've actually downloaded its content. </p>
+<blockquote>
+  <p>Pompous Aside 1: This is a really good engineering concept: the append-only file format. It's incredibly robust. If the crawler quits unexpectedly then the log file tells us exactly how far it got and it can pick up where it left off.</p>
+</blockquote>
+<p>In the log file, I prefix each URL with a letter:</p>
+<ul>
+<li><code>Q</code> - it's been "queued" for downloading after I found it in a link</li>
+<li><code>A</code> - "absent": the page had a heading telling us that there's no content</li>
+<li><code>P</code> - "present": it's got great 1986 content we all want to read</li>
+<li><code>E</code> - "edge": got a 404 status from the download attempt</li>
+</ul>
+<p>So each line is just a capital letter, a space, and a URL.</p>
+<blockquote>
+  <p>Pompous Aside 2: I could have parsed the URL into the bare numbers (the coordinates and the timestamp). But then I'd need to invent a format to write to the file. The URL is already such a format; yes, it's got tons of repeated baggage in it, but it's perfectly adequate. Don't rush to do something fancy and "proper" in the early stages of a project, because you'll probably just make it more complicated than necessary, to little advantage.</p>
+</blockquote>
+<p>When I come to read the log, I can just take the <code>P</code> lines and ignore the rest. So I started the crawler running, with no throttling to avoid overloading the server. If you're from the National Archive and you're wondering why you had a weird traffic spike last week, now you know. Sorry.</p>
+<p>I believe I started at the URL for Barnard Castle, a location held in special affection by the British. But I had to do the whole thing twice, because as well as URLs with <code>GB</code> coordinates, there are others with <code>NI</code> (Northern Ireland), and they don't join up, but in an interesting way that I promise has nothing to do with any trade border down the Irish Sea.</p>
+<h2 id="renderingamapbecausewhynot">Rendering a Map, Because Why Not?</h2>
+<p>To pass the time as I impatiently waited for results, and to convince myself it was working, I wrote another script that would scan the logfile so far and render an image of the map.</p>
+<blockquote>
+  <p>Pompous Aside 3: a really good way to keep up your enthusiasm for a project in the early stages is to make it visual. Give yourself a way to see your machine working. A dry text log file is not an exciting or rewarding form of feedback. Turn numbers into graphics, animations, cool stuff. Visualise the machine.</p>
+</blockquote>
+<p>How did I do that? Easy - the <code>GB</code> coordinates in the URL are really simple. Each page relates to an area 4km (East-West) by 3km (North-South). Why that aspect ratio? So it would fit on an old computer screen. These days it would be 8km by 4.5km to get a 16:9 ratio. If you divide the URL's coordinates by 4000 and 3000, you get <code>(x, y)</code> integer coordinates of a grid cell. So my render script would read the log and colour in pixels according to the current state letter. Here's an early run of it:</p>
+<p><img src="resources/dansday86/map2.png" alt="Weird diamond shape bitmap"></p>
+<p>Note the diamond pattern (well, square rotated 45 degrees) - this is exactly what you'd expect from an outward crawl by the method I describe above. Also there's a lovely crinkly edge to the West, because that's the actual edge of the map (red pixels indicate <code>E</code> results from the log file). Here's one from a while later:</p>
+<p><img src="resources/dansday86/map5.png" alt="Clearly part of Great Britain"></p>
+<p>That's clearly dear old Blighty! And finally:</p>
+<p><img src="resources/dansday86/map-gb.png" alt="All of Great Britain"></p>
+<p>It's stretched vertically because my pixels are square, which is too tall because the area each pixel represents is a 4:3 oblong. Also there is a suspicious preponderance of green <code>P</code> pixels on the border where there aren't red ones. I suspected (correctly as it turns out) that this was a lie caused by a bug in my crawler: as well as the <code>A</code> pages that say they have no content (yellow), there are ones that say they're off the edge of the map. I should have classified those as <code>A</code> also. Darn it.</p>
+<p>Northern Ireland appeared relatively quickly:</p>
+<p><img src="resources/dansday86/map-ni.png" alt="All of Northern Ireland"></p>
+<p>Not gonna lie, it was mildly thrilling to see those shapes appearing from the raw data in real time. But what to do with them next?</p>
+<h2 id="mapsarecomplicated">Maps Are Complicated</h2>
+<p>Drawing flat maps of a curved surface is really complicated. By the way if you subscribe to alternative theories of the shape of the Earth, stop reading now, because this will get upsettingly reality-based. Nowadays a global standard coordinate system has taken over: <a href="https://en.wikipedia.org/wiki/World_Geodetic_System">WSG 84</a>. Every point on the earth is identified by two numbers:</p>
+<ul>
+<li><em>longitude</em> is measured in degrees with the zero at the Greenwich Meridian, because… colonialism.</li>
+<li><em>latitude</em> has the zero at the equator and +90 degrees at the North Pole, -90 degrees at the South Pole.</li>
+</ul>
+<p>In a smart phone's browser there's an API you can call to get those two numbers. And in Google maps, you use those two numbers to specify a location. It all joins up nicely, and is simple to understand if you don't look too closely at the details (very much the UTC of coordinate systems, including the Greenwich origin.) And as the tectonic plates drift around the globe (seriously, Hawaii actually moves a metre every decade) there is a worldwide effort to keep maps up-to-date with this system. The land moves, but the coordinates stay still, in some weird negotiated sense.</p>
+<p>It works great for most places where people gather in large numbers, because near the equator North-South lines are <em>almost</em> parallel. They start to converge as you get closer to the poles, so travelling "1 degree West" is a significantly longer journey in London than it is in Edinburgh. And at the poles the distortion becomes infinite and the longitude becomes meaningless. But who hangs out there? No one important.</p>
+<p>Even so, on a local scale, historically, other coordinate systems were used. For the UK, <a href="https://www.ordnancesurvey.co.uk/business-government/tools-support/os-net/coordinates">Ordinance Survey has a fantastic document</a> that is well worth at least skim reading. There's also <a href="https://epsg.io/">the EPSG</a> repository of worldwide coordinate systems, which gives each one an ID number, in accordance with bureaucratic tradition. The ones we care about here are:</p>
+<ul>
+<li><a href="https://epsg.io/4326">EPSG:4326</a> - the WSG 84 global standard.</li>
+<li><a href="https://epsg.io/27700">EPSG:27700</a> - the British National Grid, defined in 1936.</li>
+<li><a href="https://epsg.io/29901">EPSG:29901</a> - the Irish National Grid (1952).</li>
+</ul>
+<p>The last two appear in the URLs with the GB and NI prefixes. We need to convert them to WSG 84, and that's a fiddly mathematics problem. The excellent OS document shows what we're dealing with:</p>
+<p><img src="resources/dansday86/coord-mapping.png" alt="WSG 84 and BNG overlaid"></p>
+<p>Fortunately <a href="https://www.npmjs.com/package/transform-coordinates">smart people already figured all this out</a> and I can just pass the GB/NI coordinates and get back global long/lat coordinates. Well, almost. Any 40km-by-30km cell in the National Grid can be defined by two numbers, giving the location of the South-West corner. But in WSG it will be deformed by the transformation. It won't be a rectangle. Strictly speaking it won't even be a regular polygon because the edges will be curves. It will be the opposite of the above composite map: the WSG lines will be straight, so therefore National Grid lines will have to curve.</p>
+<p>But our cells will still have four corners, and for simplicity I'm going to model them as regular polygons, so the grid will become a mesh of four-side polygons. To define each cell, I need four sets of coordinate pairs, giving the positions of the corners, which won't line up along lines of latitude/longitude.</p>
+<h2 id="googlemapsareeasy">Google Maps are Easy</h2>
+<p>Eager to see if my coordinate conversions were working, I spun up a simple Google Maps project, basing it on the fantastic <a href="https://parceljs.org/">Parcel</a> bundling engine. Honestly, give it a try. It's like a dream version of Webpack.</p>
+<p>Google Maps makes it very easy to draw polygons on the map: they have a specific API for that, and you just give it a list of longitude/latitude pairs. I initially did this with the individual cells, of which I think there are about 30,000. It took a while to open, and the zooming was painful. Clearly I needed to be a bit smarter about it than that. But it was an important exercise because it gave me confidence that I was heading in the right direction, and that all-important visual feedback.</p>
+<blockquote>
+  <p>Pompous Aside 4: Try the simple, dumb approach. You never know, it might work. If it doesn't, you'll find out what you need to know to fix it.</p>
+</blockquote>
+<p>What we have here is a scaling problem. 30,000 polygons aren't individually meaningful, they're too fine grained. We need bigger grains. Let's divide the original grids up into 400km-by-300km "zones", each containing 100 of the original cells. We should then end up with ~100 zones, and we can render those as polygons, and paint them with an opacity that is just the number of cells in the zone divided by 100 to get a value between 0 and 1. That gives us a heat map of the density of cells in each region, so at the national zoom level we can immediately see the areas with the most information.</p>
+<p>Then when the user zooms in closer, we can switch over to rendering the individual cells' polygons, but only for the zones that overlap with the currently visible portion of the map, so we don't overwhelm the platform. If you zoom in to that level and drag the map around, the code continuous "hit tests" which zones are now visible and creates or destroys their polygons accordingly.</p>
+<blockquote>
+  <p>Pompous Aside 5: Very often, the solution to a scaling problem consists of using a different design at different scales. Don't expect one general approach to scale smoothly. Systems that scale impressively often achieve this by having discontinuities, points where they switch between different modes as the scale increases. Maps themselves are a good analogy: national grids are more convenient for giving coordinates locally, and are still used for that reason, but they stop working at the global scale.</p>
+</blockquote>
+<p>The data for all the zones and cells is actually linked into the source as a JSON file, meaning that the site doesn't need to call a custom server to download extra data. I was able to cut the size of the JSON file by over 80% by compressing each zone's list of cells, using the <a href="https://www.npmjs.com/package/lz-string">lz-string</a> package's handy base64 format. Every time a zone scrolls into view, I decompress that zone's cell list on the fly.</p>
+<p>Finally, when the user clicks a cell, we can navigate to the original archived page for that cell. One last cool thing I added this morning was browser history support, something that is very important for any web app. When the user clicks the Back button, we need to go back to where they were. Sometimes the meaning of "where we are" (in an app's UX) is ambiguous and open to debate, but when it comes to showing places on a map, clearly we are dealing with the archetypal concept of "where". So right before navigating to the archive site, I use <code>history.pushState</code> to capture the following in the address bar:</p>
+<ul>
+<li>the map's zoom level</li>
+<li>the longitude/latitude centre point of the map</li>
+<li>the GB or NI coordinates from the URL we're about to navigate to.</li>
+</ul>
+<p>Then when the site loads up, I grab that info and obey it (I use the coordinates to show the last-visited cell in a different colour).</p>
+<p><a href="https://earwicker.com/dansday86/">And here it is!</a></p>
+<p>The End.</p>
+
+            </div>
+            
+            <div class="outer">                                
+                <table class="recent" align="center"><tr>
+    <td>
+        <strong> Domesday '86 Reloaded (Reloaded)</strong>
+    </td>
+    <td class="date"> 2021-02-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="The_Blob_Lottery.html"> The Blob Lottery</a>
+    </td>
+    <td class="date"> 2020-09-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Abstraction_is_a_Thing.html">Abstraction is a Thing</a>
+    </td>
+    <td class="date"> 2020-03-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
+    </td>
+    <td class="date"> 2019-08-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Factory_Injection_in_C.html">Factory Injection in C#</a>
+    </td>
+    <td class="date"> 2019-07-02</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Hangfire_A_Tale_of_Several_Queues.html">Hangfire - A Tale of Several Queues</a>
+    </td>
+    <td class="date"> 2019-05-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="How_Does_Auth_work.html"> How Does Auth work?</a>
+    </td>
+    <td class="date"> 2018-11-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_2_Baby_Bathwater_Routing_etc.html"> From Ember to React, Part 2: Baby, Bathwater, Routing, etc.</a>
+    </td>
+    <td class="date"> 2018-03-18</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_1_Why_Not_Ember.html"> From Ember to React, Part 1: Why Not Ember?</a>
+    </td>
+    <td class="date"> 2017-11-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="json_mobx_Like_React_but_for_Data_Part_2.html">json-mobx - Like React, but for Data (Part 2)</a>
+    </td>
+    <td class="date"> 2017-02-15</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Redux_in_Pieces.html">Redux in Pieces</a>
+    </td>
+    <td class="date"> 2017-01-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Box_em_Property_references_for_TypeScript.html">Box 'em! - Property references for TypeScript</a>
+    </td>
+    <td class="date"> 2017-01-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_s_up_with_this.html"> TypeScript - What's up with this?</a>
+    </td>
+    <td class="date"> 2017-01-01</td>    
+</tr>
+<tr>
+    <td>
+        <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>
+    </td>
+    <td class="date"> 2016-12-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
+    </td>
+    <td class="date"> 2016-12-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Epilogue.html">Immuto - Epilogue</a>
+    </td>
+    <td class="date"> 2016-12-20</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Radical_Unification.html">Immuto - Radical Unification</a>
+    </td>
+    <td class="date"> 2016-09-22</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Working_with_React_An_Example.html">Immuto - Working with React (An Example)</a>
+    </td>
+    <td class="date"> 2016-09-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_is_a_class.html"> TypeScript - What is a class?</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing_EPISODE_II.html">TypeScript and runtime typing - EPISODE II</a>
+    </td>
+    <td class="date"> 2016-09-10</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing.html">TypeScript and runtime typing</a>
+    </td>
+    <td class="date"> 2016-09-04</td>    
+</tr>
+<tr>
+    <td>
+        <a href="What_s_good_about_Redux.html">What's good about Redux</a>
+    </td>
+    <td class="date"> 2016-07-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">  
+                <div class="rss">Want to comment on anything? <a href="https://github.com/danielearwicker/danielearwicker.github.io/issues">Create an issue!</a></div>              
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>
