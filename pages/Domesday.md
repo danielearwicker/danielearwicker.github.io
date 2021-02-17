@@ -24,7 +24,7 @@ It's particularly galling that they also put a running clock's timestamp in the 
 https://webarchive.nationalarchives.gov.uk/20120316094313/http://www.bbc.co.uk/history/domesday/dblock/GB-348000-534000
 ```
 
-Right before the original BBC URL there's `20120316094313`, and as if to maximise the frustration, this is different across the pages. By the look of it, they backed up that page On March 16th, 2012 at 09:43 and 13 seconds. Why is this bad? Because apart from that stupid timestamp, this is very nearly a deterministic URL. The `GB-348000-534000` tells us the Ordinance Survey map coordinates for the south-west corner of the region covered by that page. But we can't make use of that fact unless we also know the exact time that they backed up that specific page. Ridiculous.
+Right before the original BBC URL there's `20120316094313`, and as if to maximise the frustration, this is different across the pages. By the look of it, they backed up that page On March 16th, 2012 at 09:43 and 13 seconds. Why is this bad? Because apart from that stupid timestamp, this is very nearly a deterministic URL. The `GB-348000-534000` tells us the Ordnance Survey map coordinates for the south-west corner of the region covered by that page. But we can't make use of that fact unless we also know the exact time that they backed up that specific page. Ridiculous.
 
 ## The Idea
 
@@ -100,7 +100,7 @@ In a smart phone's browser there's an API you can call to get those two numbers.
 
 It works great for most places where people gather in large numbers, because near the equator North-South lines are *almost* parallel. They start to converge as you get closer to the poles, so travelling "1 degree West" is a significantly longer journey in London than it is in Edinburgh. And at the poles the distortion becomes infinite and the longitude becomes meaningless. But who hangs out there? No one important.
 
-Even so, on a local scale, historically, other coordinate systems were used. For the UK, [Ordinance Survey has a fantastic document](https://www.ordnancesurvey.co.uk/business-government/tools-support/os-net/coordinates) that is well worth at least skim reading. There's also [the EPSG](https://epsg.io/) repository of worldwide coordinate systems, which gives each one an ID number, in accordance with bureaucratic tradition. The ones we care about here are:
+Even so, on a local scale, historically, other coordinate systems were used. For the UK, [Ordnance Survey has a fantastic document](https://www.ordnancesurvey.co.uk/business-government/tools-support/os-net/coordinates) that is well worth at least skim reading. There's also [the EPSG](https://epsg.io/) repository of worldwide coordinate systems, which gives each one an ID number, in accordance with bureaucratic tradition. The ones we care about here are:
 
 - [EPSG:4326](https://epsg.io/4326) - the WSG 84 global standard.
 - [EPSG:27700](https://epsg.io/27700) - the British National Grid, defined in 1936.
