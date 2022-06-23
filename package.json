@@ -6,7 +6,7 @@
   "dependencies": {
     "@types/jsdom": "^12.2.4",
     "@types/node": "^7.0.29",
-    "jsdom": "^15.2.0",
+    "jsdom": "^16.5.0",
     "neaten": "0.0.1",
     "showdown": "^1.4.3",
     "showdown-katex": "^0.6.0",
