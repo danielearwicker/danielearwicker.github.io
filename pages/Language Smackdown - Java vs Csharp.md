@@ -61,7 +61,7 @@ What's perhaps a little worse is that because the use of erasure was so well kno
 
 Again, there is work in the pipeline:
 
--   [https://openjdk.java.net/jeps/8261529](JEP draft: Universal Generics)
+-   [JEP draft: Universal Generics](https://openjdk.java.net/jeps/8261529)
 
 But it's focused purely on avoiding the performance bottleneck imposed by only supporting reference types; there's no plan to fully reify generics. There may be no way to do that now without creating a Python 2/3 style bifurcation.
 

@@ -79,7 +79,7 @@
 <p>What's perhaps a little worse is that because the use of erasure was so well known, and could therefore be depended on in code, it became commonplace for code to assume that a type parameter was always a reference type, based on <code>Object</code>, and therefore that it would be safe to allocate an <code>Object[]</code> and use it to store elements of a parameter type. This gets in the way of attempts to enhance the JVM to support allowing primitive type arguments in an efficient way. Also methods like <code>remove(Object item)</code> often retain that pre-2004 signature even for collections of <code>&lt;T&gt;</code>, which is pretty unhelpful; while it may not cause a type error at runtime, it can conceal a logical bug.</p>
 <p>Again, there is work in the pipeline:</p>
 <ul>
-<li>[https://openjdk.java.net/jeps/8261529](JEP draft: Universal Generics)</li>
+<li><a href="https://openjdk.java.net/jeps/8261529">JEP draft: Universal Generics</a></li>
 </ul>
 <p>But it's focused purely on avoiding the performance bottleneck imposed by only supporting reference types; there's no plan to fully reify generics. There may be no way to do that now without creating a Python 2/3 style bifurcation.</p>
 <h1 id="iteratingneedntbeirritating">Iterating needn't be irritating</h1>
