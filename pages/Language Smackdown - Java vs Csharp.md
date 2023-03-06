@@ -138,7 +138,7 @@ Verdict: hmmm.
 
 # A pattern emerges
 
-Over the last few years the two languages seem to have been adding very similar features at quite a pace. With pattern matching, C# 7.0 (2017) lead the way. It its simplest form, an `if` statement can declare a variable:
+Over the last few years the two languages seem to have been adding very similar features at quite a pace. With pattern matching, C# 7.0 (2017) led the way. It its simplest form, an `if` statement can declare a variable:
 
 ```cs
 if (someObj is string someStr)

@@ -128,7 +128,7 @@
 <p>In any case, this is a fundamental difference but I'm not sure what to make of it. A C# method can accept a collection in the form of an <code>IEnumerable&lt;T&gt;</code>, and can therefore make multiple passes through it. A Java method that is passed a <code>Stream</code> can only make one pass. But the multi-pass capability is a double-edged sword. In C# when reviewing code I have occasionally discovered some very easy performance wins by adding <code>ToList()</code> here and there, to materialize an <code>IEnumerable&lt;T&gt;</code> that was being expensively re-evaluated. And conversely, I'm not sure I've wanted that kind of behaviour deliberately. I guess low memory conditions and very large data sets could be a compelling use case for lazy re-processing of a collection that doesn't memoize the results of the first pass, but it seems odd that it's the default in C#.</p>
 <p>Verdict: hmmm.</p>
 <h1 id="apatternemerges">A pattern emerges</h1>
-<p>Over the last few years the two languages seem to have been adding very similar features at quite a pace. With pattern matching, C# 7.0 (2017) lead the way. It its simplest form, an <code>if</code> statement can declare a variable:</p><pre><code class="cs">if (someObj is string someStr)
+<p>Over the last few years the two languages seem to have been adding very similar features at quite a pace. With pattern matching, C# 7.0 (2017) led the way. It its simplest form, an <code>if</code> statement can declare a variable:</p><pre><code class="cs">if (someObj is string someStr)
 {
     // in this scope we know someStr is a string
 }
