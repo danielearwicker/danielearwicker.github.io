@@ -4,7 +4,17 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2021-02-07T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2023-03-07T00:00:00Z</lastBuildDate>
+    <item>
+      <title> Language Smackdown: Java vs. C#</title>
+      <pubDate> 2023-03-07T00:00:00Z</pubDate>
+      <description>&lt;p&gt;A pithy quote:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;There are only two kinds of languages: the ones people complain about and the ones nobody uses.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Now you might say that's exactly what the creator of C++ would say to cover his tracks. But the point is that Java and C# are languages that are 20 to 25 years old, widely used (maybe 15 million users between them), and are both cursed with toxic corporate associations. When Java first came along it was &lt;em&gt;cool&lt;/em&gt;, if a programming language ever could be. But this was because the only Java code in the wild was neat little animations and things like that. As soon as it became widely used for boring line-of-business apps, it began to be thought of as the new COBOL.&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Language_Smackdown_Java_vs_C.html</link>
+    </item>
     <item>
       <title> Domesday '86 Reloaded (Reloaded)</title>
       <pubDate> 2021-02-07T00:00:00Z</pubDate>
