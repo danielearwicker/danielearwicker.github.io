@@ -28,7 +28,7 @@ These things are likely to gradually make their way into Java over the next few 
 
 -   [JEP 401: Primitive Classes](https://openjdk.java.net/jeps/401)
 
-# Episode<T> - Generics
+# `Episode<T>` - Generics
 
 If you're thinking of designing the next great general purpose language with static typing, please remember to include generics in the first version and save yourself a world of pain. You _are_ going to add them, [even if you wait ten years](https://www.infoworld.com/article/3645228/go-118-arrives-with-much-anticipated-generics.html).
 
