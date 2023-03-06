@@ -10,7 +10,7 @@ My particular use case involves a dataset of many millions of items, of which th
 
 ## Worst case scenario
 
-In many lucky scenarios you can take advantage of patterns in how data is accessed, known as [locality of reference](https://en.wikipedia.org/wiki/Locality_of_reference). Building your design around such assumptions can give you a huge advantage, e.g. if a blog post is requested, we can assume the comments for that blog post are about to be requested very soon, so we should store them near to each other. Sometimes the past *is* a guide to the future!
+In many lucky scenarios you can take advantage of patterns in how data is accessed, known as [locality of reference](https://en.wikipedia.org/wiki/Locality_of_reference). Building your design around such assumptions can give you a huge advantage, e.g. if a blog post is requested, we can assume the comments for that blog post are about to be requested very soon, so we should store them near to each other. Sometimes the past _is_ a guide to the future!
 
 But here I'm going to be pessimistic and assume no such pattern can be found: the daily update selects around one in a thousand items entirely at random out of the full set. Where there's randomness, there's probability, which means our intuitions tend to skip important details and get wrong answers.
 
@@ -18,9 +18,9 @@ But here I'm going to be pessimistic and assume no such pattern can be found: th
 
 In the tradition of rolling a die, suppose the dataset is divided into 6 equally sized pieces which we'll call pages. If you pick a random spot to update, that spot is equally likely to appear in any page, so the probability of a page being hit is 1/6. What about the probability of a page being hit at least once after two updates?
 
-Here there's a temptation to say 2/6, like the number on the top of the fraction is the number of updates. This is our intuition, and maybe we tend toward that guess because it happens to be a good approximation if the number on the bottom of the fraction is much larger. But it isn't right, because there's a 1/6 chance that the second update will land on the same page as the first. The more pages are hit, the fewer un-hit pages remain, so the likelihood of a collision increases. The clue is in the pesky *"at least once"*. To start with, all pages have equal probability of being hit, but once a page is hit, it stays hit, so the probability of it transitioning from un-hit to hit again on subsequent updates collapses to zero.
+Here there's a temptation to say 2/6, like the number on the top of the fraction is the number of updates. This is our intuition, and maybe we tend toward that guess because it happens to be a good approximation if the number on the bottom of the fraction is much larger. But it isn't right, because there's a 1/6 chance that the second update will land on the same page as the first. The more pages are hit, the fewer un-hit pages remain, so the likelihood of a collision increases. The clue is in the pesky _"at least once"_. To start with, all pages have equal probability of being hit, but once a page is hit, it stays hit, so the probability of it transitioning from un-hit to hit again on subsequent updates collapses to zero.
 
-This kind of problem is easier to solve if you flip it around. If a page avoids being hit several times in a row, those are truly independent events. A page that remains un-hit is still in the game. The probability of a page *not* being hit by one update is 5/6. If it survives two unscathed, that's two independent events and we can multiply the probabilities, 5/6 * 5/6, or 25/36. We can then subtract that from 1 to get the probability of the page being hit at least once. More generally the probability of each of `N` pages being hit after `U` updates is:
+This kind of problem is easier to solve if you flip it around. If a page avoids being hit several times in a row, those are truly independent events. A page that remains un-hit is still in the game. The probability of a page _not_ being hit by one update is 5/6. If it survives two unscathed, that's two independent events and we can multiply the probabilities, 5/6 \* 5/6, or 25/36. We can then subtract that from 1 to get the probability of the page being hit at least once. More generally the probability of each of `N` pages being hit after `U` updates is:
 
 ![equation](resources/blob-math.png)
 
@@ -34,7 +34,7 @@ The x-axis is `N/U`, so 10 means the number of pages is 10 times the number of u
 
 ## What this tells us
 
-Why is this important? There are two potential performance costs involved here. If `N` is small, the nightly operation will read/write large numbers of irrelevant items because they happen to live in the same pages as relevant items. Our intuition says moving large amounts of data unnecessarily is wasteful so we feel an urge to avoid that. On the other hand, if `N` is large, we perform more separate physical read/write operations, because our data has been dessicated into many tiny blobs. The question is, which of these is more costly?
+Why is this important? There are two potential performance costs involved here. If `N` is small, the nightly operation will read/write large numbers of irrelevant items because they happen to live in the same pages as relevant items. Our intuition says moving large amounts of data unnecessarily is wasteful so we feel an urge to avoid that. On the other hand, if `N` is large, we perform more separate physical read/write operations, because our data has been diced into many tiny blobs. The question is, which of these is more costly?
 
 Back in olden times, when our data was stored in hard drives, there was the time taken to read data, mentioned in the ancient chronicles as 20ms/MB, but legend also told of a so-called seek time of 10ms. This meant that if you broke a megabyte of data up into 10 pieces that were scattered around the drive, it would take 120ms to read it all - the seek time overhead was huge. Maybe the overhead of dealing with many individual blobs will work like the seek time overhead. But this will obviously depend on how the blob storage service has been implemented. And there are lots of details about the internals of that service that we don't know.
 
@@ -50,16 +50,16 @@ But what if I didn't care how much data is read? So that we don't have to hold a
 
 Also, the formula tells us it's not going to help us if we go for 1000 pages - it may sound like a lot, but this is only a tenth of the number of updates, and all the pages will still be hit. So if there's a seek time-like overhead, this is going to be a terrible choice for the number of pages.
 
-| Pages      | Page size  | Pages hit   | Read/written  | Seconds |
-| ----------:| ----------:| -----------:| -------------:| -------:|
-| 1          | 5 GB       | 1           | 5 GB          | 66      |
-| 10         | 500 MB     | 10          | 5 GB          | 65      |
-| 100        | 50 MB      | 100         | 5 GB          | 68      |
-| 1,000      | 5 MB       | 1,000       | 5 GB          | 107     |
-| 10,000     | 500 KB     | 6,321       | 3.16 GB       | 171     |
-| 100,000    | 50 KB      | 9,516       | 476 MB        | 137     |
-| 1,000,000  | 5 KB       | 9,950       | 49.8 MB       | 137     |
-| 10,000,000 | 500 B      | 9,995       | 5 MB          | 134     |
+|      Pages | Page size | Pages hit | Read/written | Seconds |
+| ---------: | --------: | --------: | -----------: | ------: |
+|          1 |      5 GB |         1 |         5 GB |      66 |
+|         10 |    500 MB |        10 |         5 GB |      65 |
+|        100 |     50 MB |       100 |         5 GB |      68 |
+|      1,000 |      5 MB |     1,000 |         5 GB |     107 |
+|     10,000 |    500 KB |     6,321 |      3.16 GB |     171 |
+|    100,000 |     50 KB |     9,516 |       476 MB |     137 |
+|  1,000,000 |      5 KB |     9,950 |      49.8 MB |     137 |
+| 10,000,000 |     500 B |     9,995 |         5 MB |     134 |
 
 Well. As the number of pages increases, it becomes more and more likely there will be no collisions, until the number hit is roughly equal to the number of updates made (which, remember, is always 10,000). But the only thing we really care about is the total time taken. Basically we can shift 5 GB in both directions in just over a minute, as long as we don't break it up into more than a 100 or so pieces. That's only 1.33 Gbps, so slower than the raw read speed of an SSD, but we are writing too, so pretty impressive.
 
@@ -81,8 +81,8 @@ To get the most out of parallel processing, we need to ensure that records are e
 
 By the way, for the kind of approach I'm using here, Azure's "hot" tier is appropriate, because you are not charged for the amount of data you transfer, only the total amount stored, and also a very small charge based on the number of individual requests you make. So there is even a financial incentive to make fewer requests for larger pieces of data, rather than more requests for smaller pieces.
 
-Even so, we *could* get more sophisticated. A single index blob could be used to describe ranges of key values belonging to partitions, mapping them to integer IDs of blobs containing their records. When partitions get too large it will be necessary to split them. Supposing they shrink, we'll have to merge them. The advantage of this is that where access to keys is not random, but instead turns out to exhibit locality of reference, we'll find that a given update wave will hit far fewer pages than predicted by the random model, as the updated records will often be clustered together in the same few pages.
+Even so, we _could_ get more sophisticated. A single index blob could be used to describe ranges of key values belonging to partitions, mapping them to integer IDs of blobs containing their records. When partitions get too large it will be necessary to split them. Supposing they shrink, we'll have to merge them. The advantage of this is that where access to keys is not random, but instead turns out to exhibit locality of reference, we'll find that a given update wave will hit far fewer pages than predicted by the random model, as the updated records will often be clustered together in the same few pages.
 
-But has to be set against the downside: more complex code. We are drifting towards implementing a custom B+tree. And it probably isn't worth it, given the elastic scaling power of blob storage. We can churn through our 5 GB of data in just over a minute, or 150,000 records per second, even if we do it serially. If we do 10 in parallel, it goes up to 1.5 million records per second. If necessary, we can scale out to 100 partitions before any significant overhead is encountered, which seems to imply we can cover the whole dataset in under a second! This of course depends on whether the storage service is really *that* elastic, and how network traffic is routed inside the data centre. I haven't tested that yet...
+But has to be set against the downside: more complex code. We are drifting towards implementing a custom B+tree. And it probably isn't worth it, given the elastic scaling power of blob storage. We can churn through our 5 GB of data in just over a minute, or 150,000 records per second, even if we do it serially. If we do 10 in parallel, it goes up to 1.5 million records per second. If necessary, we can scale out to 100 partitions before any significant overhead is encountered, which seems to imply we can cover the whole dataset in under a second! This of course depends on whether the storage service is really _that_ elastic, and how network traffic is routed inside the data centre. I haven't tested that yet...
 
 Probably worth seeing how you get on with that kind of raw speed before committing a more complex design.
