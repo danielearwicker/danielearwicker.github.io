@@ -1,0 +1,431 @@
+<html>
+    <head>
+        <meta charset="utf-8" /> 
+        <title>Daniel Earwicker | A hook for collaborative editing</title>
+        <link rel="stylesheet" href="highlight/styles/default.css">        
+        <link rel="stylesheet" href="style.css">      
+        <style>
+            .katex-html {
+                display: none;
+            }
+            th {
+                color: black;
+                padding: 0.5em;
+            }
+            td {
+                color: black;
+                padding: 0.2em;
+            }
+        </style>  
+    </head>
+    <body>
+        <div class="oneColumn">
+            <div class="outer">     
+                <table class="header" align="center">
+                    <tr>
+                        <td><img src="grover.jpg" width="48"></td>
+                        <td class="username">Daniel Earwicker</td>
+                        <td>
+                            Chief Software Architect<br>
+                            <a href="https://www.fiscaltechnologies.com/">FISCAL Technologies Ltd</a>
+                        </td>
+                    </tr>
+                </table>
+                <div class="topics"><a href="tag-archival.html">ARCHIVAL (1)</a> <a href="tag-bbc.html">BBC (1)</a> <a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (8)</a> <a href="tag-cloud.html">CLOUD (1)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-java.html">JAVA (1)</a> <a href="tag-javascript.html">JAVASCRIPT (4)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-languages.html">LANGUAGES (1)</a> <a href="tag-maps.html">MAPS (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-probability.html">PROBABILITY (1)</a> <a href="tag-react.html">REACT (7)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (3)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-style.html">STYLE (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+            </div>
+            
+            <div class="content">
+                <h1>A hook for collaborative editing</h1>
+<hr>
+<p class="meta"><a href="tag-javascript.html">JAVASCRIPT</a> <a href="tag-react.html">REACT</a> <a href="tag-redux.html">REDUX</a>  2023-03-08</p>
+
+<p>Since React finalised its context feature, many apps (even quite complex ones) no longer need any sophisticated state management library. And the most well known such library (Redux) gained a reputation for being overly verbose and ceremonial.</p>
+<p>But there are certain situations where some of the patterns of Redux are very useful, and you can dip your toes into it without adopting every ceremonial aspect. And (as with most things) TypeScript makes it even better.</p>
+<p>The most minimal starting point is React's built-in hook <code>useReducer</code>, which is only a very thin wrapper around the ubiquitous <code>useState</code>. We can think of an evolutionary path like this. First you learn to store various pieces of state separately:</p><pre><code class="ts">const [firstName, setFirstName] = useState("Murray");
+const [lastName, setLastName] = useState("Hewitt");
+
+// in some event handler:
+setFirstName(e.target.value);
+</code></pre><p>Then you decide it would be better to be explicit about the fact that you're editing a "person", which is an object, so it would make more sense to store the person as a whole:</p><pre><code class="ts">const [person, setPerson] = useState({
+    firstName: "Murray",
+    lastName: "Hewitt",
+});
+
+// in some event handler:
+setPerson((previous) =&gt; ({
+    ...previous,
+    firstName: e.target.value,
+}));
+</code></pre><p>And here we take advantage of the fact that <code>useState</code>'s set-function is able to accept an "updater function", which maps from the previous value to the desired new value. This is instead of:</p><pre><code class="ts">setPerson({
+    ...person,
+    firstName: e.target.value,
+});
+</code></pre><p>where we base the updated version on the <code>person</code> value we got from the hook. This would require the event handler to be recreated whenever the value changes, or else it will be reading a stale <code>person</code>.</p>
+<p>Then as your <code>person</code> state becomes more complex, perhaps extending to include their employment history, tax records, dental records, etc. there will lots of interesting kinds of update you can perform on the person object. But it's okay because each update just calls <code>setPerson</code> with an appropriate updater function.</p>
+<p>Even so, you might want to centrally define what are the valid state transitions that are allowed to happen on a person, and keep this separate from all the presentational code that defines inputs, buttons, event handlers and so on.</p>
+<p>So you invent the notion of an <em>action</em>, which has a <code>type</code> property (one of a fixed set of strings), plus any other properties needed to carry information about the action. And then you write a reducer:</p><pre><code class="ts">function personReducer(previous: Person, action: PersonAction) {
+    switch (action.type) {
+        case "CHANGE_FIRST_NAME":
+            return { ...previous, firstName: action.firstName };
+        case "CHANGE_LAST_NAME":
+            return { ...previous, lastName: action.lastName };
+
+        // ... other action types
+
+        default:
+            throw new UnreachableCaseError(action);
+    }
+}
+</code></pre><p>As ugly as it may look superficially, TypeScript in fact makes it beautiful because <code>PersonAction</code> is defined as:</p><pre><code class="ts">type PersonAction =
+    | {
+          type: "CHANGE_FIRST_NAME";
+          firstName: string;
+      }
+    | {
+          type: "CHANGE_LAST_NAME";
+          lastName: string;
+      };
+    | // other actions...
+</code></pre><p>So every aspect of it is statically type-checked, including the requirement that there is a <code>case</code> for every <code>type</code>. By the way, <code>UnreachableCaseError</code> is in the <code>ts-essentials</code> package or you can just define it as:</p><pre><code class="ts">export class UnreachableCaseError extends Error {
+    constructor(value: never) {
+        super(`Unreachable case: ${value}`);
+    }
+}
+</code></pre><p>And once you have a reducer, you can write a higher order function that creates updater functions suitable for <code>useState</code>:</p><pre><code class="ts">function updatePerson(action: PersonAction) {
+    return (previous: Person) =&gt; personReducer(previous, action);
+}
+</code></pre><p>So this takes an action and returns a function of the form <code>Person =&gt; Person</code>, i.e. an updater. So in an event handler that wants to set the <code>firstName</code>, you can say:</p><pre><code class="ts">setPerson(
+    updatePerson({ type: "CHANGE_FIRST_NAME", firstName: e.target.value })
+);
+</code></pre><p>And naturally it gets a bit tiresome repeating that <code>setPerson(updatePerson(...))</code> pattern everywhere (and also misses the point, because you want to <em>know</em> that only your official reducer is used to perform all updates). This is where <code>useReducer</code> comes in. Instead of <code>useState</code>, say:</p><pre><code class="ts">const [person, dispatch] = useReducer(personReducer, {
+    firstName: "Murray",
+    lastName: "Hewitt",
+});
+</code></pre><p>Of course, <code>dispatch(...)</code> is exactly the same thing as <code>setPerson(updatePerson(...))</code>. So within your <code>Person</code>-editing component, you have a miniature application of the pattern of Redux in its simplest form. But always remember that <code>useReducer</code> is a wafer-thin layer over <code>useState</code>, merely like a gatekeeper, a limit on the unbounded freedom to make random updates, not a provider of some extra capability.</p>
+<p>There's another advantage to requesting updates via actions, rather than updater functions. An action is something that can be round-tripped via JSON, or cloned with <code>structuredClone</code>. This is not possible with an updater function (as with any function). Also there is no way to be sure in JS that a local function is pure, i.e. that it always produces the same outcome from the same arguments (with no side-effects). It's all too easy to accidentally depend on some external variable whose value might change between invocations. All these dangers go away if you describe your update request with a simple action object.</p>
+<p>And now you can dream big. Your <code>Person</code>-editing component initialises the state. But let's say it is provided that initial state in a prop. So this is the classic problem: what to do if that prop changes?</p>
+<p>Maybe you have a websocket channel open so the server can notify you when another user edits the person, and the new version is downloaded and your editor is re-rendered with the new prop value. But your user has made their own edits, so there's a conflict. What you need is a kind of automatic back and forth that keeps everyone synchronised with the latest state.</p>
+<p>We've already assumed that the server holds the authoritative definition of the current state. The question is, how do you tell the server to update the state, in such a way that you know you won't overwrite someone else's recent changes? One way to do this is to include some kind of version number, or time stamp, in the state:</p><pre><code class="ts">interface Person {
+    firstName: string;
+    lastName: string;
+    // other complicated information about the person
+
+    versionId: number;
+}
+</code></pre><p>So when you retrieve the <code>Person</code> from the server it has a <code>versionId</code> in it, and when you post a modified <code>Person</code> back to the server in an attempted update, that same <code>versionId</code> back will be passed back along with all the other data. If your update succeeds, you receive back a new <code>Person</code> that matches what you sent except it has a new <code>versionId</code>.</p>
+<p>But before applying your update, the server checks whether your update's <code>versionId</code> still matches the server's current state. If it doesn't, because someone else has snuck their own update on to the server, the server returns the new current state, which will therefore have a higher <code>versionId</code>.</p>
+<p>As well as returning a <code>Person</code> with a higher <code>versionId</code>, the server also returns something that specifically indicates whether the update was successful. One way to do this is to return the status code <code>409 Conflict</code>.</p>
+<p>What should a client do if its update fails? It has received the server's new latest state, so all it has to do is reapply any pending local changes on to that new basis, and then ask the server to try again. Of course, the client could get unlucky a second time because yet again another user has managed to sneak another update in first, but eventually every client will succeed. So evidently there needs to be a retry loop.</p>
+<p>But what do I mean by "reapply any pending local changes"? This is the perfect situation to use a reducer and a set of actions. When a user interacts with your <code>Person</code>-editing component, they might make two or three changes in quick succession. But as well as applying them locally so the UI updates immediately, those actions could be temporarily held in a list, until their effects have been successfully committed to the server. This means that the actions can be easily replayed onto a new starting state if necessary.</p>
+<p>In this way, the reducer becomes a "reconciler". It determines how to settle conflicts between users who are concurrently editing the same object. How can we model this pattern in a hook?</p>
+<p>First, let's encapsulate the function for saving a new state to the server. It returns a <code>Promise</code> to something that indicates whether the update succeeded and what the new current server-side state is:</p><pre><code class="ts">export interface PersistentUpdateResult&lt;S&gt; {
+    succeeded: boolean;
+    current: S;
+}
+</code></pre><p>So in our example the function has this signature:</p><pre><code class="ts">function savePerson(person: Person): Promise&lt;PersistentUpdateResult&lt;Person&gt;&gt; {
+    // ... ask the server to attempt an update
+}
+</code></pre><p>Another function we need is a comparer that examines two <code>Person</code> objects and figures out which is newest. It's exactly the same kind of function you'd pass to the array <code>sort</code> method:</p><pre><code class="ts">function comparePersons(a: Person, b: Person) {
+    return a.versionId - b.versionId;
+}
+</code></pre><p>By encapsulating this in a function, we don't make any assumptions about how the version is encoded in the object.</p>
+<p>Now we're ready to use the new hook in our editor, in place of <code>useReducer</code>:</p><pre><code class="ts">const [person, dispatch] = usePersistentReducer(
+    initialPerson,
+    personReducer,
+    comparePersons,
+    savePerson
+);
+</code></pre><p>The way it works differs from the normal <code>useReducer</code> in one very important respect: if the user has not recently dispatched any actions, and so there are no pending (unsaved) actions here, the returned <code>person</code> state is precisely the same object passed in as <code>initialPerson</code>. So if your user is passively watching the screen, and other users are making changes (which are making their way to your user via notifications on the websocket), then your user will see the <code>Person</code> updating in realtime. It doesn't get stuck on an old state.</p>
+<p>If your user dispatches one or more actions, the returned <code>person</code> is no longer the same object passed in as <code>initialPerson</code>. Rather, it is a derived object resulting from applying the reducer function to <code>initialPerson</code> as it was when the first action was performed. A background save will be attempted soon however, and when it succeeds, the server will notify all clients (including this one) via the websocket that the person has been updated, and this client will fetch the new version and so re-render the hook with the new <code>personReducer</code>. Also the <code>usePersistentReducer</code> can now happily discard its list of pending actions, and revert to returning whatever <code>personReducer</code> object it receives as its first parameter. Normality is restored!</p>
+<p>Here's how the hook is implemented:</p><pre><code class="ts">function peristentReducerState&lt;S, A&gt;(initialState: S, setEditingState: ) {
+    let timer: number | undefined = undefined;
+    let editingState = initialState;
+    let passiveState = initialState;
+    let pendingActions: A[] = [];
+
+    async function attemptSave() {
+        const result = await save(editingState);
+        if (result.succeeded) {
+            // It was accepted as a new version so we can discard our pending actions and update our local
+            pendingActions = [];
+            timer = undefined;
+            setEditingState(result.current);
+        } else if (result.current) {
+            // It was rejected and we got back the latest version which we should "rebase" on to
+            setEditingState(
+                stateRef.current.pendingActions.reduce(
+                    (state: S, action: A) =&gt; reducer(state, action),
+                    result.current
+                )
+            );
+            // Do another save soon
+            stateRef.current.timer = window.setTimeout(attemptSave, delayMs);
+        }
+    }
+
+    // Make dispatch appear stable ----- but this depends on initialState??
+
+    const dispatch = useCallback(
+        (action: A) =&gt; {
+            // If this is the first action since we last saved, make sure our editingState matches the initialState
+            setEditingState((previous) =&gt;
+                stateRef.current.pendingActions.length === 0
+                    ? reducer(initialState, action)
+                    : reducer(previous, action)
+            );
+            // Store the action so we can replay it if necessary
+            stateRef.current.pendingActions.push(action);
+            // Save soon
+            if (stateRef.current.timer !== undefined) {
+                window.clearTimeout(stateRef.current.timer);
+            }
+            stateRef.current.timer = window.setTimeout(attemptSave, delayMs);
+        },
+        [stateRef]
+    );
+}
+
+export function usePersistentReducer&lt;S, A&gt;(
+    initialState: S,
+    reducer: Reducer&lt;S, A&gt;,
+    compare: (s1: S, s2: S) =&gt; number,
+    save: (updated: S) =&gt; Promise&lt;PersistentUpdateResult&lt;S&gt;&gt;,
+    delayMs = 50
+): readonly [S, (a: A) =&gt; void] {
+    const [editingState, setEditingState] = useState(initialState);
+
+    // Keep details of unsaved actions in a ref so our delayed saves always see the latest situation
+    const stateRef = useRef&lt;{
+        timer: number | undefined;
+        editingState: S;
+        pendingActions: A[];
+    }&gt;({ timer: undefined, editingState, pendingActions: [] });
+    stateRef.current.editingState = editingState;
+
+
+
+    // If no unsaved changes, return the initialState itself (another user might change it at any time)
+    const returnedState =
+        stateRef.current.pendingActions.length !== 0 ||
+        compare(editingState, initialState) &gt; 0
+            ? editingState
+            : initialState;
+
+    return [returnedState, dispatch] as const;
+}
+</code></pre>
+
+            </div>
+            
+            <div class="outer">                                
+                <table class="recent" align="center"><tr>
+    <td>
+        <strong>A hook for collaborative editing</strong>
+    </td>
+    <td class="date"> 2023-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Language_Smackdown_Java_vs_C.html"> Language Smackdown: Java vs. C#</a>
+    </td>
+    <td class="date"> 2023-03-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Domesday_86_Reloaded_Reloaded.html"> Domesday '86 Reloaded (Reloaded)</a>
+    </td>
+    <td class="date"> 2021-02-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="The_Blob_Lottery.html"> The Blob Lottery</a>
+    </td>
+    <td class="date"> 2020-09-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Abstraction_is_a_Thing.html">Abstraction is a Thing</a>
+    </td>
+    <td class="date"> 2020-03-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Unfortunate_Bifurcations.html">Unfortunate Bifurcations</a>
+    </td>
+    <td class="date"> 2019-11-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Two_Cheers_for_SQL.html"> Two Cheers for SQL</a>
+    </td>
+    <td class="date"> 2019-08-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Factory_Injection_in_C.html">Factory Injection in C#</a>
+    </td>
+    <td class="date"> 2019-07-02</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Hangfire_A_Tale_of_Several_Queues.html">Hangfire - A Tale of Several Queues</a>
+    </td>
+    <td class="date"> 2019-05-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="How_Does_Auth_work.html"> How Does Auth work?</a>
+    </td>
+    <td class="date"> 2018-11-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_2_Baby_Bathwater_Routing_etc.html"> From Ember to React, Part 2: Baby, Bathwater, Routing, etc.</a>
+    </td>
+    <td class="date"> 2018-03-18</td>    
+</tr>
+<tr>
+    <td>
+        <a href="From_Ember_to_React_Part_1_Why_Not_Ember.html"> From Ember to React, Part 1: Why Not Ember?</a>
+    </td>
+    <td class="date"> 2017-11-07</td>    
+</tr>
+<tr>
+    <td>
+        <a href="json_mobx_Like_React_but_for_Data_Part_2.html">json-mobx - Like React, but for Data (Part 2)</a>
+    </td>
+    <td class="date"> 2017-02-15</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Redux_in_Pieces.html">Redux in Pieces</a>
+    </td>
+    <td class="date"> 2017-01-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Box_em_Property_references_for_TypeScript.html">Box 'em! - Property references for TypeScript</a>
+    </td>
+    <td class="date"> 2017-01-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_s_up_with_this.html"> TypeScript - What's up with this?</a>
+    </td>
+    <td class="date"> 2017-01-01</td>    
+</tr>
+<tr>
+    <td>
+        <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>
+    </td>
+    <td class="date"> 2016-12-28</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Eventless_XAML_Flavoured.html">Eventless - XAML Flavoured</a>
+    </td>
+    <td class="date"> 2016-12-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Epilogue.html">Immuto - Epilogue</a>
+    </td>
+    <td class="date"> 2016-12-20</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Radical_Unification.html">Immuto - Radical Unification</a>
+    </td>
+    <td class="date"> 2016-09-22</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Working_with_React_An_Example.html">Immuto - Working with React (An Example)</a>
+    </td>
+    <td class="date"> 2016-09-16</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Immuto_Strongly_Typed_Redux_Composition.html">Immuto - Strongly Typed Redux Composition</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_What_is_a_class.html"> TypeScript - What is a class?</a>
+    </td>
+    <td class="date"> 2016-09-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing_EPISODE_II.html">TypeScript and runtime typing - EPISODE II</a>
+    </td>
+    <td class="date"> 2016-09-10</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_and_runtime_typing.html">TypeScript and runtime typing</a>
+    </td>
+    <td class="date"> 2016-09-04</td>    
+</tr>
+<tr>
+    <td>
+        <a href="What_s_good_about_Redux.html">What's good about Redux</a>
+    </td>
+    <td class="date"> 2016-07-24</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_multicast_functions.html">TypeScript multicast functions</a>
+    </td>
+    <td class="date"> 2016-03-13</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_doop.html">Introducing doop</a>
+    </td>
+    <td class="date"> 2016-03-08</td>    
+</tr>
+<tr>
+    <td>
+        <a href="TypeScript_is_not_really_a_superset_of_JavaScript_and_that_is_a_Good_Thing.html">TypeScript is not really a superset of JavaScript and that is a Good Thing</a>
+    </td>
+    <td class="date"> 2015-07-11</td>    
+</tr>
+<tr>
+    <td>
+        <a href="A_new_kind_of_managed_lvalue_pointer.html">A new kind of managed lvalue pointer</a>
+    </td>
+    <td class="date"> 2014-04-27</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Using_pointer_syntax_as_a_shorthand_for_IEnumerable.html">Using pointer syntax as a shorthand for IEnumerable</a>
+    </td>
+    <td class="date"> 2014-04-26</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Adding_crazily_powerful_operator_overloading_to_C_6.html">Adding crazily powerful operator overloading to C# 6</a>
+    </td>
+    <td class="date"> 2014-04-23</td>    
+</tr>
+<tr>
+    <td>
+        <a href="Introducing_Carota.html">Introducing Carota</a>
+    </td>
+    <td class="date"> 2013-11-04</td>    
+</tr>
+</table>                
+            </div>
+
+            <div class="outer">  
+                <div class="rss">Want to comment on anything? <a href="https://github.com/danielearwicker/danielearwicker.github.io/issues">Create an issue!</a></div>              
+                <div class="rss"><a href="rss.xml">RSS</a></div>
+            </div>
+        </div>
+
+        <script src="highlight/highlight.unmin.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script>
+    </body>
+</html>
