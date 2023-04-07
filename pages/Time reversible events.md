@@ -15,12 +15,12 @@ Given this table, we can begin with an empty state table, and "play back" the ch
 When deleting, we remove one instance of the specified `value`; any two instances of the same `value` are equivalent so it doesn't matter which we delete. All that matters is how many instances there are. Generally is possible that the events in a batch might arrive at a net effect by some redundant route:
 
 | `value` | `added` |
-| ------- | ------- |
-| 3       | 1       |
-| 3       | 0       |
-| 3       | 0       |
-| 3       | 1       |
-| 3       | 1       |
+| :-----: | :-----: |
+|    3    |    1    |
+|    3    |    0    |
+|    3    |    0    |
+|    3    |    1    |
+|    3    |    1    |
 
 This has the net effect of adding 3, as there is one more added than removed. The only danger with such a situation is that order in which the events are replayed is important, as if all the removes were performed first, this could imply that `3` occurs a negative number of times in the state table! But such a batch could be simplified at the point of its creation to remove both the unnecessary events and also this problem.
 
