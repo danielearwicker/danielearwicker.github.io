@@ -48,12 +48,36 @@
 </ul>
 <p>Given this table, we can begin with an empty state table, and "play back" the changes, inserting the <code>value</code> if <code>added</code> is 1 and removing it if <code>added</code> is 0, and we will reconstruct the latest state.</p>
 <p>When deleting, we remove one instance of the specified <code>value</code>; any two instances of the same <code>value</code> are equivalent so it doesn't matter which we delete. All that matters is how many instances there are. Generally is possible that the events in a batch might arrive at a net effect by some redundant route:</p>
-<p>| <code>value</code> | <code>added</code> |
-| 3 | 1 |
-| 3 | 0 |
-| 3 | 0 |
-| 3 | 1 |
-| 3 | 1 |</p>
+<table>
+<thead>
+<tr>
+<th><code>value</code></th>
+<th><code>added</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
 <p>This has the net effect of adding 3, as there is one more added than removed. The only danger with such a situation is that order in which the events are replayed is important, as if all the removes were performed first, this could imply that <code>3</code> occurs a negative number of times in the state table! But such a batch could be simplified at the point of its creation to remove both the unnecessary events and also this problem.</p>
 <p>To be certain that our events describe the complete history, it would be safest to never directly update the state table, but instead write a batch of events and then execute that batch as described above. The event table is the definitive record of what has occurred. The latest state, arrived at by executing the events, is merely a convenient representation <em>derived</em> from the events.</p>
 <p>And if we are mostly interested in recent past states, we would prefer to start with the latest state and "rewind" back to a recent past state, if only because this is a shorter journey than starting from the ever-more-distant empty initial state and playing forward. Fortunately our events have an interesting property: we can flip the <code>added</code> bit, setting it to <code>1 - added</code>. This makes each "add" into a "remove" and vice versa.</p>
