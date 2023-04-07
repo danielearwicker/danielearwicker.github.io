@@ -34,3 +34,25 @@ This backward time travel can be implemented easily by making our algorithm for 
 -   playing backwards: `undo` is 1, and so `added != 1` implies adding, while `added == 1` implies removal, so `added` has the opposite meaning.
 
 There's an amusing similarity here with quantum field theory, in which a positron can be thought of as an electron moving backward through time.
+
+What makes an event stream time-reversible? There must be no loss of information. In databases we often avoid immutable approaches, and instead overwrite values in existing records. To support this we nominate one column to be immutable so it can act as the primary key. An event that says:
+
+> In row 15, change `last_name` to `"Smith"`
+
+is _destructive_, as the previous value is lost. The destruction of information rules out reversibility. But capturing it as:
+
+> In row 15, change `last_name` from `"Jones"` to `"Smith"`
+
+is enough to restore reversibility. To convert to an undo operation, we simply swap the values in the _from_ and _to_ slots. No doubt we will also support a delete event, in which case the event will have to capture its entire contents:
+
+> Delete row 15, in which `last_name` is `"Smith"`, `first_name` is...
+
+When that event is reversed, it becomes:
+
+> Insert row 15, in which `last_name` is `"Smith"`, `first_name` is...
+
+(Note that the primary key 15 has to be retained, as there must be at least one other event in the past referring to row 15, so we can't use the popular RDBMS feature that creates a new key from a counter on each insert.)
+
+The rules for how to time-reverse an event may appear haphazard, but really they are perfectly consistent. The "change" event is really two events, one that removes a value and the other that adds, so in every case we are in fact turning add into remove and vice versa.
+
+Even so, in the simpler scheme where our current state is just integers (which are foreign keys into another table holding immutable records, retaining every distinct combination of values we've ever encountered), this quite involved event vocabulary is unnecessary.

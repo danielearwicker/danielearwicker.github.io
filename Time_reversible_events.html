@@ -87,6 +87,25 @@
 <li>playing backwards: <code>undo</code> is 1, and so <code>added != 1</code> implies adding, while <code>added == 1</code> implies removal, so <code>added</code> has the opposite meaning.</li>
 </ul>
 <p>There's an amusing similarity here with quantum field theory, in which a positron can be thought of as an electron moving backward through time.</p>
+<p>What makes an event stream time-reversible? There must be no loss of information. In databases we often avoid immutable approaches, and instead overwrite values in existing records. To support this we nominate one column to be immutable so it can act as the primary key. An event that says:</p>
+<blockquote>
+  <p>In row 15, change <code>last_name</code> to <code>"Smith"</code></p>
+</blockquote>
+<p>is <em>destructive</em>, as the previous value is lost. The destruction of information rules out reversibility. But capturing it as:</p>
+<blockquote>
+  <p>In row 15, change <code>last_name</code> from <code>"Jones"</code> to <code>"Smith"</code></p>
+</blockquote>
+<p>is enough to restore reversibility. To convert to an undo operation, we simply swap the values in the <em>from</em> and <em>to</em> slots. No doubt we will also support a delete event, in which case the event will have to capture its entire contents:</p>
+<blockquote>
+  <p>Delete row 15, in which <code>last_name</code> is <code>"Smith"</code>, <code>first_name</code> is…</p>
+</blockquote>
+<p>When that event is reversed, it becomes:</p>
+<blockquote>
+  <p>Insert row 15, in which <code>last_name</code> is <code>"Smith"</code>, <code>first_name</code> is…</p>
+</blockquote>
+<p>(Note that the primary key 15 has to be retained, as there must be at least one other event in the past referring to row 15, so we can't use the popular RDBMS feature that creates a new key from a counter on each insert.)</p>
+<p>The rules for how to time-reverse an event may appear haphazard, but really they are perfectly consistent. The "change" event is really two events, one that removes a value and the other that adds, so in every case we are in fact turning add into remove and vice versa.</p>
+<p>Even so, in the simpler scheme where our current state is just integers (which are foreign keys into another table holding immutable records, retaining every distinct combination of values we've ever encountered), this quite involved event vocabulary is unnecessary.</p>
 
             </div>
             
