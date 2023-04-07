@@ -31,11 +31,19 @@
                         </td>
                     </tr>
                 </table>
-                <div class="topics"><a href="tag-archival.html">ARCHIVAL (1)</a> <a href="tag-bbc.html">BBC (1)</a> <a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (8)</a> <a href="tag-cloud.html">CLOUD (1)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-java.html">JAVA (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-languages.html">LANGUAGES (1)</a> <a href="tag-maps.html">MAPS (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-probability.html">PROBABILITY (1)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-style.html">STYLE (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
+                <div class="topics"><a href="tag-archival.html">ARCHIVAL (1)</a> <a href="tag-bbc.html">BBC (1)</a> <a href="tag-boxm.html">BOXM (1)</a> <a href="tag-c__23.html">C# (8)</a> <a href="tag-cloud.html">CLOUD (1)</a> <a href="tag-ember.html">EMBER (2)</a> <a href="tag-eventless.html">EVENTLESS (1)</a> <a href="tag-events.html">EVENTS (1)</a> <a href="tag-factory.html">FACTORY (1)</a> <a href="tag-federation.html">FEDERATION (1)</a> <a href="tag-frp.html">FRP (2)</a> <a href="tag-functional.html">FUNCTIONAL (4)</a> <a href="tag-hangfire.html">HANGFIRE (1)</a> <a href="tag-immutability.html">IMMUTABILITY (3)</a> <a href="tag-immuto.html">IMMUTO (4)</a> <a href="tag-injection.html">INJECTION (1)</a> <a href="tag-java.html">JAVA (1)</a> <a href="tag-javascript.html">JAVASCRIPT (3)</a> <a href="tag-json-mobx.html">JSON-MOBX (1)</a> <a href="tag-languages.html">LANGUAGES (1)</a> <a href="tag-maps.html">MAPS (1)</a> <a href="tag-mobx.html">MOBX (5)</a> <a href="tag-probability.html">PROBABILITY (1)</a> <a href="tag-react.html">REACT (6)</a> <a href="tag-reactive.html">REACTIVE (2)</a> <a href="tag-redux.html">REDUX (2)</a> <a href="tag-roslyn.html">ROSLYN (3)</a> <a href="tag-saas.html">SAAS (1)</a> <a href="tag-sql.html">SQL (1)</a> <a href="tag-style.html">STYLE (1)</a> <a href="tag-typescript.html">TYPESCRIPT (14)</a></div>
             </div>
             
             <div class="content">
-                <h2> Language Smackdown: Java vs. C#</h2>
+                <h2>Time reversible events</h2>
+<p class="meta"><a href="tag-events.html">EVENTS</a>  2023-04-07</p>
+<p>The current state of a system might be represented by the contents of a database table. The table could have many columns of various data types, but to simplify we'll say there is only a single integer column, so our table is just a list of integers. (Each integer could in reality be a foreign key into another table holding immutable and distinct tuples, each describing a frozen configuration of a more interesting entity such as a person, a medical record and so on. So we can make this simplification without loss of generality.)</p>
+<p>We can describe the history of the table's state by creating another table in which the rows represent <em>events</em>. Of course in a database we need to think about atomic transactions; some kinds of change may not make sense by themselves and must always occur atomically as part of a transaction along with certain related changes. Therefore an event always belongs to a <em>batch</em>, and a batch may contain multiple events. Batches occur in a definite order, so we can number them (that is, the primary key of a batch is a sequence number). A batch is also the ideal place to record the clock time that the events in the batch were applied.</p>
+<p>Aside from the <code>batch_id</code> an event has just two columns:</p>
+<p><a href="Time_reversible_events.html">Read on...</a></p>
+<hr>
+
+<h2> Language Smackdown: Java vs. C#</h2>
 <p class="meta"><a href="tag-languages.html">LANGUAGES</a> <a href="tag-c__23.html">C#</a> <a href="tag-java.html">JAVA</a>  2023-03-07</p>
 <p>A pithy quote:</p>
 <blockquote>
@@ -335,6 +343,12 @@ is already good enough for every way I currently make use of rich text in browse
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
+    <td>
+        <a href="Time_reversible_events.html">Time reversible events</a>
+    </td>
+    <td class="date"> 2023-04-07</td>    
+</tr>
+<tr>
     <td>
         <a href="Language_Smackdown_Java_vs_C.html"> Language Smackdown: Java vs. C#</a>
     </td>

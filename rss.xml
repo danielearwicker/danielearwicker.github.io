@@ -4,7 +4,15 @@
     <title>Ear/Wiki</title>
     <link>http://danielearwicker.github.io/</link>
     <description>No profit grows where is no pleasure taken</description>
-    <lastBuildDate> 2023-03-07T00:00:00Z</lastBuildDate>
+    <lastBuildDate> 2023-04-07T00:00:00Z</lastBuildDate>
+    <item>
+      <title>Time reversible events</title>
+      <pubDate> 2023-04-07T00:00:00Z</pubDate>
+      <description>&lt;p&gt;The current state of a system might be represented by the contents of a database table. The table could have many columns of various data types, but to simplify we'll say there is only a single integer column, so our table is just a list of integers. (Each integer could in reality be a foreign key into another table holding immutable and distinct tuples, each describing a frozen configuration of a more interesting entity such as a person, a medical record and so on. So we can make this simplification without loss of generality.)&lt;/p&gt;
+&lt;p&gt;We can describe the history of the table's state by creating another table in which the rows represent &lt;em&gt;events&lt;/em&gt;. Of course in a database we need to think about atomic transactions; some kinds of change may not make sense by themselves and must always occur atomically as part of a transaction along with certain related changes. Therefore an event always belongs to a &lt;em&gt;batch&lt;/em&gt;, and a batch may contain multiple events. Batches occur in a definite order, so we can number them (that is, the primary key of a batch is a sequence number). A batch is also the ideal place to record the clock time that the events in the batch were applied.&lt;/p&gt;
+&lt;p&gt;Aside from the &lt;code&gt;batch_id&lt;/code&gt; an event has just two columns:&lt;/p&gt;</description>
+      <link>http://danielearwicker.github.io/Time_reversible_events.html</link>
+    </item>
     <item>
       <title> Language Smackdown: Java vs. C#</title>
       <pubDate> 2023-03-07T00:00:00Z</pubDate>

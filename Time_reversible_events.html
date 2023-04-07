@@ -1,7 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8" /> 
-        <title>Daniel Earwicker | mobx</title>
+        <title>Daniel Earwicker | Time reversible events</title>
         <link rel="stylesheet" href="highlight/styles/default.css">        
         <link rel="stylesheet" href="style.css">      
         <style>
@@ -35,50 +35,41 @@
             </div>
             
             <div class="content">
-                <h2> From Ember to React, Part 2: Baby, Bathwater, Routing, etc.</h2>
-<p class="meta"><a href="tag-ember.html">EMBER</a> <a href="tag-react.html">REACT</a> <a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a>  2018-03-18</p>
-<p><em>Abstract</em>: Last time, which was too long ago, I explained why Ember is terrible and must be burnt to the ground. This time I'll begin to explain why it's not actually all terrible and we should run back into the burning building to rescue the good parts. This will lead us to answer the question: can React Router be used with MobX?</p>
-<p><a href="From_Ember_to_React_Part_2_Baby_Bathwater_Routing_etc.html">Read on...</a></p>
+                <h1>Time reversible events</h1>
 <hr>
+<p class="meta"><a href="tag-events.html">EVENTS</a>  2023-04-07</p>
 
-<h2> From Ember to React, Part 1: Why Not Ember?</h2>
-<p class="meta"><a href="tag-ember.html">EMBER</a> <a href="tag-react.html">REACT</a> <a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a>  2017-11-07</p>
-<p><em>Abstract</em>: We just replaced our entire Ember codebase with a new one written in React, TypeScript and MobX. It was a pretty engrossing couple of weeks. THIS IS OUR STORY.</p>
-<p><a href="From_Ember_to_React_Part_1_Why_Not_Ember.html">Read on...</a></p>
-<hr>
-
-<h2>json-mobx - Like React, but for Data (Part 2)</h2>
-<p class="meta"><a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-json-mobx.html">JSON-MOBX</a>  2017-02-15</p>
-<p>This is a follow-on to <a href="MobX_Like_React_but_for_Data.html">MobX - Like React, but for Data</a>, in which I noted the parallels between MobX and React.</p>
+<p>The current state of a system might be represented by the contents of a database table. The table could have many columns of various data types, but to simplify we'll say there is only a single integer column, so our table is just a list of integers. (Each integer could in reality be a foreign key into another table holding immutable and distinct tuples, each describing a frozen configuration of a more interesting entity such as a person, a medical record and so on. So we can make this simplification without loss of generality.)</p>
+<p>We can describe the history of the table's state by creating another table in which the rows represent <em>events</em>. Of course in a database we need to think about atomic transactions; some kinds of change may not make sense by themselves and must always occur atomically as part of a transaction along with certain related changes. Therefore an event always belongs to a <em>batch</em>, and a batch may contain multiple events. Batches occur in a definite order, so we can number them (that is, the primary key of a batch is a sequence number). A batch is also the ideal place to record the clock time that the events in the batch were applied.</p>
+<p>Aside from the <code>batch_id</code> an event has just two columns:</p>
 <ul>
-<li>A <code>computed</code> "renders" a "view" of some data, and automatically updates when the source data changes. Like a React component, except generalised to cover any data, not just Virtual DOM.</li>
-<li>An <code>observable</code> is like the <code>setState</code> facility in stateful React components, except that its automatic ability to notify <code>computed</code> (and <code>autorun</code>) observers works by spooky "action at a distance" and so doesn't have to take place inside one component.</li>
+<li>the <code>value</code> that would appear in the current state table</li>
+<li>a bit <code>added</code> that is 1 (true) if the value was added or 0 (false) if it was removed (the only other possible event in such a simple system)</li>
 </ul>
-<p>But this still leaves one major feature of React unaddressed, and that is <em>reconciliation</em>. What is this about, and how can it be useful in a more general way in MobX?</p>
-<p><a href="json_mobx_Like_React_but_for_Data_Part_2.html">Read on...</a></p>
-<hr>
-
-<h2>Box 'em! - Property references for TypeScript</h2>
-<p class="meta"><a href="tag-typescript.html">TYPESCRIPT</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-react.html">REACT</a> <a href="tag-boxm.html">BOXM</a>  2017-01-11</p>
-<p>This concerns quite an abstract, simple building block, but it is a neat tool for use with React and MobX. In MobX there's a utility <code>observable.box</code> (<a href="https://mobx.js.org/refguide/boxed.html">docs</a>). But I don't want to use that create all my properties and have to put <code>.get()</code> after every read access. I want to use the cool <code>@observable</code> decorator and just fetch my properties directly, and assign new values with <code>=</code>. What I need is a way to box a property. Oh, and it better be statically type checked in TypeScript.</p>
-<p>For the overall idea, see <a href="https://github.com/danielearwicker/boxm">the project page</a>, or just look at the takeaway:</p>
-<p><a href="Box_em_Property_references_for_TypeScript.html">Read on...</a></p>
-<hr>
-
-<h2>MobX - Like React, but for Data</h2>
-<p class="meta"><a href="tag-frp.html">FRP</a> <a href="tag-functional.html">FUNCTIONAL</a> <a href="tag-reactive.html">REACTIVE</a> <a href="tag-mobx.html">MOBX</a> <a href="tag-redux.html">REDUX</a> <a href="tag-react.html">REACT</a>  2016-12-28</p>
-<p>Catching up on blogged opinions about MobX and where it fits in (especially in relation to Redux), I see much confusion. There is a suspicion of it arising from fear of mutability. It has none of the frameworky ceremony of Redux, and that seems to cause anxiety in some.</p>
-<p>Even its defenders seem a little apologetic, like MobX is okay <em>despite</em> the heresy of allowing data to be mutable and object-oriented. The great Basarat even humorously <a href="https://twitter.com/basarat/status/812150927947800578">welcomed me to the dark side!</a></p>
-<p>I'm fine with being on the edgy team. You'll usually find me in my leather jacket and shades, posing on my parked Harley Davidson and chewing on a matchstick, intimidating the townspeople. Why? I don't have to explain myself to you, lady.</p>
-<p><a href="MobX_Like_React_but_for_Data.html">Read on...</a></p>
-<hr>
+<p>Given this table, we can begin with an empty state table, and "play back" the changes, inserting the <code>value</code> if <code>added</code> is 1 and removing it if <code>added</code> is 0, and we will reconstruct the latest state.</p>
+<p>When deleting, we remove one instance of the specified <code>value</code>; any two instances of the same <code>value</code> are equivalent so it doesn't matter which we delete. All that matters is how many instances there are. Generally is possible that the events in a batch might arrive at a net effect by some redundant route:</p>
+<p>| <code>value</code> | <code>added</code> |
+| 3 | 1 |
+| 3 | 0 |
+| 3 | 0 |
+| 3 | 1 |
+| 3 | 1 |</p>
+<p>This has the net effect of adding 3, as there is one more added than removed. The only danger with such a situation is that order in which the events are replayed is important, as if all the removes were performed first, this could imply that <code>3</code> occurs a negative number of times in the state table! But such a batch could be simplified at the point of its creation to remove both the unnecessary events and also this problem.</p>
+<p>To be certain that our events describe the complete history, it would be safest to never directly update the state table, but instead write a batch of events and then execute that batch as described above. The event table is the definitive record of what has occurred. The latest state, arrived at by executing the events, is merely a convenient representation <em>derived</em> from the events.</p>
+<p>And if we are mostly interested in recent past states, we would prefer to start with the latest state and "rewind" back to a recent past state, if only because this is a shorter journey than starting from the ever-more-distant empty initial state and playing forward. Fortunately our events have an interesting property: we can flip the <code>added</code> bit, setting it to <code>1 - added</code>. This makes each "add" into a "remove" and vice versa.</p>
+<p>This backward time travel can be implemented easily by making our algorithm for playing back events accept an <code>undo</code> bit parameter. An event causes an insertion if <code>added != undo</code>, and it causes a removal if <code>added == undo</code>. Think it through:</p>
+<ul>
+<li>playing forwards: <code>undo</code> is 0, and so <code>added != 0</code> implies adding, while <code>added == 0</code> implies removal, as we originally said.</li>
+<li>playing backwards: <code>undo</code> is 1, and so <code>added != 1</code> implies adding, while <code>added == 1</code> implies removal, so <code>added</code> has the opposite meaning.</li>
+</ul>
+<p>There's an amusing similarity here with quantum field theory, in which a positron can be thought of as an electron moving backward through time.</p>
 
             </div>
             
             <div class="outer">                                
                 <table class="recent" align="center"><tr>
     <td>
-        <a href="Time_reversible_events.html">Time reversible events</a>
+        <strong>Time reversible events</strong>
     </td>
     <td class="date"> 2023-04-07</td>    
 </tr>
