@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <title>Volume Invaders</title>
+        <style>
+            body {
+                background: black;
+                overflow: hidden;
+            }
+            p {
+                color: white;
+                font-family: Helvetica;
+                position: absolute;
+                left: 10px;
+                top: 0;
+                height: 30px;
+                right: 10px;
+            }
+            a {
+                color: white;
+                float: right;
+            }
+            .container {
+                position: absolute;
+                left: 0;
+                top: 30px;
+                right: 0;
+                bottom: 0;
+            }
+            canvas {
+                position: absolute;
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <p>
+            VOLUME INVADERS: Z = left, X = right, M = fire 
+            <a href="https://github.com/danielearwicker/volume-invaders">Source</a>
+        </p>
+        <audio src="../norwegianwood.mp3" autoplay loop></audio>>
+        <div class="container">
+            <canvas></canvas>
+        </div>        
+        <script src="built/bundle.js"></script>
+    </body>xxx
+</html>
