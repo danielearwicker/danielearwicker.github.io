@@ -211,7 +211,7 @@ export const ShelfEditor = ({ shelf }: { shelf: Shelf.Cursor }) => (
 );
 ```
 
-In fact there's nothing here I haven't [previously discussed](Immuto). `Shelf.books` is the collection definition, and it's a way to get a `Book` cursor if you have a `Shelf` cursor and the key of the book you're interested in.
+In fact there's nothing here I haven't [previously discussed](../Immuto). `Shelf.books` is the collection definition, and it's a way to get a `Book` cursor if you have a `Shelf` cursor and the key of the book you're interested in.
 
 So these are the basics of how you build components that bind to Immuto models. Note that you are of course free to have other props besides a cursor on a component, and you could even pass multiple cursors in different props.
 
