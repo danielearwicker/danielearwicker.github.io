@@ -408,6 +408,17 @@ ninja.data = [{
             window.location.href = "/blog/2014/Roslyn-Operators/";
           
         },
+      },{id: "post-intro-to-javascript-aimed-at-java-programmers",
+        
+          title: "Intro to JavaScript aimed at Java programmers",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2013/Prompt-Engineer-copy/";
+          
+        },
       },{id: "post-introducing-carota",
         
           title: "Introducing Carota",
