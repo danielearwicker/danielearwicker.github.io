@@ -23,7 +23,29 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-poorly-structured-notes-on-ai-part-3",
+        },{id: "post-vectors-intuitions",
+        
+          title: "Vectors - Intuitions",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/vectors/";
+          
+        },
+      },{id: "post-poorly-structured-notes-on-ai-part-4",
+        
+          title: "Poorly Structured Notes on AI Part 4",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ai4/";
+          
+        },
+      },{id: "post-poorly-structured-notes-on-ai-part-3",
         
           title: "Poorly Structured Notes on AI Part 3",
         
