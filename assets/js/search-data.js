@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-vectors-intuitions",
+        },{id: "post-tensors",
+        
+          title: "Tensors",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/tensors/";
+          
+        },
+      },{id: "post-vectors-intuitions",
         
           title: "Vectors - Intuitions",
         
