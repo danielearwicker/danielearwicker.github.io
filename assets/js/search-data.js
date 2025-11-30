@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-tensors",
+        },{id: "post-diffing-the-beatles-anthology",
+        
+          title: "Diffing the Beatles Anthology",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/beatles-anthology-diff/";
+          
+        },
+      },{id: "post-tensors",
         
           title: "Tensors",
         
