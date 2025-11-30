@@ -108,7 +108,7 @@ At this point I have still barely opened the code file except to add some text a
 
 If you want the full details, I got Claude to read its own log of the session and convert it into a human readable form:
 
--   [claude-session.md](../../../beatles-anthology-diffs/claude-session.md)
+-   [claude-session.md](https://github.com/danielearwicker/beatles-anthology-diffs/blob/main/claude-session.md)
 
 You'll see quite a lot of distraction where I tried to get it to fix issues with the layout, but even including that I think I only gave it about 30 prompts overall.
 
