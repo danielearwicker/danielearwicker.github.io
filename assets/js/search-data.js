@@ -23,7 +23,40 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-diffing-the-beatles-anthology",
+        },{id: "post-poorly-structured-notes-on-ai-part-7-gopnik-et-al",
+        
+          title: "Poorly Structured Notes on AI Part 7 - Gopnik et al",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ai7/";
+          
+        },
+      },{id: "post-poorly-structured-notes-on-ai-part-6-lecun-vs-hassabis",
+        
+          title: "Poorly Structured Notes on AI Part 6 - LeCun vs Hassabis",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ai6/";
+          
+        },
+      },{id: "post-poorly-structured-notes-on-ai-part-5-neighbourhood-diagram",
+        
+          title: "Poorly Structured Notes on AI Part 5 - Neighbourhood Diagram",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2025/ai5/";
+          
+        },
+      },{id: "post-diffing-the-beatles-anthology",
         
           title: "Diffing the Beatles Anthology",
         
@@ -461,17 +494,6 @@ ninja.data = [{
         handler: () => {
           
             window.location.href = "/blog/2014/Roslyn-Operators/";
-          
-        },
-      },{id: "post-intro-to-javascript-aimed-at-java-programmers",
-        
-          title: "Intro to JavaScript aimed at Java programmers",
-        
-        description: "",
-        section: "Posts",
-        handler: () => {
-          
-            window.location.href = "/blog/2013/Prompt-Engineer-copy/";
           
         },
       },{id: "post-introducing-carota",
