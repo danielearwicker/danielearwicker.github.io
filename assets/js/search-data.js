@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-poorly-structured-notes-on-ai-part-7-gopnik-et-al",
+        },{id: "post-poorly-structured-notes-on-ai-part-8-the-mundanity-of-ralph-wiggum",
+        
+          title: "Poorly Structured Notes on AI Part 8 - The Mundanity of Ralph Wiggum...",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/ai8/";
+          
+        },
+      },{id: "post-poorly-structured-notes-on-ai-part-7-gopnik-et-al",
         
           title: "Poorly Structured Notes on AI Part 7 - Gopnik et al",
         
