@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-poorly-structured-notes-on-ai-part-8-the-mundanity-of-ralph-wiggum",
+        },{id: "post-boo-boo-bear-a-wikipedia-edit-skirmish",
+        
+          title: "Boo-Boo Bear, A Wikipedia Edit Skirmish",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/boo-boo/";
+          
+        },
+      },{id: "post-poorly-structured-notes-on-ai-part-8-the-mundanity-of-ralph-wiggum",
         
           title: "Poorly Structured Notes on AI Part 8 - The Mundanity of Ralph Wiggum...",
         
