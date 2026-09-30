@@ -15,9 +15,14 @@ const progressBar = $("#progress");
  * To account for this, a minimal delay was introduced before computing the
  * values.
  */
-window.onload = function () {
+/*
+ * Registered as a listener rather than assigned to window.onload, so that we
+ * do not clobber (or get clobbered by) other scripts that want the load event.
+ * TikZJax, in particular, assigns window.onload to do its rendering.
+ */
+window.addEventListener("load", function () {
   setTimeout(progressBarSetup, 50);
-};
+});
 /*
  * We set up the bar according to the browser.
  * If the browser supports the progress element we use that.

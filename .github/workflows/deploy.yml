@@ -8,6 +8,8 @@ on:
     paths:
       - "assets/**"
       - "_sass/**"
+      - "_plugins/**"
+      - "bin/**"
       - "_scripts/**"
       - "**.bib"
       - "**.html"
@@ -37,6 +39,8 @@ on:
     paths:
       - "assets/**"
       - "_sass/**"
+      - "_plugins/**"
+      - "bin/**"
       - "_scripts/**"
       - "**.bib"
       - "**.html"
@@ -88,6 +92,11 @@ jobs:
           valueFile: "_config.yml"
           propertyPath: "giscus.repo"
           value: ${{ github.repository }}
+      - name: Check TikZ diagrams are pre-rendered 🖼️
+        # The runner has no TeX installation: every diagram must already have a
+        # committed SVG. Checking here fails fast with a clear message instead of
+        # erroring deep inside the Jekyll build.
+        run: ruby bin/render-tikz --check
       - name: Install and Build 🔧
         run: |
           sudo apt-get update && sudo apt-get install -y imagemagick

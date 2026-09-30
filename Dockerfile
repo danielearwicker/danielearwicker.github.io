@@ -1,76 +1,35 @@
-FROM ruby:slim
+# The al-folio image, plus a TeX installation for rendering TikZ diagrams.
+#
+# This builds on the published image rather than assembling the environment
+# from scratch, so `docker compose up` on a fresh clone takes a couple of
+# minutes rather than reinstalling every gem -- and, more to the point, it
+# actually works: al-folio's from-scratch recipe currently fails to build the
+# stringio native extension against Ruby 3.4. That original Dockerfile is in
+# this repository's git history if it is ever needed again.
+#
+# TeX lives here, in the same image that serves the site, so that editing a
+# diagram and reloading the page is all there is to it: _plugins/tikz.rb
+# compiles any TikZ block that has no cached SVG yet.
 
-# uncomment these if you are having this issue with the build:
-# /usr/local/bundle/gems/jekyll-4.3.4/lib/jekyll/site.rb:509:in `initialize': Permission denied @ rb_sysopen - /srv/jekyll/.jekyll-cache/.gitignore (Errno::EACCES)
-# ARG GROUPID=901
-# ARG GROUPNAME=ruby
-# ARG USERID=901
-# ARG USERNAME=jekyll
+FROM amirpourmand/al-folio:v0.14.4
 
-ENV DEBIAN_FRONTEND noninteractive
+LABEL description="al-folio with TeX, for build-time TikZ rendering"
 
-LABEL authors="Amir Pourmand,George Araújo" \
-      description="Docker image for al-folio academic template" \
-      maintainer="Amir Pourmand"
+ENV DEBIAN_FRONTEND=noninteractive
 
-# uncomment these if you are having this issue with the build:
-# /usr/local/bundle/gems/jekyll-4.3.4/lib/jekyll/site.rb:509:in `initialize': Permission denied @ rb_sysopen - /srv/jekyll/.jekyll-cache/.gitignore (Errno::EACCES)
-# add a non-root user to the image with a specific group and user id to avoid permission issues
-# RUN groupadd -r $GROUPNAME -g $GROUPID && \
-#     useradd -u $USERID -m -g $GROUPNAME $USERNAME
-
-# install system dependencies
-RUN apt-get update -y && \
+# texlive-latex-base   latex itself
+# texlive-pictures     PGF/TikZ and its libraries
+# texlive-latex-extra  standalone.cls, which crops the page to the picture
+# texlive-fonts-*      the Computer Modern fonts the labels are set in
+# dvisvgm              DVI -> SVG, with glyphs converted to paths
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        build-essential \
-        curl \
-        git \
-        imagemagick \
-        inotify-tools \
-        locales \
-        nodejs \
-        procps \
-        python3-pip \
-        zlib1g-dev && \
-    pip --no-cache-dir install --upgrade --break-system-packages nbconvert
-
-# clean up
-RUN apt-get clean && \
-    apt-get autoremove && \
-    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*  /tmp/*
-
-# set the locale
-RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
-    locale-gen
-
-# set environment variables
-ENV EXECJS_RUNTIME=Node \
-    JEKYLL_ENV=production \
-    LANG=en_US.UTF-8 \
-    LANGUAGE=en_US:en \
-    LC_ALL=en_US.UTF-8
-
-# create a directory for the jekyll site
-RUN mkdir /srv/jekyll
-
-# copy the Gemfile and Gemfile.lock to the image
-ADD Gemfile.lock /srv/jekyll
-ADD Gemfile /srv/jekyll
-
-# set the working directory
-WORKDIR /srv/jekyll
-
-# install jekyll and dependencies
-RUN gem install --no-document jekyll bundler
-RUN bundle install --no-cache
-
-EXPOSE 8080
-
-COPY bin/entry_point.sh /tmp/entry_point.sh
-
-# uncomment this if you are having this issue with the build:
-# /usr/local/bundle/gems/jekyll-4.3.4/lib/jekyll/site.rb:509:in `initialize': Permission denied @ rb_sysopen - /srv/jekyll/.jekyll-cache/.gitignore (Errno::EACCES)
-# set the ownership of the jekyll site directory to the non-root user
-# USER $USERNAME
-
-CMD ["/tmp/entry_point.sh"]
+        dvisvgm \
+        texlive-fonts-recommended \
+        texlive-latex-base \
+        texlive-latex-extra \
+        texlive-pictures && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+# Note: deliberately not clearing /tmp here -- the base image's CMD is
+# /tmp/entry_point.sh, and wiping it leaves the container unable to start.

@@ -1,17 +1,18 @@
-# this file uses prebuilt image in dockerhub
+# One image does everything: serves the site and renders its TikZ diagrams.
+#
+#   docker compose up
+#
+# builds the image on first run (a few minutes, cached thereafter), then serves
+# on http://localhost:8080 with live reload. Editing a post -- diagrams included
+# -- is picked up automatically; TikZ blocks are compiled to SVG by
+# _plugins/tikz.rb and cached under assets/img/tikz/, which is committed so that
+# CI, which has no TeX, can build the site from those files alone.
 services:
   jekyll:
-    image: amirpourmand/al-folio:v0.14.4
     build: .
-    # uncomment these if you are having this issue with the build:
-    # /usr/local/bundle/gems/jekyll-4.3.4/lib/jekyll/site.rb:509:in `initialize': Permission denied @ rb_sysopen - /srv/jekyll/.jekyll-cache/.gitignore (Errno::EACCES)
-    # and fill the args values with the output of the commands on the right
-    # build:
-    #   args:
-    #     GROUPID: # id -g
-    #     GROUPNAME: # id -gn
-    #     USERID: # id -u
-    #     USERNAME: # echo $USER
+    # A locally built image, because the published al-folio image has no TeX in
+    # it. Naming it here keeps the build cached between runs.
+    image: al-folio-tikz:local
     ports:
       - 8080:8080
       - 35729:35729

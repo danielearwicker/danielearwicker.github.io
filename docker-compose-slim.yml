@@ -1,4 +1,8 @@
 # this file uses prebuilt image in dockerhub
+#
+# Note: the published slim image has no TeX installation, so TikZ diagrams that
+# are not already cached under assets/img/tikz/ will show an error in place of
+# the picture. Use the main docker-compose.yml to render new diagrams.
 services:
   jekyll:
     image: amirpourmand/al-folio:slim

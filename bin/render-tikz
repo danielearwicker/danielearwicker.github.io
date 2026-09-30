@@ -1,0 +1,123 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Renders every TikZ diagram in the site to a static SVG under assets/img/tikz/.
+#
+# Jekyll itself runs in Docker (and in CI) without a TeX installation, so the
+# SVGs are produced here, on a machine that has latex and dvisvgm, and committed
+# alongside the posts. The Jekyll plugin then only has to find them.
+#
+# Usage:
+#   bin/render-tikz             render any diagram that is not already cached
+#   bin/render-tikz --force     re-render everything, ignoring the cache
+#   bin/render-tikz --prune     also delete cached SVGs no longer referenced
+#   bin/render-tikz --check     report what is missing, render nothing (for CI)
+
+require "optparse"
+
+ROOT = File.expand_path("..", __dir__)
+require File.join(ROOT, "_plugins", "tikz")
+
+# Everywhere a diagram could plausibly be written.
+SOURCE_GLOBS = [
+  "_posts/**/*.{md,markdown,html}",
+  "_pages/**/*.{md,markdown,html}",
+  "_projects/**/*.{md,markdown,html}",
+  "_books/**/*.{md,markdown,html}",
+  "*.{md,markdown,html}",
+].freeze
+
+options = { force: false, prune: false, check: false }
+OptionParser.new do |parser|
+  parser.banner = "Usage: bin/render-tikz [options]"
+  parser.on("--force", "Re-render every diagram, ignoring the cache") { options[:force] = true }
+  parser.on("--prune", "Delete cached SVGs that are no longer referenced") { options[:prune] = true }
+  parser.on("--check", "Report missing diagrams without rendering (exit 1 if any)") { options[:check] = true }
+  parser.on("-h", "--help", "Show this message") { puts parser; exit 0 }
+end.parse!
+
+unless options[:check] || TikzRender.toolchain_available?
+  abort "render-tikz: needs `latex` and `dvisvgm` on PATH (install MacTeX or TeX Live)."
+end
+
+# Collect every diagram in the site, remembering which file each came from so
+# failures can be reported somewhere useful.
+diagrams = []
+SOURCE_GLOBS.each do |glob|
+  Dir.glob(File.join(ROOT, glob)).sort.each do |path|
+    content = File.read(path)
+    next unless content.include?("text/tikz")
+    TikzRender.extract_sources(TikzRender.strip_code_regions(content)).each do |source|
+      diagrams << { source: source, file: path.sub("#{ROOT}/", "") }
+    end
+  end
+end
+
+if diagrams.empty?
+  puts "render-tikz: no TikZ diagrams found."
+  exit 0
+end
+
+rendered = 0
+cached = 0
+failures = []
+missing = []
+keys = {}
+
+diagrams.each do |diagram|
+  key = TikzRender.cache_key(diagram[:source])
+  keys[key] = true
+  path = TikzRender.svg_absolute_path(key, ROOT)
+
+  if File.exist?(path) && !options[:force]
+    cached += 1
+    next
+  end
+
+  if options[:check]
+    missing << "#{diagram[:file]} -> #{TikzRender.svg_relative_path(key)}"
+    next
+  end
+
+  begin
+    TikzRender.ensure_svg(diagram[:source], ROOT, options[:force])
+    rendered += 1
+    puts "  rendered #{TikzRender.svg_relative_path(key)}  (#{diagram[:file]})"
+  rescue TikzRender::CompileError => e
+    failures << "#{diagram[:file]}:\n#{e.message}"
+  end
+end
+
+if options[:check]
+  if missing.empty?
+    puts "render-tikz: all #{diagrams.size} diagram(s) cached."
+    exit 0
+  end
+  warn "render-tikz: #{missing.size} diagram(s) have no cached SVG:"
+  missing.each { |m| warn "  #{m}" }
+  warn "Run bin/render-tikz and commit assets/img/tikz/."
+  exit 1
+end
+
+# Diagrams that were edited leave their old SVG behind; offer to clear them out.
+stale = Dir.glob(File.join(ROOT, TikzRender::CACHE_DIR, "*.svg")).reject do |path|
+  keys[File.basename(path, ".svg")]
+end
+
+unless stale.empty?
+  if options[:prune]
+    stale.each do |path|
+      File.delete(path)
+      puts "  pruned   #{path.sub("#{ROOT}/", "")}"
+    end
+  else
+    puts "render-tikz: #{stale.size} unreferenced SVG(s); re-run with --prune to remove."
+  end
+end
+
+puts "render-tikz: #{rendered} rendered, #{cached} already cached, #{failures.size} failed."
+
+unless failures.empty?
+  failures.each { |f| warn "\n#{f}" }
+  exit 1
+end

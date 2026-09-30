@@ -1,0 +1,33 @@
+/*******************************************************************************
+ * TikZ diagrams
+ *
+ * Compiled to static SVG at build time by _plugins/tikz.rb, so there is no
+ * client-side rendering to style around -- just the resulting <img>.
+ ******************************************************************************/
+
+figure.tikz {
+  margin: 1.5rem 0;
+  text-align: center;
+
+  img {
+    // The plugin emits intrinsic width/height to stop the page reflowing as
+    // diagrams load; these keep wide diagrams inside the content column on
+    // narrow screens without distorting them.
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+// Only ever seen in development: production builds fail instead of publishing
+// a page with a missing diagram.
+figure.tikz-error {
+  text-align: left;
+
+  pre {
+    padding: 0.75rem 1rem;
+    border-left: 3px solid var(--global-highlight-color);
+    background-color: var(--global-code-bg-color);
+    color: var(--global-text-color);
+    white-space: pre-wrap;
+  }
+}
