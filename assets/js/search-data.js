@@ -23,7 +23,51 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-boo-boo-bear-a-wikipedia-edit-skirmish",
+        },{id: "post-quantumania-4-enter-complex-numbers",
+        
+          title: "Quantumania 4 - Enter Complex Numbers",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm4/";
+          
+        },
+      },{id: "post-quantumania-3-linear-operators-a-digression",
+        
+          title: "Quantumania 3 - Linear Operators, A Digression",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm3/";
+          
+        },
+      },{id: "post-quantumania-2-what-about-superposition",
+        
+          title: "Quantumania 2 - What About Superposition?",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm2/";
+          
+        },
+      },{id: "post-quantumania-1-say-no-to-blurry-arrows",
+        
+          title: "Quantumania 1 - Say No to Blurry Arrows",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm1/";
+          
+        },
+      },{id: "post-boo-boo-bear-a-wikipedia-edit-skirmish",
         
           title: "Boo-Boo Bear, A Wikipedia Edit Skirmish",
         
@@ -614,30 +658,4 @@ ninja.data = [{
         handler: () => {
           window.open("https://www.alberteinstein.com/", "_blank");
         },
-      },{
-      id: 'light-theme',
-      title: 'Change theme to light',
-      description: 'Change the theme of the site to Light',
-      section: 'Theme',
-      handler: () => {
-        setThemeSetting("light");
-      },
-    },
-    {
-      id: 'dark-theme',
-      title: 'Change theme to dark',
-      description: 'Change the theme of the site to Dark',
-      section: 'Theme',
-      handler: () => {
-        setThemeSetting("dark");
-      },
-    },
-    {
-      id: 'system-theme',
-      title: 'Use system default theme',
-      description: 'Change the theme of the site to System Default',
-      section: 'Theme',
-      handler: () => {
-        setThemeSetting("system");
-      },
-    },];
+      },];
