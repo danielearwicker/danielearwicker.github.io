@@ -21,16 +21,18 @@ module Jekyll
 
       def directory_files_content
         target_path = File.join(directory, '**', '*')
-        Dir[target_path].map{|f| File.read(f) unless File.directory?(f) }.join
+        Dir[target_path].sort.map{|f| File.read(f) unless File.directory?(f) }.join
       end
 
       def file_content
         local_file_name = file_name.slice((file_name.index('assets/')..-1))
+        local_file_name = local_file_name.sub(/\.css\z/, '.scss') unless File.exist?(local_file_name)
         File.read(local_file_name)
       end
 
       def file_contents
-        is_directory? ? file_content : directory_files_content
+        # A stylesheet is its own source plus the partials it imports
+        is_directory? ? file_content : directory_files_content + file_content
       end
 
       def is_directory?
@@ -43,7 +45,7 @@ module Jekyll
     end
 
     def bust_css_cache(file_name)
-      CacheDigester.new(file_name: file_name, directory: 'assets/_sass').digest!
+      CacheDigester.new(file_name: file_name, directory: '_sass').digest!
     end
   end
 end
