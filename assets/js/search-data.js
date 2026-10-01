@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-4-enter-complex-numbers",
+        },{id: "post-quantumania-5-geometry-strikes-back",
+        
+          title: "Quantumania 5 - Geometry Strikes Back",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm5/";
+          
+        },
+      },{id: "post-quantumania-4-enter-complex-numbers",
         
           title: "Quantumania 4 - Enter Complex Numbers",
         
