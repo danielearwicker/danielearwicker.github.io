@@ -17,8 +17,8 @@ Anyway, knowing how much was changed only worsened the itch. I wanted - no, need
 
 I did this entirely manually for episode 1, and it took a surprisingly long time. But eventually I had the two files:
 
--   [1-dvd.md](../../../beatles-anthology-diffs/1-dvd.md)
--   [1-dplus.md](../../../beatles-anthology-diffs/1-dplus.md)
+-   [1-dvd.md](https://earwicker.com/beatles-anthology-diffs/1-dvd.md)
+-   [1-dplus.md](https://earwicker.com/beatles-anthology-diffs/1-dplus.md)
 
 For example:
 
@@ -48,7 +48,7 @@ I find I get the best results the more detailed my request is, and if I talk to 
 
 To provide you with all the context (why should you be denied what an AI would be given?):
 
-- [Beatles Anthology Comparison](../../../beatles-anthology-diffs/comparison.html)
+- [Beatles Anthology Comparison](https://earwicker.com/beatles-anthology-diffs/comparison.html)
 - [Source on Github](https://github.com/danielearwicker/beatles-anthology-diffs)
 
 I didn't write any code for this _at all_. And yes, I know this is called [vibe coding](https://blog.collinsdictionary.com/language-lovers/collins-word-of-the-year-2025-ai-meets-authenticity-as-society-shifts/), but I think as well as being a ridiculous term in itself, I think it's extremely misleading, because I have to stress: _I didn't do any coding_. So whatever the activity is from my perspective, it's not _anything_ coding. I asked something else to do the coding for me, and it did that. I just said things like:
