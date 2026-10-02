@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-5-geometry-strikes-back",
+        },{id: "post-quantumania-6-that-darn-cat",
+        
+          title: "Quantumania 6 - That Darn Cat",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm6/";
+          
+        },
+      },{id: "post-quantumania-5-geometry-strikes-back",
         
           title: "Quantumania 5 - Geometry Strikes Back",
         
