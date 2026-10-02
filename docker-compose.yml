@@ -20,3 +20,16 @@ services:
       - .:/srv/jekyll
     environment:
       - JEKYLL_ENV=development
+    # The base image's entry point serves without --future, which hides any
+    # post dated after today -- i.e. tomorrow's draft. Production is unaffected:
+    # CI builds without --future, so scheduled posts still wait for their date.
+    # This runs the same `jekyll serve` as the entry point, minus its
+    # restart-on-_config.yml-change loop: restart the container after editing
+    # _config.yml.
+    command:
+      - bash
+      - -c
+      - >-
+        git config --global --add safe.directory '*' &&
+        exec bundle exec jekyll serve --watch --port=8080 --host=0.0.0.0
+        --livereload --future --verbose --trace --force_polling
