@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-6-that-darn-cat",
+        },{id: "post-quantumania-7-there-39-s-more-than-one-thing-in-the-universe",
+        
+          title: "Quantumania 7 - There&#39;s More Than One Thing in the Universe",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm7/";
+          
+        },
+      },{id: "post-quantumania-6-that-darn-cat",
         
           title: "Quantumania 6 - That Darn Cat",
         
