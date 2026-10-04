@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-7-there-39-s-more-than-one-thing-in-the-universe",
+        },{id: "post-quantumania-8-too-much-for-einstein",
+        
+          title: "Quantumania 8 - Too Much for Einstein",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm8/";
+          
+        },
+      },{id: "post-quantumania-7-there-39-s-more-than-one-thing-in-the-universe",
         
           title: "Quantumania 7 - There&#39;s More Than One Thing in the Universe",
         
