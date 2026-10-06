@@ -13,10 +13,10 @@
 # static SVG under assets/img/tikz/.
 #
 # SVGs are cached by a hash of their own source, so a diagram is only compiled
-# when it is new or has been edited. The cache is committed to the repository,
-# which means CI needs no TeX installation at all -- it simply finds every SVG
-# already present. Run bin/render-tikz on a machine that does have TeX to
-# populate the cache after editing a diagram.
+# when it is new or has been edited. The cache is committed to the repository
+# so most builds find every SVG already present; CI installs TeX too, so a
+# diagram whose SVG was not committed is rendered there instead. Run
+# bin/render-tikz on a machine with TeX to populate the cache locally.
 #
 # This file is loaded both by Jekyll (as a plugin) and by bin/render-tikz (as a
 # plain library), so everything outside the `defined?(Jekyll)` guard at the
