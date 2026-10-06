@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-8-too-much-for-einstein",
+        },{id: "post-quantumania-9-farewell-to-locality",
+        
+          title: "Quantumania 9 - Farewell to Locality",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm9/";
+          
+        },
+      },{id: "post-quantumania-8-too-much-for-einstein",
         
           title: "Quantumania 8 - Too Much for Einstein",
         
