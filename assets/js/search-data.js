@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-9-farewell-to-locality",
+        },{id: "post-quantumania-10-adventures-of-stick-man",
+        
+          title: "Quantumania 10 - Adventures of Stick Man",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm10/";
+          
+        },
+      },{id: "post-quantumania-9-farewell-to-locality",
         
           title: "Quantumania 9 - Farewell to Locality",
         
