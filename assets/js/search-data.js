@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-10-adventures-of-stick-man",
+        },{id: "post-quantumania-11-daggers-bras-and-kets",
+        
+          title: "Quantumania 11 - Daggers, Bras and Kets",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm11/";
+          
+        },
+      },{id: "post-quantumania-10-adventures-of-stick-man",
         
           title: "Quantumania 10 - Adventures of Stick Man",
         
