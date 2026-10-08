@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-11-daggers-bras-and-kets",
+        },{id: "post-quantumania-12-unexpected-values",
+        
+          title: "Quantumania 12 - Unexpected Values",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm12/";
+          
+        },
+      },{id: "post-quantumania-11-daggers-bras-and-kets",
         
           title: "Quantumania 11 - Daggers, Bras and Kets",
         
