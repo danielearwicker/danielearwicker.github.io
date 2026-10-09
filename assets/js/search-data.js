@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-12-unexpected-values",
+        },{id: "post-quantumania-13-the-hadamard-gate",
+        
+          title: "Quantumania 13 - The Hadamard Gate",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm13/";
+          
+        },
+      },{id: "post-quantumania-12-unexpected-values",
         
           title: "Quantumania 12 - Unexpected Values",
         
