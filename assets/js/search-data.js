@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-13-the-hadamard-gate",
+        },{id: "post-quantumania-14-schrödinger-39-s-umlaut",
+        
+          title: "Quantumania 14 - Schrödinger&#39;s Umlaut",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm14/";
+          
+        },
+      },{id: "post-quantumania-13-the-hadamard-gate",
         
           title: "Quantumania 13 - The Hadamard Gate",
         
