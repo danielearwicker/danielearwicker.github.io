@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-14-schrödinger-39-s-umlaut",
+        },{id: "post-quantumania-15-mystery-function",
+        
+          title: "Quantumania 15 - Mystery Function",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm15/";
+          
+        },
+      },{id: "post-quantumania-14-schrödinger-39-s-umlaut",
         
           title: "Quantumania 14 - Schrödinger&#39;s Umlaut",
         
