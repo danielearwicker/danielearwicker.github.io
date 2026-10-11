@@ -35,6 +35,31 @@ table {
   }
 }
 
+// Tables written in post markdown
+#markdown-content > table {
+  margin: 1.5rem auto;
+  border-collapse: collapse;
+
+  td,
+  th {
+    padding: 0.4rem 1rem;
+    border-bottom: 1px solid var(--global-divider-color);
+  }
+
+  td + td,
+  th + th {
+    border-left: 1px solid var(--global-divider-color);
+  }
+
+  thead th {
+    border-bottom-width: 2px;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+}
+
 a,
 table.table a {
   color: var(--global-theme-color);
