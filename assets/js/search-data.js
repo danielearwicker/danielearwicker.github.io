@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-16-diagonal-easy",
+        },{id: "post-quantumania-17-more-function-more-mystery",
+        
+          title: "Quantumania 17 - More Function, More Mystery",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm17/";
+          
+        },
+      },{id: "post-quantumania-16-diagonal-easy",
         
           title: "Quantumania 16 - Diagonal = Easy",
         
