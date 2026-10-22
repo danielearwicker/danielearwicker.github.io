@@ -92,17 +92,11 @@ jobs:
           valueFile: "_config.yml"
           propertyPath: "giscus.repo"
           value: ${{ github.repository }}
-      - name: Install TeX for TikZ diagrams 🖼️
-        # Committed SVGs are used as-is; this lets the Jekyll plugin render any
-        # diagram that has no cached SVG yet. Same packages as the Dockerfile.
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            dvisvgm \
-            texlive-fonts-recommended \
-            texlive-latex-base \
-            texlive-latex-extra \
-            texlive-pictures
+      - name: Check TikZ diagrams 🖼️
+        # SVGs are committed, so the build needs no TeX. Fail fast with a clear
+        # message if a diagram's SVG is missing: run bin/render-tikz locally and
+        # commit the result.
+        run: bin/render-tikz --check
       - name: Install and Build 🔧
         run: |
           sudo apt-get update && sudo apt-get install -y imagemagick
