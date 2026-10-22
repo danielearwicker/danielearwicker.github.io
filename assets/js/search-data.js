@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-17-more-function-more-mystery",
+        },{id: "post-quantumania-18-mixed-messages",
+        
+          title: "Quantumania 18 - Mixed Messages",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm18/";
+          
+        },
+      },{id: "post-quantumania-17-more-function-more-mystery",
         
           title: "Quantumania 17 - More Function, More Mystery",
         
