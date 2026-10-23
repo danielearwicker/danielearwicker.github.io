@@ -1,0 +1,31 @@
+/*******************************************************************************
+ * Math
+ *
+ * Compiled to static SVG at build time by _plugins/math.rb, so there is no
+ * client-side rendering to style around -- just the resulting <img>.
+ ******************************************************************************/
+
+img.math {
+  &.math-inline {
+    // Baseline is pinned per-expression by an inline vertical-align on the
+    // <img> (the plugin embeds each expression's TeX depth).
+  }
+
+  &.math-display {
+    display: block;
+    margin: 1rem auto;
+
+    // The plugin emits intrinsic width/height to stop the page reflowing as
+    // expressions load; these keep wide equations inside the content column on
+    // narrow screens without distorting them.
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+// Only ever seen in development: production builds fail instead of publishing
+// a page with a missing expression.
+span.math-error {
+  color: var(--global-theme-color);
+  font-family: monospace;
+}

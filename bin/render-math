@@ -1,0 +1,121 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Renders every math expression in the site to a static SVG under
+# assets/img/math/.
+#
+# Mirrors bin/render-tikz: the Jekyll plugin renders missing expressions itself
+# wherever TeX is available, so this is for rendering on the host ahead of time
+# and committing the SVGs alongside the posts.
+#
+# Usage:
+#   bin/render-math             render any expression that is not already cached
+#   bin/render-math --force     re-render everything, ignoring the cache
+#   bin/render-math --prune     also delete cached SVGs no longer referenced
+#   bin/render-math --check     report what is missing, render nothing (for CI)
+
+require "optparse"
+
+ROOT = File.expand_path("..", __dir__)
+require File.join(ROOT, "_plugins", "math")
+
+SOURCE_GLOBS = [
+  "_posts/**/*.{md,markdown,html}",
+  "_pages/**/*.{md,markdown,html}",
+  "_projects/**/*.{md,markdown,html}",
+  "_books/**/*.{md,markdown,html}",
+  "*.{md,markdown,html}",
+].freeze
+
+options = { force: false, prune: false, check: false }
+OptionParser.new do |parser|
+  parser.banner = "Usage: bin/render-math [options]"
+  parser.on("--force", "Re-render every expression, ignoring the cache") { options[:force] = true }
+  parser.on("--prune", "Delete cached SVGs that are no longer referenced") { options[:prune] = true }
+  parser.on("--check", "Report missing expressions without rendering (exit 1 if any)") { options[:check] = true }
+  parser.on("-h", "--help", "Show this message") { puts parser; exit 0 }
+end.parse!
+
+unless options[:check] || MathRender.toolchain_available?
+  abort "render-math: needs `latex` and `dvisvgm` on PATH (install MacTeX or TeX Live)."
+end
+
+# Collect every expression in the site, remembering which file each came from.
+expressions = []
+SOURCE_GLOBS.each do |glob|
+  Dir.glob(File.join(ROOT, glob)).sort.each do |path|
+    content = File.read(path)
+    next unless content.include?("$")
+    MathRender.extract_from_markdown(content).each do |tex, display|
+      expressions << { tex: tex, display: display, file: path.sub("#{ROOT}/", "") }
+    end
+  end
+end
+
+if expressions.empty?
+  puts "render-math: no math expressions found."
+  exit 0
+end
+
+rendered = 0
+cached = 0
+failures = []
+missing = []
+keys = {}
+
+expressions.each do |expr|
+  key = MathRender.cache_key(expr[:tex], expr[:display])
+  keys[key] = true
+  path = MathRender.svg_absolute_path(key, ROOT)
+
+  if File.exist?(path) && !options[:force]
+    cached += 1
+    next
+  end
+
+  if options[:check]
+    missing << "#{expr[:file]} -> #{MathRender.svg_relative_path(key)}"
+    next
+  end
+
+  begin
+    MathRender.ensure_svg(expr[:tex], expr[:display], ROOT, options[:force])
+    rendered += 1
+    puts "  rendered #{MathRender.svg_relative_path(key)}  (#{expr[:file]})"
+  rescue MathRender::CompileError => e
+    failures << "#{expr[:file]}:\n#{e.message}"
+  end
+end
+
+if options[:check]
+  if missing.empty?
+    puts "render-math: all #{expressions.size} expression(s) cached."
+    exit 0
+  end
+  warn "render-math: #{missing.size} expression(s) have no cached SVG:"
+  missing.each { |m| warn "  #{m}" }
+  warn "Run bin/render-math and commit assets/img/math/."
+  exit 1
+end
+
+stale = Dir.glob(File.join(ROOT, MathRender::CACHE_DIR, "*.svg")).reject do |path|
+  keys[File.basename(path, ".svg")]
+end
+
+unless stale.empty?
+  if options[:prune]
+    stale.each do |path|
+      File.delete(path)
+      puts "  pruned   #{path.sub("#{ROOT}/", "")}"
+    end
+  else
+    puts "render-math: #{stale.size} unreferenced SVG(s); re-run with --prune to remove."
+  end
+end
+
+puts "render-math: #{rendered} rendered, #{cached} already cached, #{failures.size} failed."
+
+unless failures.empty?
+  failures.each { |f| warn "\n#{f}" }
+  exit 1
+end

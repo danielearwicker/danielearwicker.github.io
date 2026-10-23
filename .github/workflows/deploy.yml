@@ -97,6 +97,10 @@ jobs:
         # message if a diagram's SVG is missing: run bin/render-tikz locally and
         # commit the result.
         run: bin/render-tikz --check
+      - name: Check math expressions ∑
+        # Like the TikZ check: math SVGs are committed, so fail fast if one is
+        # missing. Run bin/render-math locally and commit the result.
+        run: bin/render-math --check
       - name: Install and Build 🔧
         run: |
           sudo apt-get update && sudo apt-get install -y imagemagick
