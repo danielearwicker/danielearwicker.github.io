@@ -27,6 +27,7 @@ require "digest"
 require "fileutils"
 require "open3"
 require "tmpdir"
+require_relative "math_macros"
 
 module TikzRender
   CACHE_DIR = File.join("assets", "img", "tikz")
@@ -36,7 +37,7 @@ module TikzRender
   ZOOM = 1.5
 
   # Bump to invalidate every cached SVG, e.g. after changing the preamble below.
-  PREAMBLE_VERSION = 1
+  PREAMBLE_VERSION = 12
 
   # Matches a <script type="text/tikz"> block, capturing its attributes and body.
   SCRIPT_RE = %r{<script\b([^>]*?\btype\s*=\s*(["'])text/tikz\2[^>]*?)>(.*?)</script>}m
@@ -82,8 +83,10 @@ module TikzRender
     <<~TEX
       \\documentclass[dvisvgm,border=2pt]{standalone}
       \\usepackage{tikz}
+      \\usepackage{amsmath, amssymb, amsfonts}
       #{packages.join("\n")}
       #{libraries.join("\n")}
+      #{KetMacros::LATEX}
       \\begin{document}
       #{body}
       \\end{document}

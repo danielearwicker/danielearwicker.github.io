@@ -31,6 +31,7 @@ require "digest"
 require "fileutils"
 require "open3"
 require "tmpdir"
+require_relative "math_macros"
 
 module MathRender
   CACHE_DIR = File.join("assets", "img", "math")
@@ -41,7 +42,7 @@ module MathRender
   ZOOM = 1.0
 
   # Bump to invalidate every cached SVG, e.g. after changing the preamble below.
-  PREAMBLE_VERSION = 2
+  PREAMBLE_VERSION = 12
 
   # Display math: kramdown turned $$...$$ into \[...\].
   DISPLAY_RE = /\\\[(.*?)\\\]/m
@@ -94,9 +95,7 @@ module MathRender
     if display
       body = tex =~ DISPLAY_ENV_RE ? tex : "\\[#{tex}\\]"
       <<~TEX
-        \\documentclass[12pt]{article}
-        \\pagestyle{empty}
-        \\usepackage{amsmath, amssymb, amsfonts}
+        #{math_preamble}
         \\begin{document}
         #{body}
         \\end{document}
@@ -105,9 +104,7 @@ module MathRender
       # Set the math in a box and dump its metrics so we can align the baseline
       # of the resulting image with the surrounding text.
       <<~TEX
-        \\documentclass[12pt]{article}
-        \\pagestyle{empty}
-        \\usepackage{amsmath, amssymb, amsfonts}
+        #{math_preamble}
         \\newwrite\\mathmeta
         \\immediate\\openout\\mathmeta=\\jobname.meta
         \\begin{document}
@@ -118,6 +115,18 @@ module MathRender
         \\end{document}
       TEX
     end
+  end
+
+  # The shared document preamble. Adds \ket / \bra / \braket with faint red/blue
+  # slanted backgrounds that follow the shape of the fence brackets.
+  def math_preamble
+    (<<~'TEX') + KetMacros::LATEX
+      \documentclass[12pt]{article}
+      \pagestyle{empty}
+      \usepackage{amsmath, amssymb, amsfonts}
+      \def\pgfsysdriver{pgfsys-dvisvgm.def}
+      \usepackage{tikz}
+    TEX
   end
 
   # Compiles an expression and returns the SVG as a string. Inline math gets a
