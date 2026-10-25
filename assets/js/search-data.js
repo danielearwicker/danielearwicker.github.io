@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-18-mixed-messages",
+        },{id: "post-quantumania-19-disappear-with-trace",
+        
+          title: "Quantumania 19 - Disappear With Trace",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm19/";
+          
+        },
+      },{id: "post-quantumania-18-mixed-messages",
         
           title: "Quantumania 18 - Mixed Messages",
         
