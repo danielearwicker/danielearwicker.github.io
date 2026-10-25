@@ -1,0 +1,13 @@
+{% assign series_posts = site.posts | where: 'series', page.series | sort: 'date' %}
+<nav class="series-sidebar" aria-label="Series contents">
+  <h5 class="series-heading">{{ page.series }}</h5>
+  <ol class="series-list">
+    {% for p in series_posts %}
+      {% if p.url == page.url %}
+        <li class="series-item series-current">{{ p.title | remove: page.series | strip }}</li>
+      {% else %}
+        <li class="series-item"><a href="{{ p.url | relative_url }}">{{ p.title | remove: page.series | strip }}</a></li>
+      {% endif %}
+    {% endfor %}
+  </ol>
+</nav>

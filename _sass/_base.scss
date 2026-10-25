@@ -1166,6 +1166,45 @@ nav[data-toggle="toc"] {
   z-index: 1;
 }
 
+/* Series sidebar (contents listing for a group of related posts) */
+.series-sidebar {
+  position: sticky;
+  top: 5rem;
+  z-index: 1;
+  font-size: 0.8rem;
+
+  .series-heading {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .series-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+
+    .series-item {
+      margin-bottom: 0.25rem;
+      line-height: 1.35;
+
+      a {
+        color: var(--global-text-color);
+        text-decoration: none;
+
+        &:hover {
+          color: var(--global-theme-color);
+        }
+      }
+    }
+
+    .series-current {
+      font-weight: 700;
+      color: var(--global-theme-color);
+    }
+  }
+}
+
 .echarts {
   height: 400px;
   width: 100%;

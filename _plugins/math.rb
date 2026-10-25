@@ -42,7 +42,7 @@ module MathRender
   ZOOM = 1.0
 
   # Bump to invalidate every cached SVG, e.g. after changing the preamble below.
-  PREAMBLE_VERSION = 12
+  PREAMBLE_VERSION = 13
 
   # Display math: kramdown turned $$...$$ into \[...\].
   DISPLAY_RE = /\\\[(.*?)\\\]/m
@@ -123,7 +123,7 @@ module MathRender
     (<<~'TEX') + KetMacros::LATEX
       \documentclass[12pt]{article}
       \pagestyle{empty}
-      \usepackage{amsmath, amssymb, amsfonts}
+      \usepackage{amsmath, mathtools, amssymb, amsfonts}
       \def\pgfsysdriver{pgfsys-dvisvgm.def}
       \usepackage{tikz}
     TEX
@@ -252,6 +252,44 @@ module MathRender
     content.gsub(INLINE_RE) { expressions << [Regexp.last_match(1).strip, false] }
     expressions
   end
+
+  # Hex-encodes TeX so it can be carried through kramdown as an inert token.
+  def encode_tex(tex)
+    tex.unpack("H*").first
+  end
+
+  def decode_tex(hex)
+    [hex].pack("H*")
+  end
+
+  # Replaces inline $...$ with inert MATHI<hex> tokens so kramdown cannot turn
+  # underscores/asterisks inside them into <em>/<strong>. Code spans, fenced code
+  # and raw <script>/<pre>/<code> blocks are left untouched. Display $$...$$
+  # needs no protection: kramdown already parses it as block math, so it must be
+  # skipped here or inline $...$ nested inside it (e.g. in \shortintertext)
+  # would be wrongly tokenised.
+  def protect_inline_math(content)
+    return content unless content.is_a?(String) && content.include?("$")
+
+    fence = /^[ \t]*(?:`{3,}|~{3,})[^\n]*\n[\s\S]*?^[ \t]*(?:`{3,}|~{3,})[ \t]*$/m
+    raw = /<(?:script|pre|code)\b[^>]*>[\s\S]*?<\/[^>]+>/m
+    span = /`[^`\n]*`/
+    combined = Regexp.new(
+      "#{fence.source}|#{raw.source}|#{span.source}|#{DISPLAY_MD_RE.source}|#{INLINE_RE.source}",
+      Regexp::MULTILINE
+    )
+
+    content.gsub(combined) do
+      matched = Regexp.last_match(0)
+      if matched.start_with?("$$")
+        matched # display math: leave for kramdown
+      elsif matched.start_with?("$")
+        "MATHI#{encode_tex(INLINE_RE.match(matched)[1].strip)}"
+      else
+        matched # code / raw HTML / inline code span
+      end
+    end
+  end
 end
 
 if defined?(Jekyll)
@@ -281,6 +319,12 @@ if defined?(Jekyll)
       html = html.gsub(DISPLAY_RE) do
         tex = unescape_tex(Regexp.last_match(1).strip)
         render_one(tex, true, site) || Regexp.last_match(0)
+      end
+      # Inline math was protected at pre_render with inert MATHI<hex> tokens, so
+      # decode those back into TeX. The INLINE_RE fallback below is a safety net
+      # for anything that slipped through (e.g. Liquid-generated math).
+      html = html.gsub(/MATHI([0-9a-f]+)/) do
+        render_one(decode_tex(Regexp.last_match(1)), false, site) || Regexp.last_match(0)
       end
       html = html.gsub(INLINE_RE) do
         tex = unescape_tex(Regexp.last_match(1).strip)
@@ -325,9 +369,22 @@ if defined?(Jekyll)
     end
   end
 
+  Jekyll::Hooks.register %i[pages documents], :pre_render do |doc, _payload|
+    content = doc.content
+    next unless content.is_a?(String) && content.include?("$")
+
+    path = doc.respond_to?(:path) ? doc.path.to_s : ""
+    next if path =~ /\.(scss|sass|css|js|json|xml|svg|map)\z/
+
+    doc.content = MathRender.protect_inline_math(content)
+  end
+
   Jekyll::Hooks.register %i[posts pages documents], :post_render do |doc|
     output = doc.output
-    next unless output.is_a?(String) && (output.include?("$") || output.include?("\\["))
+    # Inline math is protected at pre_render as MATHI<hex> tokens, display math
+    # is \[...\], and any un-protected $...$ is caught by the INLINE_RE fallback,
+    # so look for any of those markers.
+    next unless output.is_a?(String) && (output.include?("MATHI") || output.include?("$") || output.include?("\\["))
 
     # Only ever touch real content. Jekyll also runs this hook on stylesheet
     # and script sources (e.g. the Font Awesome SCSS, which is full of `$var`
