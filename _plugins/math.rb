@@ -42,7 +42,7 @@ module MathRender
   ZOOM = 1.0
 
   # Bump to invalidate every cached SVG, e.g. after changing the preamble below.
-  PREAMBLE_VERSION = 13
+  PREAMBLE_VERSION = 15
 
   # Display math: kramdown turned $$...$$ into \[...\].
   DISPLAY_RE = /\\\[(.*?)\\\]/m
@@ -124,6 +124,8 @@ module MathRender
       \documentclass[12pt]{article}
       \pagestyle{empty}
       \usepackage{amsmath, mathtools, amssymb, amsfonts}
+      \usepackage{tensor}
+      \let\vec\mathbf
       \def\pgfsysdriver{pgfsys-dvisvgm.def}
       \usepackage{tikz}
     TEX

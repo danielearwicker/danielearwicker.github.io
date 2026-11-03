@@ -37,7 +37,7 @@ module TikzRender
   ZOOM = 1.5
 
   # Bump to invalidate every cached SVG, e.g. after changing the preamble below.
-  PREAMBLE_VERSION = 12
+  PREAMBLE_VERSION = 13
 
   # Matches a <script type="text/tikz"> block, capturing its attributes and body.
   SCRIPT_RE = %r{<script\b([^>]*?\btype\s*=\s*(["'])text/tikz\2[^>]*?)>(.*?)</script>}m
@@ -84,6 +84,7 @@ module TikzRender
       \\documentclass[dvisvgm,border=2pt]{standalone}
       \\usepackage{tikz}
       \\usepackage{amsmath, amssymb, amsfonts}
+      \\let\\vec\\mathbf
       #{packages.join("\n")}
       #{libraries.join("\n")}
       #{KetMacros::LATEX}

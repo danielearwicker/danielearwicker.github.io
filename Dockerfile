@@ -20,6 +20,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # texlive-latex-base   latex itself
 # texlive-pictures     PGF/TikZ and its libraries
 # texlive-latex-extra  standalone.cls, which crops the page to the picture
+# texlive-science      tensor.sty, for the \indices tensor notation in math.rb
 # texlive-fonts-*      the Computer Modern fonts the labels are set in
 # dvisvgm              DVI -> SVG, with glyphs converted to paths
 RUN apt-get update && \
@@ -28,7 +29,8 @@ RUN apt-get update && \
         texlive-fonts-recommended \
         texlive-latex-base \
         texlive-latex-extra \
-        texlive-pictures && \
+        texlive-pictures \
+        texlive-science && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 # Note: deliberately not clearing /tmp here -- the base image's CMD is
