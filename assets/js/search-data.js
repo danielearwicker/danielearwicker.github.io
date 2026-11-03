@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-20-disentanglement",
+        },{id: "post-quantumania-21-slot-machines",
+        
+          title: "Quantumania 21 - Slot Machines",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm21/";
+          
+        },
+      },{id: "post-quantumania-20-disentanglement",
         
           title: "Quantumania 20 - Disentanglement",
         
