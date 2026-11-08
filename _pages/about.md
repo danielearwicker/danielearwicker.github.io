@@ -40,5 +40,4 @@ And the crew were much pleased when they found it to be
    A map they could all understand."
 -- **_The Hunting of the Snark_, Fit the Second**
 
-"My stack runneth over..."
--- **Psalm 404**
+All words are written by a human. Any resemblance to AI-generated text is entirely due to good old-fashioned organic group-think conformity.

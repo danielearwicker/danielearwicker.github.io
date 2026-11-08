@@ -14,6 +14,7 @@
 #   bin/render-math --prune     also delete cached SVGs no longer referenced
 #   bin/render-math --check     report what is missing, render nothing (for CI)
 
+require "etc"
 require "optparse"
 
 ROOT = File.expand_path("..", __dir__)
@@ -63,6 +64,7 @@ failures = []
 missing = []
 keys = {}
 
+to_render = []
 expressions.each do |expr|
   key = MathRender.cache_key(expr[:tex], expr[:display])
   keys[key] = true
@@ -78,13 +80,37 @@ expressions.each do |expr|
     next
   end
 
-  begin
-    MathRender.ensure_svg(expr[:tex], expr[:display], ROOT, options[:force])
-    rendered += 1
-    puts "  rendered #{MathRender.svg_relative_path(key)}  (#{expr[:file]})"
-  rescue MathRender::CompileError => e
-    failures << "#{expr[:file]}:\n#{e.message}"
+  to_render << [key, expr]
+end
+
+unless options[:check] || to_render.empty?
+  unique_to_render = to_render.uniq { |k, _| k }
+  queue = Queue.new
+  unique_to_render.each { |item| queue << item }
+  mutex = Mutex.new
+
+  concurrency = [Etc.nprocessors, 8].min
+  workers = concurrency.times.map do
+    Thread.new do
+      until queue.empty?
+        item = (queue.pop(true) rescue nil)
+        break unless item
+        key, expr = item
+        begin
+          MathRender.ensure_svg(expr[:tex], expr[:display], ROOT, options[:force])
+          mutex.synchronize do
+            rendered += 1
+            puts "  rendered #{MathRender.svg_relative_path(key)}  (#{expr[:file]})"
+          end
+        rescue MathRender::CompileError => e
+          mutex.synchronize do
+            failures << "#{expr[:file]}:\n#{e.message}"
+          end
+        end
+      end
+    end
   end
+  workers.each(&:join)
 end
 
 if options[:check]

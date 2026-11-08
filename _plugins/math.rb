@@ -42,7 +42,7 @@ module MathRender
   ZOOM = 1.0
 
   # Bump to invalidate every cached SVG, e.g. after changing the preamble below.
-  PREAMBLE_VERSION = 15
+  PREAMBLE_VERSION = 16
 
   # Display math: kramdown turned $$...$$ into \[...\].
   DISPLAY_RE = /\\\[(.*?)\\\]/m
@@ -101,17 +101,12 @@ module MathRender
         \\end{document}
       TEX
     else
-      # Set the math in a box and dump its metrics so we can align the baseline
-      # of the resulting image with the surrounding text.
+      # Set the math in a box with a dvisvgm special that emits the baseline y-coordinate.
       <<~TEX
         #{math_preamble}
-        \\newwrite\\mathmeta
-        \\immediate\\openout\\mathmeta=\\jobname.meta
         \\begin{document}
-        \\setbox0=\\hbox{$#{tex}$}%
-        \\immediate\\write\\mathmeta{\\the\\ht0,\\the\\dp0,\\the\\wd0}%
+        \\setbox0=\\hbox{$\\special{dvisvgm:message BASELINE={?y}}#{tex}$}%
         \\box0
-        \\immediate\\closeout\\mathmeta
         \\end{document}
       TEX
     end
@@ -152,8 +147,6 @@ module MathRender
         raise CompileError, "latex failed:\n#{tex_errors(out)}"
       end
 
-      depth = display ? nil : read_depth(File.join(dir, "math.meta"))
-
       svg = File.join(dir, "math.svg")
       out, _status = Open3.capture2e(
         "dvisvgm", "--no-fonts", "--exact-bbox", "--optimize=all",
@@ -163,7 +156,20 @@ module MathRender
         raise CompileError, "dvisvgm failed:\n#{out}"
       end
 
-      result = normalise(File.read(svg))
+      raw_svg = File.read(svg)
+      depth = nil
+      if !display
+        baseline_match = out[/BASELINE=([\d.]+)/, 1]
+        vb_match = raw_svg.match(/viewBox=['"]([^\s'"]+)\s+([^\s'"]+)\s+([^\s'"]+)\s+([^\s'"]+)['"]/)
+        if baseline_match && vb_match
+          baseline_y = baseline_match.to_f
+          min_y = vb_match[2].to_f
+          height = vb_match[4].to_f
+          depth = ((min_y + height) - baseline_y).round(4)
+        end
+      end
+
+      result = normalise(raw_svg)
       result = result.sub("<svg ", %(<svg data-baseline="#{depth}" )) if depth
       result
     end
@@ -199,14 +205,9 @@ module MathRender
     [(match[1].to_f * 4.0 / 3.0).round, (match[2].to_f * 4.0 / 3.0).round]
   end
 
-  # Reads the depth (in pt) written by the inline-math document to its .meta file.
-  def read_depth(path)
-    File.read(path).strip.split(",")[1].to_f
-  end
-
   # Extracts the depth (in pt) embedded in an inline math SVG.
   def baseline_depth(svg)
-    match = svg.match(/data-baseline="([\d.]+)"/)
+    match = svg.match(/data-baseline="(-?[\d.]+)"/)
     match ? match[1].to_f : nil
   end
 
@@ -231,9 +232,11 @@ module MathRender
     cls = display ? "math math-display" : "math math-inline"
     style = ""
     if !display && (depth = baseline_depth(svg))
-      # Pin the math baseline (depth pt above the image bottom) to the text
+      # Pin the math baseline (depth pt below the image bottom) to the text
       # baseline. px = pt * 4/3, matching how the intrinsic size is displayed.
-      style = %( style="vertical-align: -#{(depth * 4.0 / 3.0).round(2)}px")
+      px = (-depth * 4.0 / 3.0).round(2)
+      px = 0 if px.zero?
+      style = %( style="vertical-align: #{px}px")
     end
     %(<img class="#{cls}" src="#{src}" alt="#{escape_html(alt_text(tex))}"#{size}#{style} loading="lazy">)
   end
