@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-21-slot-machines",
+        },{id: "post-quantumania-22-three-dimensions",
+        
+          title: "Quantumania 22 - Three Dimensions",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm22/";
+          
+        },
+      },{id: "post-quantumania-21-slot-machines",
         
           title: "Quantumania 21 - Slot Machines",
         
