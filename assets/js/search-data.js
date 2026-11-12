@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-22-three-dimensions",
+        },{id: "post-quantumania-23-turn-turn-turn",
+        
+          title: "Quantumania 23 - Turn! Turn! Turn!",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm23/";
+          
+        },
+      },{id: "post-quantumania-22-three-dimensions",
         
           title: "Quantumania 22 - Three Dimensions",
         
