@@ -63,6 +63,10 @@ layout: default
     </p>
   </header>
 
+  {% if page.series %}
+    {% include series_sidebar.liquid mode='mobile-top' %}
+  {% endif %}
+
   <article class="post-content">
     {% if page.toc and page.toc.beginning %}
       <div id="table-of-contents">
@@ -74,6 +78,10 @@ layout: default
       {{ content }}
     </div>
   </article>
+
+  {% if page.series %}
+    {% include series_sidebar.liquid mode='pager' %}
+  {% endif %}
 
   {% if page.citation %}
     {% include citation.liquid %}
@@ -102,7 +110,7 @@ layout: default
 
 {% if page.series %}
     </div>
-    <div class="col-sm-3">
+    <div class="col-sm-3 d-none d-sm-block">
       {% include series_sidebar.liquid %}
     </div>
   </div>

@@ -1,13 +1,73 @@
 {% assign series_posts = site.posts | where: 'series', page.series | sort: 'date' %}
-<nav class="series-sidebar" aria-label="Series contents">
-  <h5 class="series-heading">{{ page.series }}</h5>
-  <ol class="series-list">
-    {% for p in series_posts %}
-      {% if p.url == page.url %}
-        <li class="series-item series-current">{{ p.title | remove: page.series | strip }}</li>
+{% assign series_total = series_posts | size %}
+{% assign current_index = 1 %}
+{% assign prev_post = nil %}
+{% assign next_post = nil %}
+{% for p in series_posts %}
+  {% if p.url == page.url %}
+    {% assign current_index = forloop.index %}
+    {% unless forloop.first %}
+      {% assign prev_idx = forloop.index0 | minus: 1 %}
+      {% assign prev_post = series_posts[prev_idx] %}
+    {% endunless %}
+    {% unless forloop.last %}
+      {% assign next_idx = forloop.index0 | plus: 1 %}
+      {% assign next_post = series_posts[next_idx] %}
+    {% endunless %}
+  {% endif %}
+{% endfor %}
+
+{% if include.mode == 'mobile-top' %}
+  <details class="series-mobile-dropdown d-sm-none">
+    <summary class="series-mobile-summary">
+      <span class="series-mobile-label">
+        <strong>{{ page.series }}</strong>
+        <span class="series-mobile-count">({{ current_index }} of {{ series_total }})</span>
+      </span>
+      <i class="fa-solid fa-chevron-down series-mobile-chevron" aria-hidden="true"></i>
+    </summary>
+    <nav aria-label="Series contents">
+      <ol class="series-list">
+        {% for p in series_posts %}
+          {% if p.url == page.url %}
+            <li class="series-item series-current">{{ p.title | remove: page.series | strip }}</li>
+          {% else %}
+            <li class="series-item"><a href="{{ p.url | relative_url }}">{{ p.title | remove: page.series | strip }}</a></li>
+          {% endif %}
+        {% endfor %}
+      </ol>
+    </nav>
+  </details>
+{% elsif include.mode == 'pager' %}
+  {% if prev_post or next_post %}
+    <nav class="series-pager" aria-label="{{ page.series }} navigation">
+      {% if prev_post %}
+        <a class="series-pager-link series-pager-prev" href="{{ prev_post.url | relative_url }}">
+          <span class="series-pager-dir">&larr; Previous in {{ page.series }}</span>
+          <span class="series-pager-title">{{ prev_post.title | remove: page.series | strip }}</span>
+        </a>
       {% else %}
-        <li class="series-item"><a href="{{ p.url | relative_url }}">{{ p.title | remove: page.series | strip }}</a></li>
+        <span class="series-pager-spacer"></span>
       {% endif %}
-    {% endfor %}
-  </ol>
-</nav>
+      {% if next_post %}
+        <a class="series-pager-link series-pager-next" href="{{ next_post.url | relative_url }}">
+          <span class="series-pager-dir">Next in {{ page.series }} &rarr;</span>
+          <span class="series-pager-title">{{ next_post.title | remove: page.series | strip }}</span>
+        </a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% else %}
+  <nav class="series-sidebar" aria-label="Series contents">
+    <h5 class="series-heading">{{ page.series }}</h5>
+    <ol class="series-list">
+      {% for p in series_posts %}
+        {% if p.url == page.url %}
+          <li class="series-item series-current">{{ p.title | remove: page.series | strip }}</li>
+        {% else %}
+          <li class="series-item"><a href="{{ p.url | relative_url }}">{{ p.title | remove: page.series | strip }}</a></li>
+        {% endif %}
+      {% endfor %}
+    </ol>
+  </nav>
+{% endif %}
