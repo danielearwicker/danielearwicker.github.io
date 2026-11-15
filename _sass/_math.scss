@@ -8,7 +8,9 @@
 img.math {
   &.math-inline {
     // Baseline is pinned per-expression by an inline vertical-align on the
-    // <img> (the plugin embeds each expression's TeX depth).
+    // <img> (the plugin embeds each expression's TeX depth). Default to
+    // baseline rather than Bootstrap's vertical-align: middle.
+    vertical-align: baseline;
   }
 
   &.math-display {

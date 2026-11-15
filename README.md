@@ -1,5 +1,7 @@
 # al-folio
 
+> **Maintainer & Agent Notes:** See [`CLAUDE.md`](CLAUDE.md) and [`test/README.md`](test/README.md) for documentation on this blog's build-time LaTeX/SVG math rendering (`_plugins/math.rb`, `bin/render-math`) and the inline math baseline alignment regression test suite (`ruby test/math_baseline_test.rb`).
+
 <div align="center">
 
 [![Preview](readme_preview/al-folio-preview.png)](https://alshedivat.github.io/al-folio/)

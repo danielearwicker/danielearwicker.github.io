@@ -70,7 +70,7 @@ expressions.each do |expr|
   keys[key] = true
   path = MathRender.svg_absolute_path(key, ROOT)
 
-  if File.exist?(path) && !options[:force]
+  if !options[:force] && MathRender.valid_cached_svg?(path, expr[:display])
     cached += 1
     next
   end

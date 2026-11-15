@@ -168,6 +168,7 @@ kramdown:
 include: ["_pages", "_scripts"]
 exclude:
   - bin/
+  - CLAUDE.md
   - CONTRIBUTING.md
   - CUSTOMIZE.md
   - Dockerfile
@@ -184,6 +185,7 @@ exclude:
   - purgecss.config.js
   - README.md
   - readme_preview/
+  - test/
   - vendor
 keep_files:
   - CNAME
