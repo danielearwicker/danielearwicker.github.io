@@ -23,7 +23,29 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-23-turn-turn-turn",
+        },{id: "post-quantumania-25-irritating-conveyor-belts",
+        
+          title: "Quantumania 25 - Irritating Conveyor Belts",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm25/";
+          
+        },
+      },{id: "post-quantumania-24-learn-from-the-flerfers",
+        
+          title: "Quantumania 24 - Learn from the Flerfers",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/qm24/";
+          
+        },
+      },{id: "post-quantumania-23-turn-turn-turn",
         
           title: "Quantumania 23 - Turn! Turn! Turn!",
         
