@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-quantumania-25-irritating-conveyor-belts",
+        },{id: "post-euler-39-s-formula-1-perpendicular-accountancy",
+        
+          title: "Euler&#39;s Formula 1 - Perpendicular Accountancy",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/euler1/";
+          
+        },
+      },{id: "post-quantumania-25-irritating-conveyor-belts",
         
           title: "Quantumania 25 - Irritating Conveyor Belts",
         
