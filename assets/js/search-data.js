@@ -23,7 +23,18 @@ ninja.data = [{
           handler: () => {
             window.location.href = "/repositories/";
           },
-        },{id: "post-euler-39-s-formula-1-perpendicular-accountancy",
+        },{id: "post-euler-39-s-formula-2-going-in-circles",
+        
+          title: "Euler&#39;s Formula 2 - Going in Circles",
+        
+        description: "",
+        section: "Posts",
+        handler: () => {
+          
+            window.location.href = "/blog/2026/euler2/";
+          
+        },
+      },{id: "post-euler-39-s-formula-1-perpendicular-accountancy",
         
           title: "Euler&#39;s Formula 1 - Perpendicular Accountancy",
         
